@@ -1,0 +1,31 @@
+# .xinitrc
+ 
+xrandr -s 0
+ 
+xrdb $HOME/.Xresources
+xsetroot -cursor_name left_ptr
+xsetroot -solid '#80a0af'
+ 
+xset b 100 0 0
+xset r rate 140 200
+ 
+xmodmap -e "keycode 233 = Page_Down"
+xmodmap -e "keycode 234 = Page_Up"
+xmodmap -e "remove Lock = Caps_Lock"
+xmodmap -e "keysym Caps_Lock = Control_L"
+xmodmap -e "add Control = Control_L"
+ 
+PATH=/home/dons/bin:$PATH
+ 
+trayer --transparent true --widthtype request --height 18 --align right --edge top --expand true &
+gnome-power-manager &
+nm-applet &
+ 
+# launch the external 60 second clock, and launch the workspace status bar
+FG='#a8a3f7' 
+BG='#3f3c6d' 
+ 
+ 
+while true ; do date ; sleep 60 ; done | dzen2 -e '' -x 400 -w $off -ta r -fg $FG -bg $BG -p &
+ 
+dbus-launch --exit-with-session xmonad

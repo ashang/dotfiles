@@ -1,0 +1,13 @@
+# Temporary Files
+.*.swp
+*~
+
+# Compiled Files
+xmonad-x86_64-linux
+*.hi
+*.o
+
+# Generated Files
+history
+xmonad.errors
+xmonad.state

@@ -1,0 +1,214 @@
+# Filename:      $HOME/.gitconfig
+# Purpose:       configuration file for git(1)
+
+[format]
+    numbered = auto
+
+[color]
+    branch = yes
+    ui = auto
+    #ui = true
+    interactive = auto
+    status    = auto
+    diff   = auto
+    pager  = yes
+
+[color "branch"]
+    current = green
+    local   = yellow
+    remote  = cyan
+
+[color "diff"]
+    meta = yellow
+    frag = magenta
+    old  = red
+    new  = green
+
+[color "status"]
+    header    = magenta
+    added    = green
+    updated    = cyan
+    changed    = yellow
+    nobranch  = red
+    branch    = normal bold
+    untracked = cyan
+
+[gui]
+    fontui   = -family terminus -size 9 -weight normal -slant roman -underline 0 -overstrike 0
+    fontdiff = -family terminus -size 9 -weight normal -slant roman -underline 0 -overstrike 0
+    editor = gvim
+
+[http]
+    sslVerify=false
+
+#[sendemail]
+#    aliasesfile   = ~/.gitaliases
+#    aliasfiletype = mutt
+#    chainreplyto  = false
+#    smtpserver = /usr/bin/msmtp
+
+[core]
+    repositoryformatversion = 0
+    filemode = true
+    bare = false
+    logallrefupdates = true
+    ignorecase = false
+    editor = vim
+	#autocrlf = input
+	#safecrlf = false
+	#safecrlf = true
+
+[filter "media"]
+    clean = git media clean %f
+    smudge = git media smudge %f
+    required = true
+
+[alias]
+    st = status
+    co = checkout
+    cob = checkout -b
+    ci = commit
+    cm = !git add -A && git commit
+    save = !git add -A && git commit -m 'SAVEPOINT'
+    wip = commit -am "WIP" 
+#undo which resets the previous commit, but keeps changes from that commit in the working directory.
+    undo = reset HEAD~1 --mixed
+# for "subtree add"
+    sba = "!f() { git subtree add --prefix $2 $1 master --squash; }; f"
+# for "subtree update"
+    sbu = "!f() { git subtree pull --prefix $2 $1 master --squash; }; f"
+
+    br = branch
+    unstage = reset HEAD
+    last = log -1
+    #lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    lg = log --graph --all --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'
+    hist = log --color --pretty=format:\"%C(yellow)%h%C(reset) %s%C(bold red)%d%C(reset) %C(green)%ad%C(reset) %C(blue)[%an]%C(reset)\" --relative-date --decorate
+    #unstage = reset HEAD --
+    restore = checkout --
+    cn = commit --no-verify
+    praise = blame
+    visualise = !gitk
+    graph = log --color --graph --pretty=format:\"%h | %ad | %an | %s%d\" --date=short
+    up = !git pull --rebase --prune $@ && git submodule update --init --recursive
+
+    b     = branch
+    ca    = commit -a
+    chgd  = diff HEAD
+    ci    = commit
+    co    = checkout
+    fpu   = format-patch -s -p origin/master
+    graphviz = "!f() { echo 'digraph git {' ; git log --pretty='format:  %h -> { %p }' \"$@\" | sed 's/[0-9a-f]\\+/\"&\"/g' ; echo '}'; }; f"
+    m     = checkout master
+    mnc   = merge --no-commit
+    olg   = log --abbrev-commit --abbrev=6 --pretty=oneline
+    one   = "!sh -c 'git show -s --pretty=\"tformat:%h (%s, %ai\" \"$@\" | sed -e \"s/ [012][0-9]:[0-5][0-9]:[0-5][0-9] [-+][0-9][0-9][0-9][0-9]$/)/\"' -"
+    out   = !git push --dry-run
+    purge = !git checkout $(git rev-parse --show-cdup) && git clean -xdf
+    serve = !sh -c 'git daemon --reuseaddr --verbose \"$@\" --base-path=. --export-all ./.git' sh
+    stgd  = diff --cached
+    st    = status
+    tagme = !sh -c '[ -z "$1" ] && exit 1 || git tag -s v\"$1\" -m \"release \"$1\"\"' sh
+    who   = "!sh -c 'git log -1 --pretty=\"format:%an <%ae>\" --author=\"$1\"' -"
+
+	st = status
+	co = checkout
+	cob = checkout -b
+	ci = commit
+	cm = !git add -A && git commit
+	save = !git add -A && git commit -m 'SAVEPOINT'
+	wip = commit -am "WIP" 
+#undo which resets the previous commit, but keeps changes from that commit in the working directory.
+	undo = reset HEAD~1 --mixed
+# for "subtree add"
+	sba = "!f() { git subtree add --prefix $2 $1 master --squash; }; f"
+# for "subtree update"
+	sbu = "!f() { git subtree pull --prefix $2 $1 master --squash; }; f"
+
+	br = branch
+	unstage = reset HEAD
+	last = log -1
+	#lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	lg = log --graph --all --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'
+	hist = log --color --pretty=format:\"%C(yellow)%h%C(reset) %s%C(bold red)%d%C(reset) %C(green)%ad%C(reset) %C(blue)[%an]%C(reset)\" --relative-date --decorate
+	#unstage = reset HEAD --
+	restore = checkout --
+	cn = commit --no-verify
+	praise = blame
+	visualise = !gitk
+	graph = log --color --graph --pretty=format:\"%h | %ad | %an | %s%d\" --date=short
+	up = !git pull --rebase --prune $@ && git submodule update --init --recursive
+
+
+[credential]
+    helper = cache --timeout=360000
+
+[push]
+	#default = matching
+	default = current
+	followTags = true
+	#When push.default is set to 'matching', git will push local branches
+	#to the remote branches that already exist with the same name.
+	#
+	#Since Git 2.0, Git defaults to the more conservative 'simple'
+	#behavior, which only pushes the current branch to the corresponding
+	#remote branch that 'git pull' uses to update the current branch.
+	#
+	#See 'git help config' and search for 'push.default' for further information.
+	#(the 'simple' mode was introduced in Git 1.7.11. Use the similar mode
+	#'current' instead of 'simple' if you sometimes use older versions of Git)
+
+# to ignore sub mobule changes
+	#ignore = dirty
+	# http://git-scm.com/docs/git-status
+	# https://www.kernel.org/pub/software/scm/git/docs/git-status.html
+
+#[filter "lfs"]
+    #required = true
+    #clean = git-lfs clean -- %f
+    #smudge = git-lfs smudge -- %f
+    #process = git-lfs filter-process
+[status]
+    submoduleSummary = true
+[merge]
+    tool = vimdiff
+
+
+[filter "media"]
+	clean = git media clean %f
+	smudge = git media smudge %f
+	required = true
+
+
+[color]
+	ui = auto
+	#ui = true
+
+	branch    = auto
+	diff    = auto
+	interactive = auto
+	status    = auto
+
+[color "status"]
+	header    = normal
+	added    = green
+	updated    = cyan
+	changed    = yellow
+	untracked  = red
+	nobranch  = red
+	branch    = normal bold
+
+[include]
+	path = ~/.gitconfig.local
+
+
+#[filter "lfs"]
+	#required = true
+	#clean = git-lfs clean -- %f
+	#smudge = git-lfs smudge -- %f
+	#process = git-lfs filter-process
+
+[commit]
+  template = ~/.gitmessage
+
+# vim:tabstop=4 autoindent filetype=gitconfig expandtab

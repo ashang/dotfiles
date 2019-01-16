@@ -1,0 +1,144 @@
+# base-files version 4.2-3
+# ~/.inputrc: readline initialization file, for libreadline
+# This file controls the GNU readline utility,
+# which Bash and other GNU programs use to offer common REPL.
+
+#After you modify ~/.inputrc, restart shell or use Ctrl+X, Ctrl+R to tell it to re-read ~/.inputrc.
+# See readline(3readline) and `info rluserman' for more information.
+# https://wiki.archlinux.org/index.php/Readline
+#http://www.gnu.org/software/bash/manual/html_node/Readline-Init-File.html
+#http://oss.org.cn/man/linux/lfs/LFS_BOOK_6.0/chapter07/inputrc.html
+#When a program which uses the Readline library starts up, the init file is read, and the key bindings are set
+
+#also man tput, just in case.
+
+# see /usr/share/doc/bash/inputrc.arrows for other codes of arrow keys
+
+# By default EMACS-like shortcuts are provided.
+# Use vi instead.
+set editing-mode vi
+set keymap vi
+$include /etc/inputrc
+
+# some defaults / modifications for the emacs mode
+$if mode=emacs
+
+  # arrow up / arrow down
+    "\e[A": history-search-backward
+    "\e[B": history-search-forward
+
+  # allow the use of the Delete/Insert keys
+    "\e[2~": quoted-insert
+  # the following line is actually equivalent to "\C-?": delete-char
+    "\e[3~": delete-char
+
+  # "page up" and "page down" to step to the beginning/end of the history
+  "\e[5~": beginning-of-history
+  "\e[6~": end-of-history
+
+$endif
+
+
+# To allow the use of 8bit-characters like the german umlauts, uncomment
+# the line below. However this makes the meta key not work as a meta key,
+# which is annoying to those which don't need to type in 8-bit characters.
+
+# Allow 8-bit input/output
+set meta-flag on
+set convert-meta off
+
+# Be 8 bit clean.
+set input-meta on
+set output-meta on
+
+# try to enable the application keypad when it is called.  Some systems
+# need this to enable the arrow keys.
+set enable-keypad on
+
+$if Bash
+  # Don't ring bell on completion
+  set bell-style none
+
+  # or, don't beep at me - show me
+  set bell-style visible
+
+  # Filename completion/expansion
+  set completion-ignore-case on
+  set show-all-if-ambiguous on
+
+  # Expand homedir name
+  set expand-tilde off
+
+  # Append "/" to all dirnames
+  set mark-directories on
+  set mark-symlinked-directories on
+
+  # Match all files
+  set match-hidden-files on
+
+  # 'Magic Space'
+  # Insert a space character then performs
+  # a history expansion in the line
+  Space: magic-space
+
+$endif
+
+# mappings for Ctrl-left-arrow and Ctrl-right-arrow for word moving
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+"\e[5C": forward-word
+"\e[5D": backward-word
+"\e\e[C": forward-word
+"\e\e[D": backward-word
+
+#Or 
+#bind '"\eOC":forward-word'
+#bind '"\eOD":backward-word'
+
+#OR
+#"\eOC": forward-word
+#"\eOD": backward-word
+
+#TODO
+# Ctrl-V Ctrl-Arrow will show the value; Left: ^[[1;5D; Right: ^[[1;5C
+# \e is escape. TODO
+
+##In ~/.zshrc
+#bindkey '^[[1;5D' backward-word
+#bindkey '^[[1;5C' forward-word
+
+
+  # VT
+  # allow the use of the Home/End keys
+    "\e[1~": beginning-of-line
+    "\e[4~": end-of-line
+
+    # VT220
+    # for non RH/Debian xterm, can't hurt for RH/Debian xterm
+    "\eOH": beginning-of-line
+    "\eOF": end-of-line
+
+    # kvt
+    # for freebsd console
+    "\e[H": beginning-of-line
+    "\e[F": end-of-line
+
+
+# rxvt and konsole (i.e. the KDE-app...)
+$if term=rxvt
+  "\e[7~": beginning-of-line
+  "\e[8~": end-of-line
+  "\eOc": forward-word
+  "\eOd": backward-word
+$endif
+
+	# VT220
+	# for non RH/Debian xterm, can't hurt for RH/Debian xterm
+	# "\eOH": beginning-of-line
+	# "\eOF": end-of-line
+
+	# kvt
+	# for freebsd console
+	"\e[H": beginning-of-line
+	"\e[F": end-of-line
+

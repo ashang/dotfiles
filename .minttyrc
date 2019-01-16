@@ -1,0 +1,11 @@
+BoldAsFont=yes
+OpaqueWhenFocused=yes
+FontSmoothing=full
+Scrollbar=none
+Font=Consolas
+FontHeight=12
+AllowBlinking=yes
+Locale=C
+Charset=UTF-8
+BellFlash=yes
+CursorType=block

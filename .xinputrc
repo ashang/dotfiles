@@ -1,0 +1,12 @@
+# im-config(8) generated on Mon, 09 Jul 2018 09:55:00 +0800
+run_im fcitx
+# im-config signature: 8554355653c38bebb240da254ee10e24  -
+
+XIM=fcitx
+XIM_PROGRAM=/usr/bin/fcitx
+XIM_ARGS=""
+GTK_IM_MODULE=fcitx
+QT4_IM_MODULE=fcitx
+DEPENDS="fcitx"
+#run_im fcitx
+im-launch fcitx

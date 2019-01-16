@@ -1,0 +1,39 @@
+Config { font = "-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*"
+       , bgColor = "black"
+       , fgColor = "grey"
+       , position = Top
+       --, position = TopW L 85
+       , lowerOnStart = True
+       , commands = [ Run Network "eth0" ["-L","0","-H","32","--normal","green","--high","red"] 5
+                    , Run MultiCpu [
+                                        "-L","3",
+                                        "-H","60",
+                                        "--normal","green",
+                                        "--high","red",
+                                        "--template", "Cpu0: <total0> Cpu1: <total1> Cpu2: <total2> Cpu3: <total3>"
+                                   ] 10
+                    , Run Memory    [
+                                        "-t","Mem: <used>/<total> (<usedratio>%)"
+                                        , "-L", "1500"
+                                        , "-H", "6500"
+                                        , "--normal", "yellow"
+                                        , "--high", "red"
+                                        , "--low", "green"
+                                    ] 10
+                    , Run Swap [] 10
+                    , Run Date "%a %b %_d %Y %p %I:%M:%S" "date" 10
+                    , Run StdinReader
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%memory% | %multicpu% * %swap% | %StdinReader% }{ <fc=#d843e1>%eth0%</fc> | <fc=#ee9a00>%date%</fc>"
+       }
+
+       -- , commands = [ Run Network "wlan0" ["-L","0","-H","32","--normal","green","--high","red"] 10
+                    -- , Run Cpu ["-L","15","-H","50","--normal","green","--high","red"] 10
+                    -- , Run Memory ["-t","Mem: %"] 10
+                    -- , Run Swap [] 10
+                    -- , Run Date "%a %b %_d %Y %H:%M:%S" "date" 10
+                    -- , Run StdinReader
+                    -- ]
+       -- , template = "%StdinReader% }{ %cpu% | %memory% * %swap% | %wlan0% | %date%"

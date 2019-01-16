@@ -1,0 +1,58 @@
+xmonad-contrib needs to be installed as well.
+
+- It gives you 12 workspaces per screen, available through Alt+F1..F12.
+- You can move windows to a workspace with Win+F1..F12.
+- You can do both at the same time by pressing Win+Alt+F1..F12.
+- All workspaces except F11 respect panels and docks.
+- F11 is the fullscreen workspace (for mplayer, etc.).
+- F12 is the instant messaging workspace.
+- When you switch screens the mouse will go with you.
+
+Keybindings mostly use the Super key, but some use Alt to mimic other window
+managers. In general: Alt is used for navigation, Super for modification.
+Some of the bindings resemble the XMonad defaults, but most don't.
+
+Before we have the commands lets make some word definitions:
+- window = The window that a program runs in.
+- Workspace = One screen with many windows.
+- Screen = A physical computer screen that you will look at.
+
+__Screen management:__
+>  Ctrl+Alt+Left/Right        move focus to previous/next screen
+>  Ctrl+Alt+Down/Up           switch current window to current workspace on previous/next screen
+>  Ctrl+Alt+Shift+Left/Right  swap all windows in current screen with previous/next screen
+
+__Navigation:__
+>  Alt+Space            switch to free workspace
+>  Alt+F1..F12          switch to workspace on the same screen
+>  Alt+Tab              focus next window on same screen
+>  Alt+BackSpace        focus previous window on the same screen
+>  Win+Z                The mouse is moved one sixth of the way in from the top left of the window.
+
+__Window management:__
+>  These commands all keep windows in the same screen.
+>  Alt+Shift+Space      move current window to free workspace
+>  Win+F1..F12          move window to workspace
+>  Win+Alt+F1..F12      move window to workspace and switch to that workspace
+>  Win+Up/Down          move window up/down on
+>  Win+C                close window
+>  Alt+ScrollUp/Down    move focused window up/down
+>  Win+M                move window to master area
+>  Win+N                refresh the current window
+>  Alt+LMB              move floating window
+>  Alt+MMB              resize floating window
+>  Alt+RMB              unfloat floating window
+>  Win+T                unfloat floating window
+
+__Layout management:__
+>  Win+Left/Right       shrink/expand master area
+>  Win+W/V              move more/less windows into master area
+>  Win+Space            cycle layouts
+>  Alt+Space            Go back to the first layout
+
+__Other:__
+>  Win+Enter            start a terminal
+>  Win+R                open the dmenu dialogue
+>  Win+Q                restart XMonad
+>  Win+B                opens your browser
+>  Win+Shift+Q          display Gnome shutdown dialog

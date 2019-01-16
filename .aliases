@@ -1,0 +1,434 @@
+# Alias definitions. a separate file
+# linked to ~/.bash_aliases
+
+# For dircolors-solarized
+# - https://github.com/seebi/dircolors-solarized
+
+## translate
+#alias u='translate -i'
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# ls, color, etc.
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+
+fi
+
+#-F, --classify                append indicator (one of */=>@|) to entries
+#-F      Display a slash (`/') immediately after each pathname that is a directory,
+#        an asterisk (`*') after each that is executable,
+#        an at sign (`@') after each symbolic link,
+#        an equals sign (`=') after each socket,
+#        a percent sign (`%') after each whiteout, and
+#        a vertical bar (`|') after each that is a FIFO.
+
+if [[ "`uname -s`" == "FreeBSD" ]]
+#if [[ "$OSTYPE" =~ *BSD ]]; then
+then
+  alias ls='\ls -FG'
+elif [[ "$OSTYPE" =~ ^darwin ]]; then
+#elif [ "`uname -s`" == "Darwin" ]
+    # uname also works now
+  alias ls="command ls -bFG"
+else # Assume Linux
+  alias ls='\ls -bF -X --color=auto --show-control-chars'
+  #alias ls='\ls -F -X --color=tty --show-control-chars'
+fi
+
+alias l.='ls -Al '
+alias lt='ls -ltr '
+alias lta='ls -latr '
+alias lS='ls -lSr '
+alias l='ls -CF'
+alias ll='ls -l'                              # long list
+alias la='ls -A'                              # all but . and ..
+alias ldir='\ls -l | \grep ^d'
+alias lh='ls -a | \grep "^\."'
+
+#function cd_func
+#This function defines a 'cd' replacement function capable of keeping,
+#displaying and accessing history of visited directories, up to 10 entries.
+#To use it, uncomment it, source this file and try 'cd --'.
+#acd_func 1.0.5, 10-nov-2004
+cd_func ()
+{
+  local x2 the_new_dir adir index
+  local -i cnt
+
+  if [[ $1 ==  "--" ]]; then
+    dirs -v
+    return 0
+  fi
+
+  the_new_dir=$1
+  [[ -z $1 ]] && the_new_dir=$HOME
+
+  if [[ ${the_new_dir:0:1} == '-' ]]; then
+    #
+    # Extract dir N from dirs
+    index=${the_new_dir:1}
+    [[ -z $index ]] && index=1
+    adir=$(dirs +$index)
+    [[ -z $adir ]] && return 1
+    the_new_dir=$adir
+  fi
+
+  #
+  # '~' has to be substituted by ${HOME}
+  [[ ${the_new_dir:0:1} == '~' ]] && the_new_dir="${HOME}${the_new_dir:1}"
+
+  #
+  # Now change to the new dir and add to the top of the stack
+  pushd "${the_new_dir}" > /dev/null
+  [[ $? -ne 0 ]] && return 1
+  the_new_dir=$(pwd)
+
+  #
+  # Trim down everything beyond 11th entry
+  popd -n +11 2>/dev/null 1>/dev/null
+
+  #
+  # Remove any other occurence of this dir, skipping the top of the stack
+  for ((cnt=1; cnt <= 10; cnt++)); do
+    x2=$(dirs +${cnt} 2>/dev/null)
+    [[ $? -ne 0 ]] && return 0
+    [[ ${x2:0:1} == '~' ]] && x2="${HOME}${x2:1}"
+    if [[ "${x2}" == "${the_new_dir}" ]]; then
+      popd -n +$cnt 2>/dev/null 1>/dev/null
+      cnt=cnt-1
+    fi
+  done
+
+  return 0
+}
+
+alias cd=cd_func
+
+# vi `lf`
+alias lf="ls . -rt1 | tail -1"
+
+
+#alias pix='for i in *.jpg; do convert -quality 50% "$i" "$i"; done'
+alias ps='ps aux'
+alias psg='\ps aux | \grep -v without-match | grep'
+alias po="popd"
+alias pu="pushd"
+alias py="python"
+alias rpi='rpm -qi '
+alias rpg='rpm -qa | grep'
+alias rx='LANG=zh_CN.GB2312 LC_CTYPE=zh_CN.GB2312 rxvt -ls -sl 500 -fn 8x16 -bg black -fg grey80 -ls&'
+alias rmbra="rename 'y/)(/_/' "
+
+#alias which="type -path"
+#alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
+alias wget="wget -c "
+alias where="type -all"
+# alias xpdf='xpdf -fullscreen'
+# Byzanz requires a 24bpp or 32bpp depth for recording.
+alias xx='startx -- -nolisten tcp -depth 24 '
+alias xfb='startx -- -nolisten tcp -fbbpp 24'
+alias x1='startx -- :1 -depth 32 '
+alias x2='startx -- :2 -depth 32 '
+alias yum='yum -v -y --color=auto '
+
+#alias expemerge="ACCEPT_KEYWORDS=\"~x86\" emerge"
+# with params?: scp -P 1222 $* 120.77.17.19
+
+# alias l='ls -ah --color'
+alias l='ls -CF'
+#-A, --almost-all            do not list implied . and ..
+alias la='ls -A'
+alias l.='ls -Al'
+alias ldir='\ls -l | egrep ^d'
+alias lf="ls -tr1 . | tail -1"
+alias lh='ls -A | egrep "^\."'
+alias ll='ls -l'
+alias lS='ls -lS'
+alias lSr='ls -lSr'
+alias lt='ls -ltA'
+alias ltr='ls -ltAr'
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias cd..="cd .."
+
+alias copy='xclip -selection clipboard'
+alias yank='xclip -selection clipboard -o'
+
+alias pbcopy='xsel --clipboard --input'
+alias pbpaste='xsel --clipboard --output'
+
+alias N='&>/dev/null'
+
+alias a='alias'
+alias as='apt-cache search'
+alias adbw='adb wait-for-device'
+
+alias bb='bitbake -v'
+
+alias c='clear'
+alias cp='\cp -i -v -a'
+# -a = -pPR
+#  -R If source_file designates a directory, cp copies the directory and the entire subtree connected at that point.  If the source_file ends in a /, the
+#     contents of the directory are copied rather than the directory itself.  This option also causes symbolic links to be copied, rather than indirected
+#     through, and for cp to create special files rather than copying them as normal files.  Created directories have the same mode as the corresponding
+#     source directory, unmodified by the process' umask.
+#
+#     In -R mode, cp will continue copying even if errors are detected.
+#
+#     Note that cp copies hard-linked files as separate files.  If you need to preserve hard links, consider using tar(1), cpio(1), or pax(1) instead.
+
+alias chmod='chmod -v'
+alias crontab='crontab -i'
+alias curl='curl -L'
+alias cv='convmv -f gbk -t utf-8 -r --notest'
+
+alias dd="dd bs=8M status=progress"
+alias debug_on="sed -i 's/^\/\/#define LOG_NDEBUG 0/#define LOG_NDEBUG 0/g'"
+alias debug_off="sed -i 's/^#define LOG_NDEBUG 0/\/\/#define LOG_NDEBUG 0/g'"
+which colordiff &>/dev/null && alias diff='colordiff'
+[ which colormake >/dev/null 2>&1 ] && alias make=colormake
+
+alias dl='dpkg -L'
+alias dlg='dpkg -l | grep'
+alias dlc='dlocate -i'
+alias ds='dpkg -s'
+
+alias emerge='emerge -avt'
+alias eng='env | grep -i'
+alias equo='equo --color --ask -v'
+alias es='emerge --search'
+#alias expemerge="ACCEPT_KEYWORDS=\"~x86\" emerge"
+
+alias ff="firefox"
+alias file="file -k"
+alias fn="find -iname"
+alias fsg='find . -name .svn -prune -o -print | xargs grep -H -n -I -s --colour=auto'
+# search for a string in all subdirectories, matched lines will be printed together with filename and line number.
+alias finds='find . -regex ".*\.\(h\|cpp\|c\|java\|aidl\|py\|pl\|pm\)" | xargs grep -Hn'
+# case insensitive search.
+alias findsi='find . -regex ".*\.\(h\|cpp\|c\|java\|aidl\|py\|pl\|pm\)" | xargs grep -Hni'
+
+# git
+# git reset --hard `gitorigin`
+alias gitorigin="git branch -r | head -1 | cut -d' ' -f 5"
+alias g='git status --ignore-submodules=dirty'
+alias g='git status -buno'
+alias ga="git add"
+alias gap="git add --patch"
+alias gb="git branch -vv"
+alias gch="git checkout"
+alias gca='git commit --amend'
+alias gcl='git clone -v --recursive'
+# as function: git clone --recursive $1
+alias gcv='git commit --no-verify'
+alias gd='git diff --patience'
+alias gdc='git diff --cached -w'
+alias gdw='git diff --no-ext-diff --word-diff'
+alias gdv='git diff -v'
+alias gf='git fetch -a -p'
+alias gg="git log --graph --all --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'"
+alias gg="git log --graph --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'"
+alias gg="git log --color --all --graph --pretty=format:\"%h %ad %an %s%d\" --date=short"
+alias gsl='git stash list'
+alias gss='git stash save'
+alias gup='git pull --rebase --prune && git submodule update --init --recursive'
+alias gh='git hist'
+alias gi="git commit -v"
+alias gl='git log --oneline --decorate'
+alias gl="git log --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%C(yellow)%d%Creset %Cblue[%an]%Creset\" --graph --date=short"
+alias glp='git log -p'
+alias glss='git log --stat --summary'
+alias gm="git checkout master"
+alias gmb="git merge-base"
+alias gp='git pull'
+alias gpa='for i in `git remote`; do echo; echo To remote $i ......; echo; git push $i;done'
+alias gpp='git pull --rebase && git push'
+alias gr="git remote -v"
+alias grss="git remote show origin"
+alias gpr='git pull --rebase --recurse-submodules'
+alias gri='git rebase -i'
+alias grc='git rebase --continue'
+alias grs='git rebase --skip'
+
+alias gt='gnome-terminal &'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+#alias grep='grep --color'                     # show differences in colour
+
+alias grep='grep --color --exclude-dir=.git -s -I'
+alias grpe=grep
+alias gerp=grep
+
+alias hig='history | \grep'
+
+alias info='info --vi-keys'
+
+alias jo="jobs -l"
+alias ka="killall"
+alias kk='xlock'
+
+alias lc='locate -i'
+alias less='less -r'                          # raw control characters
+
+alias make='make -j4'
+alias mm="make menuconfig"
+alias mplayer='mplayer -vf screenshot -msgcolor '
+alias mpv="mpv --audio-display=no"
+alias ms='gpm -m /dev/psaux -t imps2'
+#alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A &'
+alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A -geometry 125x43+0+0 &'
+alias mutt='mutt -y '
+alias m=mutt
+alias mv='mv -i'
+alias mo=more
+alias moer=more
+alias mroe=most
+
+alias nano='nano -i -m -w -B -F -L'
+alias nano='nano -i -m -w -B -F -L -xcSr68'
+alias netstat='netstat -an'
+alias np='nano -w PKGBUILD'
+alias nv="nvim -p"
+
+#alias pix='for i in *.jpg; do convert -quality 50% "$i" "$i"; done'
+alias ps='ps aux'
+alias pacman='pacman -v'
+alias pS='sudo pacman -S'
+alias pss='pacman -Ss'
+alias pqg='pacman -Q|egrep -i'
+alias pqi='pacman -Qi'
+alias pql='pacman -Ql'
+alias pqo='pacman -Qo'
+alias psg='\ps aux | \grep -v without-match | \grep -i'
+alias po="popd"
+alias pu="pushd"
+alias py="python"
+
+alias rpg='rpm -qa | \grep'
+alias rename='perl-rename'
+alias rmbra="rename 'y/)(/_/'"
+alias rsync='rsync -av --progress'
+
+# acct - The GNU Accounting utilities for process and login accounting
+# surfraw - a fast unix command line interface to WWW
+alias scp='scp -r'
+alias sdr='sudo rm -r'
+alias sls='screen -ls'
+alias svi='sudo vi'
+alias sr='screen -r'
+alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=60'
+## ignore ~/.ssh/known_hosts entries
+#alias insecssh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -o "PreferredAuthentications=keyboard-interactive"'
+
+alias sysup='sudo apt-get update && sudo apt-get upgrade'
+
+# alias tail='tail -f'
+alias tmux='tmux -2'
+alias ta='tmux a -d'
+alias ta='tmux a'
+alias tou8='iconv -f gbk -t utf-8'
+alias tz="tar -xzvf"
+alias tzt="tar -tzvf"
+alias tj="tar -xjvf"
+alias tjt="tar -tjvf"
+alias tmars='telnet 210.77.17.19 1012'
+
+alias ua='uname -a'
+# Disabled because some version has no this option
+# UnZip 6.00 of 20 April 2009, by Debian. Original by Info-ZIP.
+# alias unzip='unzip -O CP936'
+
+alias vd="vimdiff"
+alias vi="vim -p"
+#alias vim="vim -p"
+#alias vim="nvim -p"
+
+alias wget="wget --no-check-certificate -c --content-disposition"
+alias whence='type -a'                        # where, of a sort
+alias where="type -all"
+alias which='alias | which -a'
+#alias which="type -path"
+#alias which='alias | which --tty-only --read-alias --show-dot --show-tilde'
+
+# alias xpdf='xpdf -fullscreen'
+# Byzanz requires a 24bpp or 32bpp depth for recording.
+alias xx='startx -- -nolisten tcp -depth 24'
+alias xfb='startx -- -nolisten tcp -fbbpp 24'
+alias x1='startx -- :1 -depth 32'
+alias x2='startx -- :2 -depth 32'
+
+# program 'notify-send' is in libnotify-bin
+
+
+# Undo a `git push` ##NO@@##
+alias undopush="git push -f origin HEAD^:master"
+
+# IP addresses
+alias digip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias localip="ipconfig getifaddr en1"
+alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
+alias whois="whois -h whois-servers.net"
+
+# Flush Directory Service cache
+alias flush="dscacheutil -flushcache"
+
+# View HTTP traffic
+alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
+alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
+
+# Start an HTTP server from a directory
+alias server="python2 -m SimpleHTTPServer"
+alias server="python2 -m SimpleHTTPServer 8080"
+alias server='python2 -c "import SimpleHTTPServer;SimpleHTTPServer.test()"'
+alias server="python3 -m http.server 8080"
+alias server="python3 -m http.server"
+
+# Trim new lines and copy to clipboard
+alias C="tr -d '\n' | pbcopy"
+
+# Recursively delete `.DS_Store` files
+alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
+
+# File size
+alias fs="stat -f \"%z bytes\""
+
+# ROT13-encode text. Works for decoding, too! ;)
+alias rot13='tr a-zA-Z n-za-mN-ZA-M'
+
+# One of @janmoesen’s ProTip™s
+for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do alias "$method"="lwp-request -m '$method'"; done
+
+# Stuff I never really use but cannot delete either because of http://xkcd.com/530/
+alias stfu="osascript -e 'set volume output muted true'"
+alias pumpitup="osascript -e 'set volume 10'"
+alias hax="growlnotify -a 'Activity Monitor' 'System error' -m 'WTF R U DOIN'"
+
+# PostgreSQL
+alias start-psql="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
+alias stop-psql="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
+
+#bsd
+export PACKAGEROOT=ftp://ftp.freebsdchina.org
+# export PACKAGESITE
+
+# Canonical hex dump; some systems have this symlinked
+[ -n "$ZSH_VERSION" ] && type hd > /dev/null || alias hd="hexdump -C"
+[ "$BASH_VERSINFO" -ge "4" ] && type -t hd > /dev/null || alias hd="hexdump -C"
+
+[[ -f $HOME/.aliases.local ]] && . $HOME/.aliases.local
+
+alias pacrepo='sudo reflector -l 20 -f 10 --save /etc/pacman.d/mirrorlist'
+alias pacman='sudo pacman'
+alias journalctl='sudo journalctl'
+alias pacu='sudo pacman -Syu --noconfirm'
+alias auru='yaourt -Syua --noconfirm'
+alias systemctl='sudo systemctl'
+alias fe='find /sbin /bin /usr/sbin /usr/bin | grep'

@@ -1,0 +1,54 @@
+--Config { font = "xft:cure-10"
+-- Config { font = "-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*"
+Config { font = "xft:inconsolata:size=10:antialias=true"
+         -- , bgColor = "#002b36"
+         -- , fgColor = "#657b83"
+         , bgColor = "#181818"
+         , fgColor = "#888888"
+         -- , bgColor = "grey"
+         -- , fgColor = "black"
+         , position = TopW L 85
+         -- , position = Top
+         , lowerOnStart = True
+         --, lowerOnStart = False
+         , commands = [ Run Network "wlp6s0" ["-L","0","-H","32","--normal","green","--high","red"] 10
+                      , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
+                      , Run Memory ["-t","Mem: <usedratio>%"] 10
+                    -- , Run Memory ["-t","Mem: %"] 10
+                      , Run DiskIO [("/", "IO: <total>"), ("sda2", "<total>")] [] 10
+                      , Run Date "<fc=#93a1a1>%a %b %_d %Y %H:%M</fc>" "date" 10
+                    -- , Run Date "%a %b %_d %Y %p %I:%M:%S" "date" 10
+                    -- , Run Date "%a %b %_d<fc=#9c8e2d> %H:%M</fc>" "date" 10
+                    -- , Run Date "%a %b %_d %Y %H:%M:%S" "date" 10
+                    --, Run Com "ruby" ["/path/to/gmail_checker.rb"] "gmail" 3000
+                  , Run StdinReader
+        ]
+        , sepChar = "%"
+        , alignSep = "}{"
+        --, template = "%memory% | %multicpu% * | %StdinReader% }{ <fc=#d843e1>%eth0%</fc> | <fc=#ee9a00>%date%</fc>"
+        --, template = "%StdinReader% }{ <fc=#93a1a1>%gmail%</fc>  %cpu%  %memory%  %wlan0%  %diskio%  %date%"
+        , template = "%StdinReader% }{%wlp6s0%  %diskio%  %cpu%  %memory% %date%"}
+        --, template = "%StdinReader% }{ %cpu%  %memory%  %wlp6s0%  %diskio%  %date%"}
+        --, template = "%StdinReader%} {%music%<fc=#bd1550>  <fc=#51588E>>></fc>  </fc>%cpu%  <fc=#51588E>>></fc>  %wlan0%  <fc=#51588E>>></fc>  %date%"
+
+       --, Run Com "mpc" ["status", "--format", "\"%artist% - %title%\""] "music" 20
+       --, Run Cpu ["-L","7","-H","50","--low","#888888","--normal","#99bb10","--high","#d12828"] 10
+       --, Run Network "wlan0" ["-t","Net: <rx><fc=#9c8e2d>  >>  </fc><tx>","-L","5","-H","32","--normal","#9c8e2d","--high","#98565e","--low","#888888"] 10
+       --}
+
+      --  , commands = [ Run Network "eth0" ["-L","0","-H","32","--normal","green","--high","red"] 5
+      --               , Run MultiCpu [
+      --                                   "-L","3",
+      --                                   "-H","60",
+      --                                   "--normal","green",
+      --                                   "--high","red",
+      --                                   "--template", "Cpu0: <total0> Cpu1: <total1> Cpu2: <total2> Cpu3: <total3>"
+      --                              ] 10
+      --               , Run Memory    [
+      --                                   "-t","Mem: <used>/<total> (<usedratio>%)"
+      --                                   , "-L", "1500"
+      --                                   , "-H", "6500"
+      --                                   , "--normal", "yellow"
+      --                                   , "--high", "red"
+      --                                   , "--low", "green"
+      --                               ] 10

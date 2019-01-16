@@ -1,0 +1,400 @@
+# -*- coding: utf-8 -*-
+# source ~/.gitignore
+#/*
+# Never ignore these
+!.gitignore
+
+# VCS
+.git
+.svn
+.hgignore
+
+# Repo
+!/.gitignore
+!/README
+!/README.md
+!/CONTRIBUTING.md
+!/SUPPORTERS.md
+/bin/*
+
+
+# gcc coverage testing tool files
+*.gcno
+*.gcda
+*.gcov
+
+# automake
+Makefile.in
+
+# autoconf
+autom4te.cache
+aclocal.m4
+compile
+configure
+depcomp
+install-sh
+Makefile
+config.guess
+config.log
+config.status
+config.sub
+libtool
+ltmain.sh
+missing
+stamp-h1
+
+# Build artifacts
+dist/
+build/
+_build/
+output/
+/images/
+*.m4
+*.P[lo|o]
+Module.symvers
+modules.order
+*.rng
+md5sums
+build_deb/
+build_image/
+ramdisk_deb/
+ram_disk/
+
+
+# Object files
+*.o
+*.o.cmd
+*.ko
+*.ko.cmd
+*.elf
+*.dbg
+*.mod.c
+*.l[o|a]
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects
+*.so
+*.so.*
+
+# Executables
+*.out
+*.i*86
+*.x86_64
+*.hex
+.directory
+
+# C++ Compiled Object files
+*.slo
+*.obj
+# C++ Precompiled Headers
+*.gch
+*.pch
+# C++ Compiled Dynamic libraries
+*.dylib
+# Compiled Static libraries
+*.lai
+*.lib
+*.app
+
+
+# Kbuild ignores
+*.o.*
+*.s
+Kbuild
+Config.in
+
+
+# Normal output
+/busybox
+/busybox_old
+/busybox_unstripped*
+
+
+# debugging stuff
+core
+.gdb_history
+.gdbinit
+
+
+# testing output
+/busybox.links
+/runtest-tempdir-links
+/testsuite/echo-ne
+
+
+# Gradle
+.gradle
+
+#/coverage/
+.coverage
+/coverage/
+/spec/tmp
+rerun.txt
+pickle-email-*.html
+
+
+# module files
+*.mod
+
+# Editor/IDE
+## Vi
+*.sw[po]
+*.un~
+.*.un~
+
+## Eclipse
+.project
+.classpath
+.settings
+
+# Idea
+.idea
+*.iml
+*.iws
+*.ipr
+
+
+# Packages
+*.7z
+*.xz
+*.txz
+*.tbz
+*.bz2
+*.gz
+*.tgz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+
+# OS generated files #
+
+## Mac
+.DS_Store*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Icon?
+*.dmg
+!/bin/brew
+!/share/man/man1/brew.1
+!/Library/
+/Library/LinkedKegs
+/Library/PinnedKegs
+/Library/Taps
+/Library/Formula/.gitignore
+
+## Windows:
+*.com
+*.dll
+*.exe
+[Dd]esktop.ini
+
+
+# Temporary files
+~*
+*~
+._*
+.lock*
+.~lock.*
+tmp/
+*.tmp
+*.part
+*.crdownload
+@eaDir
+@SynoResource
+.@__thumb
+
+
+# Backup files
+*.bak
+*.orig
+*.rej
+/*.patch
+
+
+# Logs
+*.log
+logs/
+log/*.log
+
+
+# Databases
+*.sql
+*.sqlite
+db/*.sqlite3
+db/*.sqlite3-journal
+db.ini
+deploy_key_rsa
+
+
+# Embedded
+*.dtb
+uImage
+
+
+# cscope output
+cscope.files
+#Included in *.out
+#cscope.in.out
+#cscope.out
+#cscope.po.out
+
+
+## Nodejs
+node_modules
+
+## Tcl
+.tmp_versions
+test-driver
+
+## Java
+*.class
+*.war
+*.oar
+
+## Python
+*.py[cod~]
+*.egg
+*.egg-info
+*.whl
+.python_history
+.ipython/
+
+
+## Ruby
+### Environment normalisation:
+.bundle
+/vendor/bundle
+
+### these should all be checked in to normalise the environment:
+### Gemfile.lock, .ruby-version, .ruby-gemset
+
+### if using bower-rails ignore default bower_components path bower.json files
+/vendor/assets/bower_components
+*.bowerrc
+bower.json
+
+.rbx/
+.sass-cache/
+
+
+# Vagrant
+.vagrant
+
+# Docker
+/registry
+
+
+# Ansible
+ansible/*.retry
+
+
+# Documentation
+*.html
+*.pdf
+*.epub
+*.mobi
+#*.rdoc
+#*.textile
+/doc/tags
+
+
+# Site
+/public/system
+site/
+env/
+htmlcov/
+.tox/
+mkdocs.egg-info/
+
+## sensitive information
+sites/*/settings*.php
+## Comment out these rules if you are OK with secrets being uploaded to the repo
+config/initializers/secret_token.rb
+config/secrets.yml
+
+## generated content
+public/uploads
+sites/*/files
+sites/*/private
+
+# Architecture specific extensions/prefixes
+*.[568vq]
+#Included in *.out
+#[568vq].out
+
+## Go
+*.cgo1.go
+*.cgo2.c
+_cgo_defun.c
+_cgo_gotypes.go
+_cgo_export.*
+
+_testmain.go
+
+*.test
+*.prof
+
+# Folders
+_obj
+_test
+
+Downloads/
+
+.ICEauthority
+.Private
+.Xauthority
+.android/
+.bash_history
+.bash_sessions/
+.cache/
+.config/
+.ecryptfs
+.gem/
+.kde/
+.lesshst
+.local/share/
+.mozilla/
+.npm/
+.sdcv_history
+.ssh/
+.thumbnails/
+.vim*
+*.un~
+.wget-hsts
+.xsession-errors
+.xsession-errors.old
+
+.AndroidStudio*
+.CLion*
+.Genymobile/
+.IdeaIC*
+.PlayOnLinux/
+.PyCharm*
+.Xresources
+.ackrc
+.cabal/
+.cargo/
+.comments/
+.cpan/
+.dbus/
+.eclipse/
+.eric6/
+.fonts/
+.ghc/
+.gnome/
+.gnome2/
+.gnupg/
+.janus/
+.netbeans/
+.stardict/
+.vagrant.d/
+.vim/
+.ssh/environment
+.local/
