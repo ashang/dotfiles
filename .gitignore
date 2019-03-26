@@ -51,8 +51,6 @@ output/
 /images/
 *.m4
 *.P[lo|o]
-Module.symvers
-modules.order
 *.rng
 md5sums
 build_deb/
@@ -64,12 +62,21 @@ ram_disk/
 # Object files
 *.o
 *.o.cmd
-*.ko
-*.ko.cmd
 *.elf
 *.dbg
-*.mod.c
 *.l[o|a]
+
+# Kernel
+core
+*.ko
+*.ko.cmd
+*.mod.c
+.tmp_versions
+.depend
+#*.order
+#*.symvers
+Module.symvers
+modules.order
 
 # Libraries
 *.lib
@@ -250,7 +257,6 @@ cscope.files
 node_modules
 
 ## Tcl
-.tmp_versions
 test-driver
 
 ## Java

@@ -76,7 +76,6 @@ xmodmap ~/.Xmodmap
 # xmodmap -e "keysym Caps_Lock = Control_L"
 # xmodmap -e "add Control = Control_L"
 
-
 #exec ck-launch-session mate-session
 # If you have authorization problems (e.g. when mounting disks), try
 #exec ck-launch-session dbus-launch mate-session
@@ -89,7 +88,6 @@ touch /tmp/$1
 xset b 100 0 0
 ### xset r rate 140 200
 
-
 ### status | dzen2 -ta r -w 1200 -fg '#a8a3f7' -bg '#3f3c6d' -fn '-*-terminus-medium-r-normal--16-*' -e "button1=exec:xterm" &
 
 # launch the external 60 second clock, and launch the workspace status bar
@@ -97,23 +95,22 @@ FG='#a8a3f7'
 BG='#3f3c6d'
 ### xmonad-clock | dzen2 -e '' -x 400 -w 1200 -ta r -fg $FG -bg $BG &
 
-xmonad &
+xmonad
 
 # wait for xmonad
 ### wait $!
 ### pkill -HUP dzen2
 ### wait
 
+#DEFAULT_SESSION=xfce4-session
+#DEFAULT_SESSION=startxfce4
+#DEFAULT_SESSION=mate-session
 #DEFAULT_SESSION=awesome
-#DEFAULT_SESSION=xmonad
-DEFAULT_SESSION=mate-session
+#DEFAULT_SESSION=i3
+#DEFAULT_SESSION=xmonad-session
+DEFAULT_SESSION=xmonad
 case $1 in
   xfce) exec dbus-launch xfce4-session ;;
-  *) exec dbus-launch  $DEFAULT_SESSION ;;
-esac
-
-
-case $1 in
   dwm)
     #conky -qc /home/sunn/.xmonad/.conky_dzen | dzen2 -x '666' -w '700' -h '12' -ta 'r' -bg '#222222' -fg '#bbbbbb' -y '0' -fn '-*-lime-*-*-*-*-*-*-*-*-*-*-*-*' &
     #conky -qc /home/sunn/.xmonad/.conky_dzen | while read -r; do xsetroot -name "$REPLY"; done &
@@ -121,7 +118,13 @@ case $1 in
     ;;
   *)
     exec dbus-launch $DEFAULT_SESSION &
+    #exec $DEFAULT_SESSION &&
     xmonad --replace
+    #i3 --replace
+    #awesome --replace
+    #=gnome-flashback-xmonad
+    #=i3-with-shmlog
+    #=startlxqt
     ;;
     #bspwm|*)
     #sxhkd &
@@ -129,7 +132,3 @@ case $1 in
     #mkfifo "$PANEL_FIFO"
     #exec dbus-launch bspwm -c /home/sunn/.config/bspwm/autostart -s "$PANEL_FIFO" -p W
 esac
-
-# exec $DEFAULT_SESSION &
-# exec $DEFAULT_SESSION
-
