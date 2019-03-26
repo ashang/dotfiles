@@ -40,16 +40,6 @@ else # Assume Linux
   #alias ls='\ls -F -X --color=tty --show-control-chars'
 fi
 
-alias l.='ls -Al '
-alias lt='ls -ltr '
-alias lta='ls -latr '
-alias lS='ls -lSr '
-alias l='ls -CF'
-alias ll='ls -l'                              # long list
-alias la='ls -A'                              # all but . and ..
-alias ldir='\ls -l | \grep ^d'
-alias lh='ls -a | \grep "^\."'
-
 #function cd_func
 #This function defines a 'cd' replacement function capable of keeping,
 #displaying and accessing history of visited directories, up to 10 entries.
@@ -112,18 +102,6 @@ alias cd=cd_func
 # vi `lf`
 alias lf="ls . -rt1 | tail -1"
 
-
-#alias pix='for i in *.jpg; do convert -quality 50% "$i" "$i"; done'
-alias ps='ps aux'
-alias psg='\ps aux | \grep -v without-match | grep'
-alias po="popd"
-alias pu="pushd"
-alias py="python"
-alias rpi='rpm -qi '
-alias rpg='rpm -qa | grep'
-alias rx='LANG=zh_CN.GB2312 LC_CTYPE=zh_CN.GB2312 rxvt -ls -sl 500 -fn 8x16 -bg black -fg grey80 -ls&'
-alias rmbra="rename 'y/)(/_/' "
-
 #alias which="type -path"
 #alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
 alias wget="wget -c "
@@ -152,6 +130,8 @@ alias lS='ls -lS'
 alias lSr='ls -lSr'
 alias lt='ls -ltA'
 alias ltr='ls -ltAr'
+alias lta='ls -latr '
+
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -236,6 +216,7 @@ alias gf='git fetch -a -p'
 alias gg="git log --graph --all --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'"
 alias gg="git log --graph --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'"
 alias gg="git log --color --all --graph --pretty=format:\"%h %ad %an %s%d\" --date=short"
+alias gg='git grep -a -i'
 alias gsl='git stash list'
 alias gss='git stash save'
 alias gup='git pull --rebase --prune && git submodule update --init --recursive'
@@ -262,6 +243,8 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 #alias grep='grep --color'                     # show differences in colour
+alias cg='grep -in --color -I'
+alias cgr='grep -in --color -rI'
 
 alias grep='grep --color --exclude-dir=.git -s -I'
 alias grpe=grep
@@ -307,13 +290,18 @@ alias pqg='pacman -Q|egrep -i'
 alias pqi='pacman -Qi'
 alias pql='pacman -Ql'
 alias pqo='pacman -Qo'
-alias psg='\ps aux | \grep -v without-match | \grep -i'
 alias po="popd"
 alias pu="pushd"
+#alias pix='for i in *.jpg; do convert -quality 50% "$i" "$i"; done'
+alias ps='ps aux'
+alias psg='\ps aux | \grep -v without-match | grep'
 alias py="python"
 
+alias rpi='rpm -qi '
+alias rpg='rpm -qa | grep'
+alias rx='LANG=zh_CN.GB2312 LC_CTYPE=zh_CN.GB2312 rxvt -ls -sl 500 -fn 8x16 -bg black -fg grey80 -ls&'
 alias rpg='rpm -qa | \grep'
-alias rename='perl-rename'
+#alias rename='perl-rename'
 alias rmbra="rename 'y/)(/_/'"
 alias rsync='rsync -av --progress'
 
@@ -415,6 +403,17 @@ alias hax="growlnotify -a 'Activity Monitor' 'System error' -m 'WTF R U DOIN'"
 alias start-psql="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
 alias stop-psql="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
 
+alias pacrepo='sudo reflector -l 20 -f 10 --save /etc/pacman.d/mirrorlist'
+alias journalctl='sudo journalctl'
+alias pacu='sudo pacman -Syu --noconfirm'
+alias auru='yaourt -Syua --noconfirm'
+alias fe='find /sbin /bin /usr/sbin /usr/bin | grep'
+
+alias sv='source ~/.vim/scripts/gb.bash sv'
+
+alias hs='history | tail -40 | more'
+alias tcs='ctags -R --fields=+lS . ; cscope -Rbq '
+
 #bsd
 export PACKAGEROOT=ftp://ftp.freebsdchina.org
 # export PACKAGESITE
@@ -424,11 +423,3 @@ export PACKAGEROOT=ftp://ftp.freebsdchina.org
 [ "$BASH_VERSINFO" -ge "4" ] && type -t hd > /dev/null || alias hd="hexdump -C"
 
 [[ -f $HOME/.aliases.local ]] && . $HOME/.aliases.local
-
-alias pacrepo='sudo reflector -l 20 -f 10 --save /etc/pacman.d/mirrorlist'
-alias pacman='sudo pacman'
-alias journalctl='sudo journalctl'
-alias pacu='sudo pacman -Syu --noconfirm'
-alias auru='yaourt -Syua --noconfirm'
-alias systemctl='sudo systemctl'
-alias fe='find /sbin /bin /usr/sbin /usr/bin | grep'
