@@ -14,9 +14,12 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # ls, color, etc.
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-
+  if test -r ~/.dircolors ; then
+    eval "$(dircolors -b ~/.dircolors)"
+  else
+    eval "$(dircolors -b)"
+  fi
+  alias ls='ls --color=auto'
 fi
 
 #-F, --classify                append indicator (one of */=>@|) to entries
@@ -56,26 +59,28 @@ cd_func ()
   fi
 
   the_new_dir=$1
-  [[ -z $1 ]] && the_new_dir=$HOME
+  if [[ -z $1 ]]; then
+    the_new_dir=$HOME
+  fi
 
   if [[ ${the_new_dir:0:1} == '-' ]]; then
     #
     # Extract dir N from dirs
     index=${the_new_dir:1}
-    [[ -z $index ]] && index=1
+    if [[ -z $index ]] ; then index=1; fi
     adir=$(dirs +$index)
-    [[ -z $adir ]] && return 1
+    if [[ -z $adir ]] ; then return 1; fi
     the_new_dir=$adir
   fi
 
   #
   # '~' has to be substituted by ${HOME}
-  [[ ${the_new_dir:0:1} == '~' ]] && the_new_dir="${HOME}${the_new_dir:1}"
+  if [[ ${the_new_dir:0:1} == '~' ]] ; then the_new_dir="${HOME}${the_new_dir:1}"; fi
 
   #
   # Now change to the new dir and add to the top of the stack
   pushd "${the_new_dir}" > /dev/null
-  [[ $? -ne 0 ]] && return 1
+  if [[ $? -ne 0 ]] ; then return 1; fi
   the_new_dir=$(pwd)
 
   #
@@ -84,15 +89,17 @@ cd_func ()
 
   #
   # Remove any other occurence of this dir, skipping the top of the stack
-  for ((cnt=1; cnt <= 10; cnt++)); do
-    x2=$(dirs +${cnt} 2>/dev/null)
-    [[ $? -ne 0 ]] && return 0
-    [[ ${x2:0:1} == '~' ]] && x2="${HOME}${x2:1}"
-    if [[ "${x2}" == "${the_new_dir}" ]]; then
-      popd -n +$cnt 2>/dev/null 1>/dev/null
-      cnt=cnt-1
-    fi
-  done
+
+# Fish does not know this
+#  for ((cnt=1; cnt <= 10; cnt++)); do
+#    x2=$(dirs +${cnt} 2>/dev/null)
+#    if [[ $? -ne 0 ]] ; then return 0; fi
+#    if [[ ${x2:0:1} == '~' ]] ; then x2="${HOME}${x2:1}"; fi
+#    if [[ "${x2}" == "${the_new_dir}" ]]; then
+#      popd -n +$cnt 2>/dev/null 1>/dev/null
+#      cnt=cnt-1
+#    fi
+#  done
 
   return 0
 }
@@ -172,8 +179,8 @@ alias cv='convmv -f gbk -t utf-8 -r --notest'
 alias dd="dd bs=8M status=progress"
 alias debug_on="sed -i 's/^\/\/#define LOG_NDEBUG 0/#define LOG_NDEBUG 0/g'"
 alias debug_off="sed -i 's/^#define LOG_NDEBUG 0/\/\/#define LOG_NDEBUG 0/g'"
-which colordiff &>/dev/null && alias diff='colordiff'
-[ which colormake >/dev/null 2>&1 ] && alias make=colormake
+#which colordiff &>/dev/null && alias diff='colordiff'
+#[ which colormake >/dev/null 2>&1 ] && alias make=colormake
 
 alias dl='dpkg -L'
 alias dlg='dpkg -l | grep'
@@ -213,19 +220,19 @@ alias gdc='git diff --cached -w'
 alias gdw='git diff --no-ext-diff --word-diff'
 alias gdv='git diff -v'
 alias gf='git fetch -a -p'
-alias gg="git log --graph --all --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'"
-alias gg="git log --graph --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'"
-alias gg="git log --color --all --graph --pretty=format:\"%h %ad %an %s%d\" --date=short"
+alias gg="git log --abbrev=10 --graph --all --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'"
+alias gg="git log --abbrev=10 --graph --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'"
+alias gg="git log --abbrev=10 --color --all --graph --pretty=format:\"%h %ad %an %s%d\" --date=short"
 alias gg='git grep -a -i'
 alias gsl='git stash list'
 alias gss='git stash save'
 alias gup='git pull --rebase --prune && git submodule update --init --recursive'
 alias gh='git hist'
 alias gi="git commit -v"
-alias gl='git log --oneline --decorate'
-alias gl="git log --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%C(yellow)%d%Creset %Cblue[%an]%Creset\" --graph --date=short"
-alias glp='git log -p'
-alias glss='git log --stat --summary'
+alias gl='git log --abbrev=10 --oneline --decorate'
+alias gl="git log --abbrev=10 --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%C(yellow)%d%Creset %Cblue[%an]%Creset\" --graph --date=short"
+alias glp='git log --abbrev=10 -p'
+alias glss='git log --abbrev=10 --stat --summary'
 alias gm="git checkout master"
 alias gmb="git merge-base"
 alias gp='git pull'
@@ -281,8 +288,9 @@ alias netstat='netstat -an'
 alias np='nano -w PKGBUILD'
 alias nv="nvim -p"
 
-#alias pix='for i in *.jpg; do convert -quality 50% "$i" "$i"; done'
-alias ps='ps aux'
+#alias pcmanfm='pcmanfm -d'
+alias pcmanfm='pcmanfm -d --desktop'
+alias ps='ps auxwf'
 alias pacman='pacman -v'
 alias pS='sudo pacman -S'
 alias pss='pacman -Ss'
@@ -292,8 +300,6 @@ alias pql='pacman -Ql'
 alias pqo='pacman -Qo'
 alias po="popd"
 alias pu="pushd"
-#alias pix='for i in *.jpg; do convert -quality 50% "$i" "$i"; done'
-alias ps='ps aux'
 alias psg='\ps aux | \grep -v without-match | grep'
 alias py="python"
 
@@ -419,7 +425,19 @@ export PACKAGEROOT=ftp://ftp.freebsdchina.org
 # export PACKAGESITE
 
 # Canonical hex dump; some systems have this symlinked
-[ -n "$ZSH_VERSION" ] && type hd > /dev/null || alias hd="hexdump -C"
-[ "$BASH_VERSINFO" -ge "4" ] && type -t hd > /dev/null || alias hd="hexdump -C"
+if test -n "$ZSH_VERSION" ; then
+  type hd > /dev/null
+else
+  alias hd="hexdump -C"
+fi
 
-[[ -f $HOME/.aliases.local ]] && . $HOME/.aliases.local
+if test "$BASH_VERSINFO" -ge "4" ; then
+  type -t hd > /dev/null
+else
+  alias hd="hexdump -C"
+fi
+
+if test -f $HOME/.aliases.local ; then
+  . $HOME/.aliases.local
+fi
+
