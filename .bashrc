@@ -53,7 +53,6 @@ esac
 #Don't wait for job termination notification
 set -o notify
 
-#set -o vi #this is sparta!
 
 #http://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html
 [ "${BASH_VERSINFO}" -ge "4" ] && shopt -s autocd cdspell dirspell
@@ -940,7 +939,6 @@ export PATH
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 export EDITOR=vim
-export SVN_EDITOR=vim
 # export INPUTRC=/etc/inputrc
 export USER LOGNAME MAIL HOSTNAME
 export VISUAL=$EDITOR
@@ -1186,4 +1184,9 @@ PS1="$BGreen\D{W%V.%u %m%d} $UPurple\t$NORMAL $BBlue"$PS1$NORMAL
 
 # curl https://mirrors.tuna.tsinghua.edu.cn/git/git-repo -o repo
 export REPO_URL='https://mirrors.tuna.tsinghua.edu.cn/git/git-repo/'
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
 
