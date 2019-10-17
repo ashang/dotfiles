@@ -16,6 +16,7 @@
 
 # By default EMACS-like shortcuts are provided.
 # Use vi instead.
+
 set editing-mode vi
 set keymap vi
 $include /etc/inputrc

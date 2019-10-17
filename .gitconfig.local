@@ -4,3 +4,7 @@
 [user]
 	name = Aaron Shang
 	email = aaronshang@gmail.com
+
+[http "https://gopkg.in"]
+	followRedirects = true
+

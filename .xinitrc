@@ -40,8 +40,6 @@ if which dbus-launch >/dev/null && test -z "$DBUS_SESSION_BUS_ADDRESS"; then
     eval "$(dbus-launch --sh-syntax --exit-with-session)"
 fi
 
-xrdb -merge ~/.Xresources
-#xrdb $HOME/.Xresources
 
 # Environment variables
 export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
@@ -68,13 +66,49 @@ xsetroot -solid '#80a0af'
 #feh --bg-scale //Bilder/waves_sunset-1920x1200.jpg &
 #xscreensaver -nosplash &
 $(gnome-keyring-daemon --start --daemonize)
+
+
+sysresources=/etc/X11/xinit/.Xresources
+sysmodmap=/etc/X11/xinit/.Xmodmap
+# Moved $HOME/.Xresources to $XDG_CONFIG_HOME/xorg/xresources
+userresources=$XDG_CONFIG_HOME/xorg/xresources
+usermodmap=$HOME/.Xmodmap
 ##setxkbmap de nodeadkeys
-xmodmap ~/.Xmodmap
 # xmodmap -e "keycode 233 = Page_Down"
 # xmodmap -e "keycode 234 = Page_Up"
 # xmodmap -e "remove Lock = Caps_Lock"
 # xmodmap -e "keysym Caps_Lock = Control_L"
 # xmodmap -e "add Control = Control_L"
+
+# merge in defaults and keymaps
+
+if [ -f $sysresources ]; then
+    xrdb -merge $sysresources
+fi
+
+if [ -f $sysmodmap ]; then
+    xmodmap $sysmodmap
+fi
+
+if [ -f "$userresources" ]; then
+    xrdb -merge "$userresources"
+fi
+
+if [ -f "$usermodmap" ]; then
+    xmodmap "$usermodmap"
+fi
+
+# start some nice programs
+
+if [ -d /etc/X11/xinit/xinitrc.d ] ; then
+ for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
+  [ -x "$f" ] && . "$f"
+ done
+ unset f
+fi
+
+#exec herbstluftwm
+
 
 #exec ck-launch-session mate-session
 # If you have authorization problems (e.g. when mounting disks), try
@@ -132,3 +166,4 @@ case $1 in
     #mkfifo "$PANEL_FIFO"
     #exec dbus-launch bspwm -c /home/sunn/.config/bspwm/autostart -s "$PANEL_FIFO" -p W
 esac
+#!/bin/sh

@@ -1,27 +1,9 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
-#
-# This file is sourced by all *interactive* bash shells on startup,
-# including some apparently interactive shells such as scp and rcp
-# that can't tolerate any output.  So make sure this doesn't display
-# anything or bad things will happen !
+# ~/.bashrc: executed by bash(1) for non-login shells. ??
 
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
+# ~/.bashrc: executed by bash(1) for interactive shells.
 
-# This file is sourced by all *interactive* bash shells on startup,
-# including some apparently interactive shells such as scp and rcp
-# that can't tolerate any output.  So make sure this doesn't display
-# anything or bad things will happen !
-
-# To enable the settings / commands in this file for login shells as well,
-# this file has to be sourced in profile.
-#
-# Test for an interactive shell.  There is no need to set anything
-# past this point for scp and rcp, and it's important to refrain from
-# outputting anything in those cases.
-
-## Detect `$-`, instead of `PS1`
-##[ -z "${PS1}" ]
+# Modifying /etc/skel/.bashrc directly will prevent
+# setup from updating it.
 
 # Shell is non-interactive.  Be done now!
 [[ $- != *i* ]] && return
@@ -61,6 +43,40 @@ set -o notify
 # for example, cd /vr/lgo/apaache would find /var/log/apache
 # cdspell
 
+# Use case-insensitive filename globbing
+# shopt -s nocaseglob
+#
+# Make bash append rather than overwrite the history on disk
+# shopt -s histappend
+#
+# When changing directory small typos can be ignored by bash
+# for example, cd /vr/lgo/apaache would find /var/log/apache
+# shopt -s cdspell
+#
+# This file is sourced by all *interactive* bash shells on startup,
+# including some apparently interactive shells such as scp and rcp
+# that can't tolerate any output.  So make sure this doesn't display
+# anything or bad things will happen !
+
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+
+# This file is sourced by all *interactive* bash shells on startup,
+# including some apparently interactive shells such as scp and rcp
+# that can't tolerate any output.  So make sure this doesn't display
+# anything or bad things will happen !
+
+# To enable the settings / commands in this file for login shells as well,
+# this file has to be sourced in profile.
+#
+# Test for an interactive shell.  There is no need to set anything
+# past this point for scp and rcp, and it's important to refrain from
+# outputting anything in those cases.
+
+## Detect `$-`, instead of `PS1`
+##[ -z "${PS1}" ]
+
+
 
 #$ tty
 #/dev/ttys003
@@ -87,12 +103,14 @@ stty -ctlecho #don't show ^C when pressing Ctrl+C
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-# sometimes, stty eof '^D' / stty eof undef
-#Don't use ^D to exit
-#IGNOREEOF=10    # Shell only exists after the 10th consecutive Ctrl-d
+# Don't use ^D to exit
 #set -o ignoreeof  # Same as setting IGNOREEOF=10
+#IGNOREEOF=10    # Shell only exists after the 10th consecutive Ctrl-d
 #set ignoreeof  # prevent accidental shell termination
-export IGNOREEOF=2
+
+# sometimes, stty eof '^D' / stty eof undef
+#export IGNOREEOF=2
+IGNOREEOF=2
 
 ########################################
 # bind
@@ -1189,4 +1207,59 @@ export REPO_URL='https://mirrors.tuna.tsinghua.edu.cn/git/git-repo/'
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
+
+function count {
+  I=$1
+  while [ $I -le $2 ];
+    do echo $I
+    I=$((I+1))
+  done
+}
+
+function defaultps1() {
+  PS1='\[\e]0;${TITLEBAR_PREFIX} \w\a\]\u@\h:\w\$ '
+}
+defaultps1 # call it
+
+TITLEBAR_PREFIX=""
+function titlebar {
+  TITLEBAR_PREFIX="$*"
+  echo -ne "\033]2;$*\a"
+}
+
+function color() {
+  tput setf $1
+}
+function nocolor() {
+  tput sgr0
+}
+
+function gitps1() {
+  PROMPT_COMMAND=gitps1
+
+  if ! git root >/dev/null 2>&1; then
+    defaultps1
+    return
+  fi
+
+  B=$(git curbr)
+  U=$USER
+  R=$(basename $(git root))
+  H=$(hostname | cut -f1 -d.)
+  W=$(realpath . | sed "s|$(git root)/\?|/|")
+
+  #TODO: abstract the prefix, which sets titlebar and is duplicated
+  #TODO: with defaultps1
+  PS1='\[\e]0;${TITLEBAR_PREFIX} \w\a\]\[$(color 6)\]$U@$H \[$(color 1)\]$R \[$(color 3)\]$B \[$(color 6)\]$W\[$(nocolor)\]\$ '
+}
+
+export PRINTER=tahiti-color
+export PRINTER2=waikiki-color
+export ENV=$HOME/.bashrc
+
+export PATH=~/src/go/bin:/usr/local/go/bin:$PATH
+export GOPATH=~/src/go
+function KUBEGOPATH {
+  export GOPATH=`pwd`/Godeps/_workspace:`pwd`/_output/local/go:$GOPATH
+}
 
