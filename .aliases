@@ -7,18 +7,15 @@
 ## translate
 #alias u='translate -i'
 
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# guideline 0: those not in command-not-found
+# guideline 1: standard cross-platform parameters, such as ps, tar.
+
 
 # ls, color, etc.
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
-  if test -r ~/.dircolors ; then
-    eval "$(dircolors -b ~/.dircolors)"
-  else
-    eval "$(dircolors -b)"
-  fi
+  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
   alias ls='ls --color=auto'
 fi
 
@@ -36,75 +33,13 @@ then
   alias ls='\ls -FG'
 elif [[ "$OSTYPE" =~ ^darwin ]]; then
 #elif [ "`uname -s`" == "Darwin" ]
-    # uname also works now
+	# uname also works
   alias ls="command ls -bFG"
 else # Assume Linux
-  alias ls='\ls -bF -X --color=auto --show-control-chars'
+  #alias ls="command ls -FG"
+  alias ls='\ls -F -X --color=auto --show-control-chars'
   #alias ls='\ls -F -X --color=tty --show-control-chars'
 fi
-
-#function cd_func
-#This function defines a 'cd' replacement function capable of keeping,
-#displaying and accessing history of visited directories, up to 10 entries.
-#To use it, uncomment it, source this file and try 'cd --'.
-#acd_func 1.0.5, 10-nov-2004
-cd_func ()
-{
-  local x2 the_new_dir adir index
-  local -i cnt
-
-  if [[ $1 ==  "--" ]]; then
-    dirs -v
-    return 0
-  fi
-
-  the_new_dir=$1
-  if [[ -z $1 ]]; then
-    the_new_dir=$HOME
-  fi
-
-  if [[ ${the_new_dir:0:1} == '-' ]]; then
-    #
-    # Extract dir N from dirs
-    index=${the_new_dir:1}
-    if [[ -z $index ]] ; then index=1; fi
-    adir=$(dirs +$index)
-    if [[ -z $adir ]] ; then return 1; fi
-    the_new_dir=$adir
-  fi
-
-  #
-  # '~' has to be substituted by ${HOME}
-  if [[ ${the_new_dir:0:1} == '~' ]] ; then the_new_dir="${HOME}${the_new_dir:1}"; fi
-
-  #
-  # Now change to the new dir and add to the top of the stack
-  pushd "${the_new_dir}" > /dev/null
-  if [[ $? -ne 0 ]] ; then return 1; fi
-  the_new_dir=$(pwd)
-
-  #
-  # Trim down everything beyond 11th entry
-  popd -n +11 2>/dev/null 1>/dev/null
-
-  #
-  # Remove any other occurence of this dir, skipping the top of the stack
-
-# Fish does not know this
-#  for ((cnt=1; cnt <= 10; cnt++)); do
-#    x2=$(dirs +${cnt} 2>/dev/null)
-#    if [[ $? -ne 0 ]] ; then return 0; fi
-#    if [[ ${x2:0:1} == '~' ]] ; then x2="${HOME}${x2:1}"; fi
-#    if [[ "${x2}" == "${the_new_dir}" ]]; then
-#      popd -n +$cnt 2>/dev/null 1>/dev/null
-#      cnt=cnt-1
-#    fi
-#  done
-
-  return 0
-}
-
-alias cd=cd_func
 
 # vi `lf`
 alias lf="ls . -rt1 | tail -1"
@@ -126,7 +61,7 @@ alias yum='yum -v -y --color=auto '
 
 # alias l='ls -ah --color'
 alias l='ls -CF'
-#-A, --almost-all            do not list implied . and ..
+#-A, --almost-all			do not list implied . and ..
 alias la='ls -A'
 alias l.='ls -Al'
 alias ldir='\ls -l | egrep ^d'
@@ -138,7 +73,6 @@ alias lSr='ls -lSr'
 alias lt='ls -ltA'
 alias ltr='ls -ltAr'
 alias lta='ls -latr '
-
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -154,8 +88,15 @@ alias pbpaste='xsel --clipboard --output'
 alias N='&>/dev/null'
 
 alias a='alias'
-alias as='apt-cache search'
+#alias adb='adb wait-for-device'
 alias adbw='adb wait-for-device'
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+alias as='apt-cache search'
+alias asrmr='adb shell rm -r'
+alias auru='yaourt -Syua --noconfirm'
 
 alias bb='bitbake -v'
 
@@ -173,27 +114,34 @@ alias cp='\cp -i -v -a'
 
 alias chmod='chmod -v'
 alias crontab='crontab -i'
-alias curl='curl -L'
 alias cv='convmv -f gbk -t utf-8 -r --notest'
+
+#alias curl="curl --user-agent 'noleak'"
+alias curl='curl -L -C -'
 
 alias dd="dd bs=8M status=progress"
 alias debug_on="sed -i 's/^\/\/#define LOG_NDEBUG 0/#define LOG_NDEBUG 0/g'"
 alias debug_off="sed -i 's/^#define LOG_NDEBUG 0/\/\/#define LOG_NDEBUG 0/g'"
-#which colordiff &>/dev/null && alias diff='colordiff'
-#[ which colormake >/dev/null 2>&1 ] && alias make=colormake
+which colordiff &>/dev/null && alias diff='colordiff'
+[ which colormake >/dev/null 2>&1 ] && alias make=colormake
+# debug_on MediaExtractor.cpp
+# debug_off *.*
 
+which colordiff &>/dev/null && alias diff='colordiff'
+alias df='df -h -T | grep -v tmpfs'
 alias dl='dpkg -L'
 alias dlg='dpkg -l | grep'
 alias dlc='dlocate -i'
 alias ds='dpkg -s'
+alias du.='du -h --max-depth=1 | sort -hr'
 
 alias emerge='emerge -avt'
 alias eng='env | grep -i'
+alias enprint='enscript -h -G -E -2 -r --rotate-even-pages -DDuplex:true'
 alias equo='equo --color --ask -v'
 alias es='emerge --search'
 #alias expemerge="ACCEPT_KEYWORDS=\"~x86\" emerge"
 
-alias ff="firefox"
 alias file="file -k"
 alias fn="find -iname"
 alias fsg='find . -name .svn -prune -o -print | xargs grep -H -n -I -s --colour=auto'
@@ -201,16 +149,18 @@ alias fsg='find . -name .svn -prune -o -print | xargs grep -H -n -I -s --colour=
 alias finds='find . -regex ".*\.\(h\|cpp\|c\|java\|aidl\|py\|pl\|pm\)" | xargs grep -Hn'
 # case insensitive search.
 alias findsi='find . -regex ".*\.\(h\|cpp\|c\|java\|aidl\|py\|pl\|pm\)" | xargs grep -Hni'
+alias findgrep="find . -print0 | xargs -0 grep"
 
 # git
+alias g='git status --ignore-submodules=dirty'
+alias gitl='git log --graph --oneline --decorate'
+alias gits='git status --ignore-submodules=dirty'
+alias g='echo; git log -n 12 --graph --oneline --decorate; echo; git status -sb; echo'
 # git reset --hard `gitorigin`
 alias gitorigin="git branch -r | head -1 | cut -d' ' -f 5"
-alias g='git status --ignore-submodules=dirty'
-alias g='git status -buno'
 alias ga="git add"
 alias gap="git add --patch"
 alias gb="git branch -vv"
-alias gch="git checkout"
 alias gca='git commit --amend'
 alias gcl='git clone -v --recursive'
 # as function: git clone --recursive $1
@@ -236,7 +186,7 @@ alias glss='git log --abbrev=10 --stat --summary'
 alias gm="git checkout master"
 alias gmb="git merge-base"
 alias gp='git pull'
-alias gpa='for i in `git remote`; do echo; echo To remote $i ......; echo; git push $i;done'
+alias gpa='for i in `git remote|grep -v upstream`; do echo; echo To remote $i ......; echo; git push $i;done'
 alias gpp='git pull --rebase && git push'
 alias gr="git remote -v"
 alias grss="git remote show origin"
@@ -244,43 +194,44 @@ alias gpr='git pull --rebase --recurse-submodules'
 alias gri='git rebase -i'
 alias grc='git rebase --continue'
 alias grs='git rebase --skip'
+alias gup='git pull --rebase --prune && git submodule update --init --recursive'
+alias gsl='git stash list'
+alias gss='git stash save'
 
-alias gt='gnome-terminal &'
+alias gdb='gdb -q'
+
+# Never use 'grep --colour=always', control characters apply!
 alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
-#alias grep='grep --color'                     # show differences in colour
+alias grep='grep --color --exclude-dir=.git -s -I'
 alias cg='grep -in --color -I'
 alias cgr='grep -in --color -rI'
-
-alias grep='grep --color --exclude-dir=.git -s -I'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
 alias grpe=grep
 alias gerp=grep
 
 alias hig='history | \grep'
-
 alias info='info --vi-keys'
-
 alias jo="jobs -l"
+alias jq="jq -C -S"
 alias ka="killall"
-alias kk='xlock'
-
 alias lc='locate -i'
 alias less='less -r'                          # raw control characters
 
+alias m=mutt
 alias make='make -j4'
 alias mm="make menuconfig"
+alias moer=more
 alias mplayer='mplayer -vf screenshot -msgcolor '
 alias mpv="mpv --audio-display=no"
 alias ms='gpm -m /dev/psaux -t imps2'
+alias mutt='mutt -y'
+alias mv='mv -i'
 #alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A &'
 alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A -geometry 125x43+0+0 &'
-alias mutt='mutt -y '
-alias m=mutt
-alias mv='mv -i'
 alias mo=more
 alias moer=more
-alias mroe=most
+alias mroe=more
 
 alias nano='nano -i -m -w -B -F -L'
 alias nano='nano -i -m -w -B -F -L -xcSr68'
@@ -288,20 +239,34 @@ alias netstat='netstat -an'
 alias np='nano -w PKGBUILD'
 alias nv="nvim -p"
 
+alias open='xdg-open'
+
+#alias pix='for i in *.jpg; do convert -quality 50% "$i" "$i"; done'
+alias ps='ps aux'
+
 #alias pcmanfm='pcmanfm -d'
 alias pcmanfm='pcmanfm -d --desktop'
 alias ps='ps auxwf'
-alias pacman='pacman -v'
 alias pS='sudo pacman -S'
 alias pss='pacman -Ss'
+alias pacman='sudo pacman -v'
+alias pacrepo='sudo reflector -l 20 -f 10 --save /etc/pacman.d/mirrorlist'
+alias pacr='sudo pacman -Rs'
+alias pacu='sudo pacman -Syu --noconfirm'
 alias pqg='pacman -Q|egrep -i'
 alias pqi='pacman -Qi'
 alias pql='pacman -Ql'
 alias pqo='pacman -Qo'
+alias pacrf='sudo pacman -Rns'
+alias pS='sudo pacman -S'
+alias pss='pacman -Ss'
+
 alias po="popd"
 alias pu="pushd"
+#alias psg='ps -Af | grep $1'
 alias psg='\ps aux | \grep -v without-match | grep'
 alias py="python"
+alias rpg='rpm -qa | grep'
 
 alias rpi='rpm -qi '
 alias rpg='rpm -qa | grep'
@@ -310,11 +275,12 @@ alias rpg='rpm -qa | \grep'
 #alias rename='perl-rename'
 alias rmbra="rename 'y/)(/_/'"
 alias rsync='rsync -av --progress'
-
 # acct - The GNU Accounting utilities for process and login accounting
 # surfraw - a fast unix command line interface to WWW
 alias scp='scp -r'
 alias sdr='sudo rm -r'
+alias se='ls /usr/bin | grep'
+alias shred="shred -zf"
 alias sls='screen -ls'
 alias svi='sudo vi'
 alias sr='screen -r'
@@ -322,19 +288,15 @@ alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=60'
 ## ignore ~/.ssh/known_hosts entries
 #alias insecssh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -o "PreferredAuthentications=keyboard-interactive"'
 
-alias sysup='sudo apt-get update && sudo apt-get upgrade'
-
 # alias tail='tail -f'
 alias tmux='tmux -2'
 alias ta='tmux a -d'
-alias ta='tmux a'
 alias tou8='iconv -f gbk -t utf-8'
 alias tz="tar -xzvf"
 alias tzt="tar -tzvf"
 alias tj="tar -xjvf"
 alias tjt="tar -tjvf"
 alias tmars='telnet 210.77.17.19 1012'
-
 alias ua='uname -a'
 # Disabled because some version has no this option
 # UnZip 6.00 of 20 April 2009, by Debian. Original by Info-ZIP.
@@ -344,8 +306,10 @@ alias vd="vimdiff"
 alias vi="vim -p"
 #alias vim="vim -p"
 #alias vim="nvim -p"
+alias nv="nvim -p"
 
-alias wget="wget --no-check-certificate -c --content-disposition"
+#alias wget="wget --no-check-certificate -c --content-disposition"
+alias wget="wget -U User-Agent -c --content-disposition"
 alias whence='type -a'                        # where, of a sort
 alias where="type -all"
 alias which='alias | which -a'
@@ -358,8 +322,69 @@ alias xx='startx -- -nolisten tcp -depth 24'
 alias xfb='startx -- -nolisten tcp -fbbpp 24'
 alias x1='startx -- :1 -depth 32'
 alias x2='startx -- :2 -depth 32'
+alias xorpsh='su xorp -p -c xorpsh'
 
 # program 'notify-send' is in libnotify-bin
+
+
+#function cd_func
+#This function defines a 'cd' replacement function capable of keeping,
+#displaying and accessing history of visited directories, up to 10 entries.
+#To use it, uncomment it, source this file and try 'cd --'.
+#acd_func 1.0.5, 10-nov-2004
+cd_func ()
+{
+  local x2 the_new_dir adir index
+  local -i cnt
+
+  if [[ $1 ==  "--" ]]; then
+    dirs -v
+    return 0
+  fi
+
+  the_new_dir=$1
+  [[ -z $1 ]] && the_new_dir=$HOME
+
+  if [[ ${the_new_dir:0:1} == '-' ]]; then
+    #
+    # Extract dir N from dirs
+    index=${the_new_dir:1}
+    [[ -z $index ]] && index=1
+    adir=$(dirs +$index)
+    [[ -z $adir ]] && return 1
+    the_new_dir=$adir
+  fi
+
+  #
+  # '~' has to be substituted by ${HOME}
+  [[ ${the_new_dir:0:1} == '~' ]] && the_new_dir="${HOME}${the_new_dir:1}"
+
+  #
+  # Now change to the new dir and add to the top of the stack
+  pushd "${the_new_dir}" > /dev/null
+  [[ $? -ne 0 ]] && return 1
+  the_new_dir=$(pwd)
+
+  #
+  # Trim down everything beyond 11th entry
+  popd -n +11 2>/dev/null 1>/dev/null
+
+  #
+  # Remove any other occurence of this dir, skipping the top of the stack
+#  for ((cnt=1; cnt <= 10; cnt++)); do
+#    x2=$(dirs +${cnt} 2>/dev/null)
+#    [[ $? -ne 0 ]] && return 0
+#    [[ ${x2:0:1} == '~' ]] && x2="${HOME}${x2:1}"
+#    if [[ "${x2}" == "${the_new_dir}" ]]; then
+#      popd -n +$cnt 2>/dev/null 1>/dev/null
+#      cnt=cnt-1
+#    fi
+#  done
+
+  return 0
+}
+
+#alias cd=cd_func
 
 
 # Undo a `git push` ##NO@@##
@@ -367,6 +392,7 @@ alias undopush="git push -f origin HEAD^:master"
 
 # IP addresses
 alias digip="dig +short myip.opendns.com @resolver1.opendns.com"
+## TODO
 alias localip="ipconfig getifaddr en1"
 alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
 alias whois="whois -h whois-servers.net"
@@ -394,6 +420,10 @@ alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
 # File size
 alias fs="stat -f \"%z bytes\""
 
+alias dos2unix='perl -pi -e "tr/\r//d"'
+alias unix2dos='perl -pi -e "s/\n$/\r\n/g"'
+alias mac2unix='perl -pi -e "tr/\r/\n/d"'
+
 # ROT13-encode text. Works for decoding, too! ;)
 alias rot13='tr a-zA-Z n-za-mN-ZA-M'
 
@@ -410,7 +440,6 @@ alias start-psql="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/s
 alias stop-psql="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
 
 alias pacrepo='sudo reflector -l 20 -f 10 --save /etc/pacman.d/mirrorlist'
-alias journalctl='sudo journalctl'
 alias pacu='sudo pacman -Syu --noconfirm'
 alias auru='yaourt -Syua --noconfirm'
 alias fe='find /sbin /bin /usr/sbin /usr/bin | grep'
@@ -425,18 +454,20 @@ export PACKAGEROOT=ftp://ftp.freebsdchina.org
 # export PACKAGESITE
 
 # Canonical hex dump; some systems have this symlinked
-if test -n "$ZSH_VERSION" ; then
-  type hd > /dev/null
-else
-  alias hd="hexdump -C"
-fi
+[ -n "$ZSH_VERSION" ] && type hd > /dev/null || alias hd="hexdump -C"
+[ "$BASH_VERSINFO" -ge "4" ] && type -t hd > /dev/null || alias hd="hexdump -C"
 
-if test "$BASH_VERSINFO" -ge "4" ; then
-  type -t hd > /dev/null
-else
-  alias hd="hexdump -C"
-fi
+# source '~/google-cloud-sdk/path.bash.inc'
 
+alias scu='systemctl --user'
+alias journ='sudo journalctl -b -f'
+alias poweroff='sudo systemctl poweroff'
+alias reboot='sudo systemctl reboot'
+alias suspend='sudo systemctl suspend'
+
+alias lsblk='lsblk -o NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,UUID'
+alias strc="awk '!/^ *#/ && NF'"
+alias dmesg='clear; dmesg -eL -w'
 if test -f $HOME/.aliases.local ; then
   . $HOME/.aliases.local
 fi
