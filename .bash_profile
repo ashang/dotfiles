@@ -11,5 +11,4 @@
 # The following line runs .bashrc recommended by the bash info pages.
 #[[ -f ~/.bashrc ]] && . ~/.bashrc
 [[ -f $HOME/.bashrc ]] && . $HOME/.bashrc
-
 [[ -f ~/.extend.bash_profile ]] && . ~/.extend.bash_profile

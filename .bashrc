@@ -77,7 +77,6 @@ set -o notify
 ##[ -z "${PS1}" ]
 
 
-
 #$ tty
 #/dev/ttys003
 #$ uname -a
@@ -235,28 +234,6 @@ if ! shopt -q login_shell ; then # We're not a login shell
 fi
 
 
-if [ "$PS1" ]; then
-  if [ "$BASH" ]; then
-    PS1='\u@\h:\w\$ '
-    # Source global definitions
-    if [ -f /etc/bashrc ]; then
-      . /etc/bashrc
-    fi
-
-    if [ -f /etc/bash.bashrc ]; then
-      . /etc/bash.bashrc
-    fi
-
-  else
-    if [ "`id -u`" -eq 0 ]; then
-      PS1='# '
-    else
-      PS1='$ '
-    fi
-  fi
-fi
-
-
 ########################################
 # colorful
 unset color_prompt force_color_prompt
@@ -393,31 +370,6 @@ On_IWhite='\e[0;107m'   # White
 
 # unsets color to term's fg color
 NORMAL="\[\e[0m\]"
-
-# Setup a red prompt for root and a green one for users.
-RED="\[\e[1;31m\]"
-GREEN="\[\e[1;32m\]"
-if [[ $EUID == 0 ]] ; then
-  PS1="$RED\u [ $NORMAL\w$RED ]# $NORMAL"
-else
-  PS1="$GREEN\u [ $NORMAL\w$GREEN ]\$ $NORMAL"
-fi
-
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-  xterm-color|*-256color) color_prompt=yes;;
-esac
-
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-force_color_prompt=yes
-
-if [ "$color_prompt" = yes ]; then
-    PS1='\[\033[01;31m\][\h\[\033[01;36m\] \W\[\033[01;31m\]]\$\[\033[00m\] '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
 
 if [ -n "$force_color_prompt" ]; then
   if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
@@ -1182,20 +1134,6 @@ if [ $(tty) == "/dev/tty3" ]; then
 fi
 
 
-##PS1 ----------------------------------------
-unset PS1
-TTY=$(tty)
-TTY=${TTY##*/}
-
-##bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
-#if [ "$PS1" ] && [ $bmajor -eq 2 ] && [ $bminor '>' 04 ]
-#unset bash bmajor bminor
-
-#PS1=$BYellow"@$TTY@\\s-\\v "$Cyan$PS1
-#PS1='\u@$(hostname):$( printf "%s" "${PWD/${HOME}/~}")\n\$ '
-PS1="${ON_YELLOW}\u@\h${GREEN}:\w/${NORMAL}$(__git_ps1)\n\$ "
-PS1="$BGreen\D{W%V.%u %m%d} $UPurple\t$NORMAL $BBlue"$PS1$NORMAL
-
 #eval `keychain --eval --agents ssh id_rsa`
 #eval `keychain --eval ~/.ssh/id_dsa`
 #eval `keychain --eval ~/.ssh/id_rsa`
@@ -1250,7 +1188,7 @@ function gitps1() {
 
   #TODO: abstract the prefix, which sets titlebar and is duplicated
   #TODO: with defaultps1
-  PS1='\[\e]0;${TITLEBAR_PREFIX} \w\a\]\[$(color 6)\]$U@$H \[$(color 1)\]$R \[$(color 3)\]$B \[$(color 6)\]$W\[$(nocolor)\]\$ '
+  PS1='\[\e]0;${TITLEBAR_PREFIX} \w\a\]\[$(color 6)\]$U@$H \[$(color 1)\]$R \[$(color 3)\]$B \[$(color 6)\]$W\[$(nocolor)\] \$ '
 }
 
 export PRINTER=tahiti-color
@@ -1262,4 +1200,68 @@ export GOPATH=~/src/go
 function KUBEGOPATH {
   export GOPATH=`pwd`/Godeps/_workspace:`pwd`/_output/local/go:$GOPATH
 }
+
+##PS1 ----------------------------------------
+unset PS1
+if [ "$PS1" ]; then
+  if [ "$BASH" ]; then
+    PS1='\u@\h:\w\$ '
+    # Source global definitions
+    if [ -f /etc/bashrc ]; then
+      . /etc/bashrc
+    fi
+
+    if [ -f /etc/bash.bashrc ]; then
+      . /etc/bash.bashrc
+    fi
+
+  else
+    if [ "`id -u`" -eq 0 ]; then
+      PS1='# '
+    else
+      PS1='$ '
+    fi
+  fi
+fi
+
+# Setup a red prompt for root and a green one for users.
+RED="\[\e[1;31m\]"
+GREEN="\[\e[1;32m\]"
+if [[ $EUID == 0 ]] ; then
+  PS1="$RED\u [ $NORMAL\w$RED ]# $NORMAL"
+else
+  PS1="$GREEN\u [ $NORMAL\w$GREEN ]\$ $NORMAL"
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+  xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+force_color_prompt=yes
+
+if [ "$color_prompt" = yes ]; then
+    PS1='\[\033[01;31m\]\u@\h\[\033[01;36m\]:\w/\[\033[01;31m\]\n\$\[\033[00m\] '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+
+
+TTY=$(tty)
+TTY=${TTY##*/}
+
+##bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
+#if [ "$PS1" ] && [ $bmajor -eq 2 ] && [ $bminor '>' 04 ]
+#unset bash bmajor bminor
+
+#PS1=$BYellow"@$TTY@\\s-\\v "$Cyan$PS1
+#PS1='\u@$(hostname):$( printf "%s" "${PWD/${HOME}/~}")\n\$ '
+#PS1="${ON_YELLOW}\u@\h${GREEN}:\w/${NORMAL}$(__git_ps1)\n\$ "
+#PS1="$BGreen\D{W%V.%u %m%d} $UPurple\t$NORMAL $BBlue"$PS1$NORMAL
+PS1="$BGreen\D{W%V.%u %m%d} $UPurple\T$NORMAL $BBlue"$PS1$NORMAL
+
+[ -d "$HOME/.gem/ruby/bin" ] && export PATH="$HOME/.gem/ruby/bin:$PATH"
 
