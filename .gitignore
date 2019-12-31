@@ -404,6 +404,3 @@ Downloads/
 .vim/
 .ssh/environment
 .local/
-
-.tmux/plugins/
-.tmux/resurrect/

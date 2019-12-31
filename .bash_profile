@@ -1,14 +1,12 @@
 # This is ~/.bash_profile; NOT ~/.profile
-# .bash_profile is sourced by bash for login shells
+# ~/.bash_profile is sourced by BASH for login shells
+# ~/.profile is executed by BASH for non-LOGIN shells
+# ~/.profile is *NOT* read by BASH IF ~/.bash_profile or ~/.bash_login exists
+# ~/.profile should be executed by command interpreter (also /bin/sh ) for LOGIN shells
 
-# ~/.profile is *NOT* read by bash IF ~/.bash_profile or ~/.bash_login exists
-# ~/.profile is executed by command interpreter (also /bin/sh ) for LOGIN shells
+# Refer also to /etc/skel/
+# Refer also to /etc/default
 
-
-# always be found at /etc/skel/
-# always be found at /etc/defaults/etc/skel/.profile
-
-# The following line runs .bashrc recommended by the bash info pages.
-#[[ -f ~/.bashrc ]] && . ~/.bashrc
-[[ -f $HOME/.bashrc ]] && . $HOME/.bashrc
-[[ -f ~/.extend.bash_profile ]] && . ~/.extend.bash_profile
+# Get the aliases and functions, recommended by the bash info pages.
+[ -f ~/.bash_profile.local ] && . ~/.bash_profile.local
+[[ -f ~/.bashrc ]] && . ~/.bashrc
