@@ -1244,7 +1244,7 @@ esac
 force_color_prompt=yes
 
 if [ "$color_prompt" = yes ]; then
-    PS1='\[\033[01;31m\]\u@\h\[\033[01;36m\]:\w/\[\033[01;31m\]\n\$\[\033[00m\] '
+    PS1='\[\033[01;31m\]\u@\h\[\033[01;36m\]:\w/\[\033[00m\]\n'
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
@@ -1265,3 +1265,5 @@ PS1="$BGreen\D{W%V.%u %m%d} $UPurple\T$NORMAL $BBlue"$PS1$NORMAL
 
 [ -d "$HOME/.gem/ruby/bin" ] && export PATH="$HOME/.gem/ruby/bin:$PATH"
 
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

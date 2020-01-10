@@ -30,7 +30,7 @@ set autoindent
 # set backupdir ""
 
 ## Do backwards searches by default.
-set backwards
+##set backwards
 
 ## Use bold text instead of reverse video text.
 set boldtext
@@ -50,7 +50,7 @@ set casesensitive
 ## (The old form, 'const', is deprecated.)
 
 ## Use cut-to-end-of-line by default. Toggle by `Meta-K`
-set cut
+## set cut
 
 ## Set the line length for wrapping text and justifying paragraphs.
 ## If the value is 0 or less, the wrapping point will be the screen
@@ -152,8 +152,10 @@ set cut
 ## beginning of the line.
 # set smarthome
 
+## ! Deprecated !
 ## Use smooth scrolling as the default.
 # set smooth
+## ! Deprecated !
 
 ## Enable soft line wrapping (AKA full-line display).
 # set softwrap
@@ -270,6 +272,5 @@ set multibuffer
 set nohelp            # perhaps comment out until comfortable
 set quickblank
 set regexp
-set smooth
 set suspend
 set tabsize 4
