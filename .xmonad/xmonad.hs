@@ -11,15 +11,20 @@ import XMonad
 import Data.Monoid
 import System.Exit
 
--- import qualified XMonad.StackSet as W
-import XMonad.StackSet as W
+import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
+
+import System.Posix.Env (getEnv)
+import Data.Maybe (maybe)
+
+import XMonad.Config.Desktop
+--import XMonad.Config.Gnome
+--import XMonad.Config.Xfce
+
 
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
 --
-
--- myTerminal      = "xterm"
 myTerminal      = "terminator"
 
 -- Whether focus follows the mouse pointer.
@@ -64,8 +69,7 @@ myFocusedBorderColor = "#ff0000"
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- launch a terminal
-    --[ ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
-    [ ((modm, xK_Return), spawn $ XMonad.terminal conf)
+    [ ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
 
     -- launch dmenu
     , ((modm,               xK_p     ), spawn "dmenu_run")
@@ -77,9 +81,15 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_c     ), kill)
 
      -- Rotate through the available layout algorithms
-    , ((modm,               xK_space ), sendMessage NextLayout)
+    --Space is for Input Method
+    --, ((modm,               xK_space ), sendMessage NextLayout)
+    , ((modm .|. shiftMask, xK_space ), sendMessage NextLayout)
 
     --  Reset the layouts on the current workspace to default
+    , ((modm .|. shiftMask, xK_l     ), setLayout $ XMonad.layoutHook conf)
+
+    -- Resize viewed windows to the correct size
+    , ((modm,               xK_n     ), refresh)
 
     -- Move focus to the next window
     , ((modm,               xK_Tab   ), windows W.focusDown)
@@ -158,13 +168,16 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- mod-button1, Set the window to floating mode and move by dragging
+    --[ ((modm, button1), (\w -> focus w >> mouseMoveWindow w
     [ ((modm, button1), (\w -> XMonad.focus w >> mouseMoveWindow w
                                        >> windows W.shiftMaster))
 
     -- mod-button2, Raise the window to the top of the stack
+    --, ((modm, button2), (\w -> focus w >> windows W.shiftMaster))
     , ((modm, button2), (\w -> XMonad.focus w >> windows W.shiftMaster))
 
     -- mod-button3, Set the window to floating mode and resize by dragging
+    --, ((modm, button3), (\w -> focus w >> mouseResizeWindow w
     , ((modm, button3), (\w -> XMonad.focus w >> mouseResizeWindow w
                                        >> windows W.shiftMaster))
 
@@ -251,7 +264,15 @@ myStartupHook = return ()
 
 -- Run xmonad with the settings you specify. No need to modify this.
 --
+--main = do
+     --session <- getEnv "DESKTOP_SESSION"
+     --xmonad  $ maybe desktopConfig desktop session
 main = xmonad defaults
+
+--desktop "gnome" = gnomeConfig
+--desktop "xfce" = xfceConfig
+--desktop "xmonad-mate" = gnomeConfig
+--desktop _ = desktopConfig
 
 -- A structure containing your configuration settings, overriding
 -- fields in the default config. Any you don't override, will
@@ -262,12 +283,11 @@ main = xmonad defaults
 defaults = def {
       -- simple stuff
         terminal           = myTerminal,
-        --terminal           = "terminator",
         focusFollowsMouse  = myFocusFollowsMouse,
         clickJustFocuses   = myClickJustFocuses,
         borderWidth        = myBorderWidth,
         modMask            = myModMask,
-        XMonad.workspaces         = myWorkspaces,
+        workspaces         = myWorkspaces,
         normalBorderColor  = myNormalBorderColor,
         focusedBorderColor = myFocusedBorderColor,
 
@@ -288,7 +308,7 @@ help :: String
 help = unlines ["The default modifier key is 'alt'. Default keybindings:",
     "",
     "-- launching and killing programs",
-    "mod-Shift-Enter  Launch myTerminal",
+    "mod-Shift-Enter  Launch xterminal",
     "mod-p            Launch dmenu",
     "mod-Shift-p      Launch gmrun",
     "mod-Shift-c      Close/kill the focused window",
@@ -333,3 +353,5 @@ help = unlines ["The default modifier key is 'alt'. Default keybindings:",
     "mod-button1  Set the window to floating mode and move by dragging",
     "mod-button2  Raise the window to the top of the stack",
     "mod-button3  Set the window to floating mode and resize by dragging"]
+
+

@@ -153,6 +153,7 @@ case $1 in
   *)
     exec dbus-launch $DEFAULT_SESSION &
     #exec $DEFAULT_SESSION &&
+	# Exec=/usr/bin/xmonad-start
     xmonad --replace
     #i3 --replace
     #awesome --replace

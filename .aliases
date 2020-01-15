@@ -183,19 +183,6 @@ alias emerge='emerge -avt '
 alias eng='env | grep -i'
 #alias expemerge="ACCEPT_KEYWORDS=\"~x86\" emerge"
 
-#alias gr="git rm -r "
-
-# git reset --hard `gitorigin`
-alias gitorigin="git branch -r | head -1 | cut -d' ' -f 5"
-
-alias gss='git show --stat'
-#alias gst='git status --ignore-submodules=dirty | less'
-alias gst='git branch -vv && git status -suno --ignore-submodules=dirty | less'
-
-alias gd="git diff --patience --ignore-space-change"
-alias gh="git log --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%C(yellow)%d%Creset %Cblue[%an]%Creset\" --graph --date=short"
-
-
 alias rx='LANG=zh_CN.GB2312 LC_CTYPE=zh_CN.GB2312 rxvt -ls -sl 500 -fn 8x16 -bg black -fg grey80 -ls&'
 alias rmbra="rename 'y/)(/_/' "
 
@@ -258,9 +245,8 @@ alias findgrep="find . -print0 | xargs -0 grep"
 
 # git
 alias g='git status --ignore-submodules=dirty'
-alias gitl='git log --graph --oneline --decorate'
 alias gits='git status --ignore-submodules=dirty'
-alias g='echo; git log -n 12 --graph --oneline --decorate; echo; git status -sb; echo'
+
 # git reset --hard `gitorigin`
 alias gitorigin="git branch -r | head -1 | cut -d' ' -f 5"
 alias ga="git add"
@@ -269,7 +255,6 @@ alias gca='git commit --amend'
 alias gcl='git clone -v --recursive'
 # as function: git clone --recursive $1
 alias gcv='git commit --no-verify'
-alias gd='git diff --patience'
 alias gdc='git diff --cached -w'
 alias gdw='git diff --no-ext-diff --word-diff'
 alias gdv='git diff -v'
@@ -281,8 +266,10 @@ alias gg='git grep -a -i'
 alias gsl='git stash list'
 alias gss='git stash save'
 alias gup='git pull --rebase --prune && git submodule update --init --recursive'
-alias gh='git hist'
 alias gi="git commit -v"
+alias gitl='git log --graph --oneline --decorate'
+
+alias g='echo; git log -n 12 --graph --oneline --decorate; echo; git status --name-status --date=iso -sb; echo'
 alias gl='git log --abbrev=10 --oneline --decorate'
 alias gl="git log --abbrev=10 --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%C(yellow)%d%Creset %Cblue[%an]%Creset\" --graph --date=short"
 alias glp='git log --abbrev=10 -p'
@@ -295,9 +282,15 @@ alias gpp='git pull --rebase && git push'
 alias gr="git remote -v"
 alias grss="git remote show origin"
 alias gpr='git pull --rebase --recurse-submodules'
-alias gri='git rebase -i'
-alias grc='git rebase --continue'
-alias grs='git rebase --skip'
+
+alias gss='git show --stat'
+#alias gst='git status --ignore-submodules=dirty'
+alias gst='git branch -vv && git status -suno --ignore-submodules=dirty'
+
+alias gd="git diff --patience --ignore-space-change"
+alias gh="git log --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%C(yellow)%d%Creset %Cblue[%an]%Creset\" --graph --date=short"
+
+
 alias gup='git pull --rebase --prune && git submodule update --init --recursive'
 alias gsl='git stash list'
 alias gss='git stash save'
