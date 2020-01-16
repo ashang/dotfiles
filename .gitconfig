@@ -92,6 +92,7 @@
 [merge]
     tool = vimdiff
 	conflictstyle = diff3
+	ff = false
 
 
 [filter "media"]
@@ -169,7 +170,6 @@ mergeoptions = --no-commit --no-ff
     graphviz = "!f() { echo 'digraph git {' ; git log --pretty='format:  %h -> { %p }' \"$@\" | sed 's/[0-9a-f]\\+/\"&\"/g' ; echo '}'; }; f"
     m     = checkout master
     mnc   = merge --no-commit
-    olg   = log --abbrev-commit --abbrev=6 --pretty=oneline
     one   = "!sh -c 'git show -s --pretty=\"tformat:%h (%s, %ai\" \"$@\" | sed -e \"s/ [012][0-9]:[0-5][0-9]:[0-5][0-9] [-+][0-9][0-9][0-9][0-9]$/)/\"' -"
     out   = !git push --dry-run
     purge = !git checkout $(git rev-parse --show-cdup) && git clean -xdf
@@ -187,7 +187,6 @@ mergeoptions = --no-commit --no-ff
 # for "subtree update"
 	sbu = "!f() { git subtree pull --prefix $2 $1 master --squash; }; f"
 
-	last = log -1
 	#lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 	lg = log --graph --all --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'
 	hist = log --color --pretty=format:\"%C(yellow)%h%C(reset) %s%C(bold red)%d%C(reset) %C(green)%ad%C(reset) %C(blue)[%an]%C(reset)\" --relative-date --decorate
