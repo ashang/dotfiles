@@ -98,7 +98,7 @@ if [ -d "${HOME}/info" ]; then
 fi
 
 # Load RVM into a shell session *as a function*
-#export PATH="$PATH:$HOME/.rvm/bin" 
+#export PATH="$PATH:$HOME/.rvm/bin"
 # Use the following; Add RVM to PATH for scripting
 #[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
@@ -121,11 +121,11 @@ TZ='Asia/Shanghai'; export TZ
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
-# colors
-darkgrey="$(tput bold ; tput setaf 0)"
-white="$(tput bold ; tput setaf 7)"
-red="$(tput bold; tput setaf 1)"
-nc="$(tput sgr0)"
+## colors
+#darkgrey="$(tput bold ; tput setaf 0)"
+#white="$(tput bold ; tput setaf 7)"
+#red="$(tput bold; tput setaf 1)"
+#nc="$(tput sgr0)"
 
 alias ls="ls --color"
 alias shred="shred -zf"
@@ -148,7 +148,7 @@ export VISUAL=vim
 export EDITOR=vim
 
 # export INPUTRC=/etc/inputrc
-export USER LOGNAME MAIL HOSTNAME 
+export USER LOGNAME MAIL HOSTNAME
 
 # Append our default paths
 appendpath () {

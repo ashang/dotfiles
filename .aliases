@@ -50,7 +50,7 @@ alias l='ls -CF'
 #-A, --almost-all			do not list implied . and ..
 alias la='ls -A'
 alias l.='ls -Al'
-alias ldir='\ls -l | egrep ^d'
+alias ldir='\ls -al | egrep ^d'
 # vi `lf`
 alias lf="ls . -rt1 | tail -1"
 alias lh='ls -A | egrep "^\."'
@@ -58,7 +58,7 @@ alias ll='ls -l'
 alias lS='ls -lS'
 alias lSr='ls -lSr'
 alias lt='ls -ltA'
-alias lt='ls -ltr '
+alias lt='ls -ltr'
 alias ltr='ls -ltAr'
 alias lta='ls -latr'
 # alias ll='ls -lih --color'
@@ -105,7 +105,7 @@ alias cd..="cd .."
 
 #if [[ "`uname -s`" == "FreeBSD" ]]
 #then
-    #alias ls='\ls -FG '
+    #alias ls='\ls -FG'
 #fi
 
 
@@ -128,14 +128,14 @@ fi
 alias l='ls -CF'
 # alias l='ls -ah --color'
 
-alias ll='ls -l '
-alias la='ls -A '
+alias ll='ls -l'
+alias la='ls -A'
 
 #-a, --all						do not ignore entries starting with .
 #-A, --almost-all			do not list implied . and ..
 
 # List all files colorized in long format, including dot files
-alias l.='ls -Al '
+alias l.='ls -Al'
 
 #-C										list entries by columns
 #-F, --classify				append indicator (one of */=>@|) to entries
@@ -143,7 +143,7 @@ alias l.='ls -Al '
 
 alias cd..="cd .."
 
-alias cp='cp -i -v -a '
+alias cp='cp -i -v -a'
 
 # -a = -pPR
 #  -R If source_file designates a directory, cp copies the directory and the entire subtree connected at that point.  If the source_file ends in a /, the
@@ -155,7 +155,7 @@ alias cp='cp -i -v -a '
 #
 #     Note that cp copies hard-linked files as separate files.  If you need to preserve hard links, consider using tar(1), cpio(1), or pax(1) instead.
 
-alias chmod='chmod -v '
+alias chmod='chmod -v'
 which colordiff &>/dev/null && alias diff='colordiff'
 [ which colormake >/dev/null 2>&1 ] && alias make=colormake
 alias crontab='crontab -i'
@@ -211,7 +211,7 @@ alias a='alias'
 #alias adb='adb wait-for-device'
 alias adbw='adb wait-for-device'
 
-alias acs='apt-cache search '
+alias acs='apt-cache search'
 alias asrm='adb shell rm'
 alias adbw='adb wait-for-device'
 alias asrmr='adb shell rm -r'
@@ -245,9 +245,11 @@ alias findgrep="find . -print0 | xargs -0 grep"
 alias gits='git status --ignore-submodules=dirty'
 
 # git reset --hard `gitorigin`
-alias gitorigin="git branch -r | head -1 | cut -d' ' -f 5"
+#alias gitorigin="git branch -r | head -1 | cut -d' ' -f 5"
+alias gor="git branch -r | head -1 | cut -d' ' -f 5"
 alias ga="git add"
 alias gap="git add --patch"
+alias gb='git branch -vv'
 alias gca='git commit --amend'
 alias gcl='git clone -v --recursive'
 # as function: git clone --recursive $1
@@ -282,7 +284,7 @@ alias gpr='git pull --rebase --recurse-submodules'
 
 alias gss='git show --stat'
 #alias gst='git status --ignore-submodules=dirty'
-alias gst='git branch -vv && git status -suno --ignore-submodules=dirty'
+alias gst='git status -suno --ignore-submodules=dirty && git branch -vv'
 
 alias gd="git diff --patience --ignore-space-change"
 alias gh="git log --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%C(yellow)%d%Creset %Cblue[%an]%Creset\" --graph --date=iso"
@@ -309,7 +311,7 @@ alias ka="killall"
 alias less='less -r'                          # raw control characters
 
 
-alias mpl='mplayer -vf screenshot -msgcolor '
+alias mpl='mplayer -vf screenshot -msgcolor'
 alias mm="make menuconfig"
 alias ms='gpm -m /dev/psaux -t imps2'
 #alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A &'
@@ -385,7 +387,7 @@ alias sr='screen -r'
 alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=60'
 ## ignore ~/.ssh/known_hosts entries
 #alias insecssh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -o "PreferredAuthentications=keyboard-interactive"'
-alias svi='sudo vi '
+alias svi='sudo vi'
 
 # alias tail='tail -f'
 alias tmux='tmux -2'

@@ -1,7 +1,7 @@
 # ~/.bash_logout: executed by bash(1) when login shell exits.
 
 # clear sensitive history
-/bin/rm $HOME/.mysql_history
+#/bin/rm $HOME/.mysql_history
 
 # when leaving the console clear the screen to increase privacy
 clear
