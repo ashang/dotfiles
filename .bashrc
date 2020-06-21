@@ -1,242 +1,149 @@
-# ~/.bashrc: executed by bash(1) for non-login shells. ??
-
 # ~/.bashrc: executed by bash(1) for interactive shells.
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-# Modifying /etc/skel/.bashrc directly will prevent
-# setup from updating it.
+# To enable the settings / commands in this file for login shells as well,
+# this file has to be sourced in profile.
 
-# Shell is non-interactive.  Be done now!
+# if no "-" , .profile won't be loaded??
+# such as in "su -", or "mintty -"
+
+# Modifying /etc/skel/.bashrc directly will prevent setup from updating it.
+
+# some ... shells such as scp and rcp
+# that can't tolerate any output.  So make sure this doesn't display
+# anything or bad things will happen !
+
+##[ -z "${PS1}" ]
+# Shell is non-interactive. Be done now!
 [[ $- != *i* ]] && return
 
-# If not running interactively, don't do anything
-case $- in
-    *i*) ;;
-      *) return;;
-esac
-
-
-#QUOTE    BEGIN
+#QUOTE BEGIN
     ## System-wide .profile for sh(1)
 
     #if [ -x /usr/libexec/path_helper ]; then
         #eval `/usr/libexec/path_helper -s`
     #fi
-#
+
     #if [ "${BASH-no}" != "no" ]; then
         #[ -r /etc/bashrc ] && . /etc/bashrc
     #fi
-#QUOTE    END
+#QUOTE END
 
 
-########################################
-#Shell Options
-#See man bash for more options...
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color) color_prompt=yes;;
+esac
 
-#Don't wait for job termination notification
-set -o notify
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
 
-
-#http://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html
-[ "${BASH_VERSINFO}" -ge "4" ] && shopt -s autocd cdspell dirspell
-
-# When changing directory small typos can be ignored by bash
-# for example, cd /vr/lgo/apaache would find /var/log/apache
-# cdspell
-
-# Use case-insensitive filename globbing
-# shopt -s nocaseglob
-#
-# Make bash append rather than overwrite the history on disk
-# shopt -s histappend
-#
-# When changing directory small typos can be ignored by bash
-# for example, cd /vr/lgo/apaache would find /var/log/apache
-# shopt -s cdspell
-#
-# This file is sourced by all *interactive* bash shells on startup,
-# including some apparently interactive shells such as scp and rcp
-# that can't tolerate any output.  So make sure this doesn't display
-# anything or bad things will happen !
-
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
-
-# This file is sourced by all *interactive* bash shells on startup,
-# including some apparently interactive shells such as scp and rcp
-# that can't tolerate any output.  So make sure this doesn't display
-# anything or bad things will happen !
-
-# To enable the settings / commands in this file for login shells as well,
-# this file has to be sourced in profile.
-#
-# Test for an interactive shell.  There is no need to set anything
-# past this point for scp and rcp, and it's important to refrain from
-# outputting anything in those cases.
-
-## Detect `$-`, instead of `PS1`
-##[ -z "${PS1}" ]
-
-
-#$ tty
-#/dev/ttys003
-#$ uname -a
-#Darwin Mato.local 14.0.0 Darwin Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64 x86_64
-
-stty -ctlecho #don't show ^C when pressing Ctrl+C
-
-#if [ "`locale charmap 2>/dev/null`" = "UTF-8" ]
-#then
-  #stty iutf8
-#fi
-
-
-# if no "-" , .profile won't be loaded??
-# such as in "su -", or "mintty -"
-
-## Use case-insensitive filename globbing
-# shopt -s nocaseglob
-
-# Bash won't get SIGWINCH if another process is in the foreground.
-# Check terminal size when it regains control.
-# http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
-# update the values of LINES and COLUMNS.
-shopt -s checkwinsize
-
-# Don't use ^D to exit
-#set -o ignoreeof  # Same as setting IGNOREEOF=10
-#IGNOREEOF=10    # Shell only exists after the 10th consecutive Ctrl-d
-#set ignoreeof  # prevent accidental shell termination
-
-# sometimes, stty eof '^D' / stty eof undef
-#export IGNOREEOF=2
-IGNOREEOF=2
-
-########################################
-# bind
-# Bash is using readline to handle the prompt.
-# $HOME/.inputrc is the configuration file for readline.
-#After modify $HOME/.inputrc, use Ctrl+X, Ctrl+R to tell it to re-read $HOME/.inputrc.
-## arrow up
-#"\e[A": history-search-backward
-## arrow down
-#"\e[B": history-search-forward
-#or equivalently,
-
-
-# If bond, Some systems lacking of "" would mess HOME/END??
-bind -r "\e[A"
-bind -r "\e[B"
-bind -r "\eOA"
-bind -r "\eOB"
-bind '"\e[A":history-search-backward'
-bind '"\eOA":history-search-backward'
-bind '"\e[B":history-search-forward'
-bind '"\eOB":history-search-forward'
-
-# $HOME/.bashrc
-#bind '"\e[A": history-search-backward'
-#bind '"\e[B": history-search-forward'
-#Normally, Up and Down are bound to the Readline functions previous-history and
-# next-history respectively. I prefer to bind PgUp/PgDn to these functions,
-# instead of displacing the normal operation of Up/Down.
-
-# To get the escape codes for the arrow keys you can do the following:
-#Start cat in a terminal (just cat, no further arguments).
-#Type keys on keyboard, you will get ^[[A for up arrow and ^[[B for down arrow.
-#Replace ^[ with \e.
-bind "set match-hidden-files off"     #don't match hidden files
-bind "set bind-tty-special-chars on"  #punctuations are not word delimiters
-
-#ctrl-RIGHT got 5C
-
-
-### history
-
-# append to the history file, don't overwrite it
-shopt -s histappend
-shopt -s histverify
-
-#Don't put duplicate lines in the history.
-# Keep also space-starting lines, just in case
-export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
-#HISTCONTROL=ignoreboth
-#HISTCONTROL=ignoredups:ignorespace
-# See bash(1) for more options
-# HISTCONTROL=ignoredups
-
-#Ignore some controlling instructions
-#HISTIGNORE is a colon-delimited list of patterns which should be excluded.
-#The '&' is a special pattern which suppresses duplicate entries.
-HISTIGNORE=$'[ \t]*:&:[fb]g:pwd:date:exit:ls'
-#HISTIGNORE="[ \t]*:&:[fb]g:pwd:date:exit:* --help"
-
-HISTIMEFORMAT="%F %T"
-
-#Whenever displaying the prompt, write the previous line to disk
-# to keep history even after abnormal bash quit,
-# This does mean sessions get interleaved when reading later on, but this
-# way the history is always up to date.  History is not synced across live
-# sessions though; that is what `history -n` does.
-# Disabled by default due to concerns related to system recovery when $HOME
-# is under duress, or lives somewhere flaky (like NFS).  Constantly syncing
-# the history will halt the shell prompt until it's finished.
-# export PROMPT_COMMAND="history -a"
-# PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
-# #PROMPT_COMMAND='history -a $HOME/.bash_history; echo -ne "\033]0;$PWD\007"; $PROMPT_COMMAND;'
-
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=50000
-HISTFILESIZE=60000
-
-### history end
-
-
-# Even for non-interactive, non-login shells.
-# the default umask is set in /etc/profile
-# The default umask is now handled by pam_umask.
-# See pam_umask(8) and /etc/login.defs.
-
-#/etc/profile sets 022, removing write perms to group + others.
-#Set a more restrictive umask: i.e. no exec perms for others
-#umask 027
-##Paranoid: neither group nor others have any perms:
-#umask 077
-# if [ "`id -gn`" = "`id -un`" -a `id -u` -gt 99 ]; then
-# id: cannot find name for group ID 1000
-if [ $UID -gt 99 ] && [ "`id -gn`" = "`id -un`" ]; then
-    umask 002
-else
-    umask 022
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
 fi
 
-# for ssh logins, install and configure the libpam-umask package
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
 
-if ! shopt -q login_shell ; then # We're not a login shell
-    # Need to redefine pathmunge, it get's undefined at the end of /etc/profile
-    pathmunge () {
-        if ! echo $PATH | /bin/egrep -q "(^|:)$1($|:)" ; then
-            if [ "$2" = "after" ] ; then
-                PATH=$PATH:$1
-            else
-                PATH=$1:$PATH
-            fi
-        fi
-    }
+if [[ "`uname -s`" == "FreeBSD" ]]
+#if [[ "$OSTYPE" =~ *BSD ]]; then
+then
+  alias ls='\ls -FG'
+elif [[ "$OSTYPE" =~ ^darwin ]]; then
+#elif [ "`uname -s`" == "Darwin" ]
+	# uname also works
+  alias ls="command ls -bFG"
+else # Assume Linux
+  #alias ls="command ls -FG"
+  alias ls='\ls -F -X --show-control-chars'
+  #alias ls='\ls -F -X --color=tty --show-control-chars'
+  export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:'
+fi
+
+# Obseleted!!
+# enable color support of ls and also add handy aliases
+# eval "`dircolors -b`"
+
+# dircolors --print-database uses its own built-in database
+# instead of using /etc/DIR_COLORS.  Try to use the external file
+# first to take advantage of user additions.  Use internal bash
+# globbing instead of external grep binary.
+
+# guideline 0: those not in command-not-found
+# guideline 1: standard cross-platform parameters, such as ps, tar.
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+    # Never use 'grep --colour=always', control characters apply!
+    alias grep='grep --color=auto --exclude-dir=.git -s -I'
+fi
+
+# For dircolors-solarized
+# - https://github.com/seebi/dircolors-solarized
+
+export LS_OPTIONS='--color=auto'
+export CLICOLOR='Yes'
+# for ls colors
+LS_COLORS="rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:"
+export LS_COLORS
+
+export LSCOLORS=gxfxbEaEBxxEhEhBaDaCaD
+
+use_color=false
 
 
-##FIXME time consuming
-    for i in /etc/profile.d/*.sh; do
-        #[ -r "$i" ] && . $i
-        [ -r "$i" ] && echo $i
-    done
-    unset i
-    unset pathmunge
+match_lhs=""
+[[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(</etc/DIR_COLORS)"
+[[ -f $HOME/.dir_colors ]] && match_lhs="${match_lhs}$(<$HOME/.dir_colors)"
+[[ -z ${match_lhs} ]] && type -P dircolors >/dev/null && match_lhs=$(dircolors --print-database)
+[[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
+
+if type -P dircolors >/dev/null; then
+  LS_COLORS=
+
+  # If it isn't set, then `ls` will only colorize by default
+  # based on file attributes and ignore extensions (even the compiled
+  # in defaults of dircolors).
+
+  if [[ -n ${LS_COLORS:+set} ]] ; then
+    use_color=true
+  else
+    # Delete it if it's empty as it's useless in that case.
+    unset LS_COLORS
+  fi
+
+else
+  # Some systems (e.g. BSD & embedded) don't typically come with
+  # dircolors so we need to hardcode some terminals in here.
+  case ${TERM} in
+    [aEkx]term*|rxvt*|gnome*|konsole*|screen|cons25|*color) use_color=true;;
+  esac
 fi
 
 
 ########################################
 # colorful
 unset color_prompt force_color_prompt
+color_prompt=yes
+force_color_prompt=yes
 
 #Color scheme
 # 033 = e
@@ -263,7 +170,6 @@ unset color_prompt force_color_prompt
 # \u: current username
 # \h: hostname up to the first ., \H: full hostname
 # \w: current working directory, \W: same, but only the basename
-# $(__git_ps1 "%s"): your current git branch if you're in a git directory, otherwise nothing
 # \$: if the effective UID is 0: #, otherwise $
 # \d: the date in "Weekday Month Date" format (e.g., "Tue May 26")
 # \t: the current time in 24-hour HH:MM:SS format, \T: same, but 12-hour format, \@: same, but in 12-hour am/pm format
@@ -291,12 +197,10 @@ unset color_prompt force_color_prompt
 # 5 magenta
 # 6 cyan
 # 7 white
-# example: \[\e[0;33m\]prompt:\[\e[0m\]
-
 
 # Regular Colors
 Black='\e[0;30m'        # Black
-Red='\e[0;31m'          # Red
+RED="\[\e[01;31m\]"
 Green='\e[0;32m'        # Green
 Yellow='\e[0;33m'       # Yellow
 Blue='\e[0;34m'         # Blue
@@ -305,7 +209,6 @@ Purple='\e[0;35m'       # Purple
 Cyan='\e[0;36m'         # Cyan
 White='\e[0;37m'        # White
 LIGHT_GRAY="\[\033[0;37m\]"
-
 
 # Bold
 BBlack='\e[1;30m'       # Black
@@ -367,7 +270,6 @@ On_IPurple='\e[0;105m'  # Purple
 On_ICyan='\e[0;106m'    # Cyan
 On_IWhite='\e[0;107m'   # White
 
-
 # unsets color to term's fg color
 NORMAL="\[\e[0m\]"
 
@@ -381,7 +283,6 @@ if [ -n "$force_color_prompt" ]; then
     color_prompt=
   fi
 fi
-
 
 # colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
@@ -413,11 +314,523 @@ colors() {
   done
 }
 
-use_color=false
 
 
-# better yaourt colors
-export YAOURT_COLORS="nb=1:pkg=1:ver=1;32:lver=1;45:installed=1;42:grp=1;34:od=1;41;5:votes=1;44:dsc=0:other=1;35"
+
+# Alias
+## translate
+#alias u='translate -i'
+
+#-C										list entries by columns
+#-F, --classify                append indicator (one of */=>@|) to entries
+#-F      Display a slash (`/') immediately after each pathname that is a directory,
+#        an asterisk (`*') after each that is executable,
+#        an at sign (`@') after each symbolic link,
+#        an equals sign (`=') after each socket,
+#        a percent sign (`%') after each whiteout, and
+#        a vertical bar (`|') after each that is a FIFO.
+
+# alias l='ls -ah --color'
+alias l='ls'
+alias la='ls -A'
+alias ll='ls -lh --color=tty'                 # classify files in colour
+#-a, --all						do not ignore entries starting with .
+#-A, --almost-all			do not list implied . and ..
+# List all files colorized in long format, including dot files
+alias l.='ls -Al'
+alias ldir='\ls -al | egrep ^d'
+# vi `lf`
+alias lf="ls . -rt1 | tail -1"
+alias lh='ls -A | egrep "^\."'
+alias lS='ls -lS'
+alias lSr='ls -lSr'
+alias lt='ls -ltA'
+alias ltr='ls -ltAr'
+
+alias ..='cd ..'
+
+alias N='&>/dev/null'
+alias '...'='../..'
+alias '....'='../../..'
+alias BG='& exit'
+alias C='|wc -l'
+alias G='|grep'
+alias H='|head'
+alias Hl=' --help |& less -r'
+alias K='|keep'
+alias L='|less'
+alias LL='|& less -r'
+alias M='|most'
+alias N='&>/dev/null'
+alias R='| tr A-z N-za-m'
+alias SL='| sort | less'
+alias S='| sort'
+alias T='|tail'
+alias V='| vim -'
+
+alias cd..="cd .."
+
+alias cp='cp -i -v -a'
+
+# -a = -pPR
+#  -R If source_file designates a directory, cp copies the directory and the entire subtree connected at that point.  If the source_file ends in a /, the
+#     contents of the directory are copied rather than the directory itself.  This option also causes symbolic links to be copied, rather than indirected
+#     through, and for cp to create special files rather than copying them as normal files.  Created directories have the same mode as the corresponding
+#     source directory, unmodified by the process' umask.
+#
+#     In -R mode, cp will continue copying even if errors are detected.
+#
+#     Note that cp copies hard-linked files as separate files.  If you need to preserve hard links, consider using tar(1), cpio(1), or pax(1) instead.
+
+alias chmod='chmod -v'
+which colordiff &>/dev/null && alias diff='colordiff'
+[ which colormake >/dev/null 2>&1 ] && alias make=colormake
+alias crontab='crontab -i'
+alias cv='convmv -f gbk -t utf-8 -r --notest'
+
+#alias curl="curl --user-agent 'noleak'"
+alias curl="curl --user-agent 'noleak'"
+alias curl='curl -L -C'
+alias curl='curl -L -C -'
+
+alias dd="dd bs=8M status=progress"
+alias debug_on="sed -i 's/^\/\/#define LOG_NDEBUG 0/#define LOG_NDEBUG 0/g' "
+alias debug_off="sed -i 's/^#define LOG_NDEBUG 0/\/\/#define LOG_NDEBUG 0/g' "
+# debug_on MediaExtractor.cpp
+# debug_off *.*
+
+alias df='df -h -T | grep -v tmpfs'
+alias diff='diff -x.git'
+alias dl='dpkg -L'
+alias dlg='dpkg -l | grep'
+alias dlc='dlocate -i'
+alias docker-pid="sudo docker inspect --format '{{.State.Pid}}'"
+alias docker-ip="sudo docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
+alias ds='dpkg -s'
+alias du.='du -h --max-depth=1 | sort -hr'
+
+alias emerge='emerge -avt'
+alias eng='env | grep -i'
+alias enprint='enscript -h -G -E -2 -r --rotate-even-pages -DDuplex:true'
+alias equo='equo --color --ask -v'
+alias es='emerge --search'
+#alias expemerge="ACCEPT_KEYWORDS=\"~x86\" emerge"
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+# program 'notify-send' is in libnotify-bin
+
+
+alias a='alias'
+#alias adb='adb wait-for-device'
+alias adbw='adb wait-for-device'
+
+alias acs='apt-cache search'
+alias asrm='adb shell rm'
+alias adbw='adb wait-for-device'
+alias asrmr='adb shell rm -r'
+alias auru='yaourt -Syua --noconfirm'
+
+alias bb='bitbake -v'
+
+alias c='clear'
+alias cp='\cp -i -v -a'
+# -a = -pPR
+#  -R If source_file designates a directory, cp copies the directory and the entire subtree connected at that point.  If the source_file ends in a /, the
+#     contents of the directory are copied rather than the directory itself.  This option also causes symbolic links to be copied, rather than indirected
+#     through, and for cp to create special files rather than copying them as normal files.  Created directories have the same mode as the corresponding
+#     source directory, unmodified by the process' umask.
+#
+#     In -R mode, cp will continue copying even if errors are detected.
+#
+#     Note that cp copies hard-linked files as separate files.  If you need to preserve hard links, consider using tar(1), cpio(1), or pax(1) instead.
+
+
+alias file="file -k"
+alias fn="find -iname"
+alias fsg='find . -name .git -prune -o -print | xargs grep -H -I -s --colour=auto'
+# search for a string in all subdirectories, matched lines will be printed together with filename and line number.
+alias finds='find . -regex ".*\.\(h\|cpp\|c\|java\|aidl\|py\|pl\|pm\)" | xargs grep -Hn'
+# case insensitive search.
+alias findsi='find . -regex ".*\.\(h\|cpp\|c\|java\|aidl\|py\|pl\|pm\)" | xargs grep -Hni'
+alias findgrep="find . -print0 | xargs -0 grep"
+
+# git
+alias gits='git status --ignore-submodules=dirty'
+
+# git reset --hard `gitorigin`
+#alias gitorigin="git branch -r | head -1 | cut -d' ' -f 5"
+alias gor="git branch -r | head -1 | cut -d' ' -f 5"
+alias ga="git add"
+alias gap="git add --patch"
+alias gb='git branch -vv'
+alias gca='git commit --amend'
+alias gcl='git clone -v --recursive'
+# as function: git clone --recursive $1
+alias gcv='git commit --no-verify'
+alias gd="git diff --patience --ignore-space-change"
+alias gdc='git diff --cached -w'
+alias gdw='git diff --no-ext-diff --word-diff'
+alias gdv='git diff -v'
+alias gf='git fetch -a -p'
+alias gg="git log --abbrev=10 --graph --all --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'"
+alias gg="git log --abbrev=10 --graph --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'"
+alias gg="git log --abbrev=10 --color --all --graph --pretty=format:\"%h %ad %an %s%d\" --date=iso"
+alias gg='git grep -a -i'
+alias gup='git pull --rebase --prune && git submodule update --init --recursive'
+alias gi="git commit -v"
+alias g='echo; git log -n 12 --graph --oneline --decorate; echo; git status --ignore-submodules=dirty; echo'
+alias gl="git log --abbrev=10 --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%C(yellow)%d%Creset %Cblue[%an]%Creset\" --graph --date=iso"
+alias gl='git log --abbrev=10 --oneline --decorate --graph'
+alias glp='git log -p'
+alias glss='git log --abbrev=10 --stat'
+alias gmb="git merge-base"
+alias gpa='for i in `git remote | grep -v upstream`; do echo; echo To remote $i ......; echo; git push $i;done'
+alias gpp='git pull --rebase && git push'
+alias gr="git remote -v"
+alias grss="git remote show origin"
+alias gpr='git pull --rebase --recurse-submodules'
+
+alias gss='git show --stat'
+#alias gst='git status --ignore-submodules=dirty'
+alias gst='git status -suno --ignore-submodules=dirty && git branch -vv'
+
+alias gup='git pull --rebase --prune && git submodule update --init --recursive'
+alias gsl='git stash list'
+alias gss='git stash save'
+
+alias gdb='gdb -q'
+
+alias cg='grep -in --color -I'
+alias cgr='grep -in --color -rI'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias grpe=grep
+alias gerp=grep
+
+alias hig='history | grep'
+alias info='info --vi-keys'
+alias jobs="jobs -l"
+alias jq="jq -C -S"
+alias ka="killall"
+
+alias mpl='mplayer -vf screenshot -msgcolor'
+alias mm="make menuconfig"
+alias ms='gpm -m /dev/psaux -t imps2'
+#alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A &'
+alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A -geometry 125x43+0+0 &'
+alias lc='locate -i'
+alias less='less -r'                          # raw control characters
+
+alias make='make -j4'
+alias mm="make menuconfig"
+alias moer=more
+alias mplayer='mplayer -vf screenshot -msgcolor'
+alias mpv="mpv --audio-display=no"
+alias ms='gpm -m /dev/psaux -t imps2'
+#alias mutt='mutt -y'
+alias m=mutt
+alias mv='mv -i'
+#alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A &'
+alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A -geometry 125x43+0+0 &'
+alias mo=more
+alias moer=more
+alias mroe=more
+
+alias nano='nano -i -m -w -B -F -L'
+alias nano='nano -i -m -w -B -F -L -xcSr68'
+alias netstat='netstat -an'
+alias np='nano -w PKGBUILD'
+
+alias open='xdg-open'
+
+alias pacman='sudo pacman -v'
+alias pacrepo='sudo reflector -l 20 -f 10 --save /etc/pacman.d/mirrorlist'
+alias pacr='sudo pacman -Rs'
+alias pacu='sudo pacman -Syu --noconfirm'
+alias pcmanfm='pcmanfm -d --desktop'
+#alias pix='for i in *.jpg; do convert -quality 50% "$i" "$i"; done'
+alias po="popd"
+alias pu="pushd"
+alias rp='realpath'
+alias ps='ps auxwf'
+
+alias pS='sudo pacman -S'
+alias pss='pacman -Ss'
+#alias psg='ps -Af | grep $1'
+alias psg='\ps aux | grep -v without-match | grep'
+alias pqg='pacman -Q|egrep -i'
+alias pqi='pacman -Qi'
+alias pql='pacman -Ql'
+alias pqo='pacman -Qo'
+alias pacrf='sudo pacman -Rns'
+alias pS='sudo pacman -S'
+alias pss='pacman -Ss'
+alias py="python2"
+
+#if type pgrep &>/dev/null; then xxx; fi
+which pgrep &>/dev/null && alias pgrep='ps -C polkitd -o pid='
+
+alias rpi='rpm -qi'
+alias rx='LANG=zh_CN.GB2312 LC_CTYPE=zh_CN.GB2312 rxvt -ls -sl 500 -fn 8x16 -bg black -fg grey80 -ls&'
+alias rpg='rpm -qa | grep'
+#alias rename='perl-rename'
+alias rmbra="rename 'y/)(/_/'"
+alias rsync='rsync -av --progress'
+# acct - The GNU Accounting utilities for process and login accounting
+# surfraw - a fast unix command line interface to WWW
+alias scp='scp -r'
+alias sdr='sudo rm -r'
+alias se='ls /usr/bin | grep'
+alias shred="shred -zf"
+alias sls='screen -ls'
+# acct - The GNU Accounting utilities for process and login accounting
+# surfraw - a fast unix command line interface to WWW
+alias sr='screen -r'
+alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=30 -o StrictHostKeyChecking=yes'
+## ignore ~/.ssh/known_hosts entries
+#alias insecssh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -o "PreferredAuthentications=keyboard-interactive"'
+alias svi='sudo vi'
+
+alias tmars='telnet 210.77.17.19 1012'
+
+# alias tail='tail -f'
+alias tmux='tmux -2'
+#alias ta='tmux a -d'
+alias tad='tmux a -d'
+alias tou8='iconv -f gbk -t utf-8'
+
+alias ua='uname -a'
+# Disabled because some version has no this option
+# UnZip 6.00 of 20 April 2009, by Debian. Original by Info-ZIP.
+# alias unzip='unzip -O CP936'
+
+alias vd="vimdiff"
+#alias vim="vim -p"
+which nvim &>/dev/null && alias vd="nvim -d"
+which nvim &>/dev/null && alias nv="nvim -p"
+alias vi="vim -p"
+
+
+# Undo a `git push`
+alias undopush="git push -f origin HEAD^:master"
+
+# IP addresses
+alias digip="dig +short myip.opendns.com @resolver1.opendns.com"
+## TODO
+alias localip="ipconfig getifaddr en1"
+alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
+alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
+
+# Flush Directory Service cache
+alias flush="dscacheutil -flushcache"
+
+# View HTTP traffic
+alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
+alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
+
+# Start an HTTP server from a directory
+alias server="python2 -m SimpleHTTPServer"
+alias server="python2 -m SimpleHTTPServer 8080"
+alias server='python2 -c "import SimpleHTTPServer;SimpleHTTPServer.test()"'
+alias server="python3 -m http.server 8080"
+alias server="python3 -m http.server"
+
+# Trim new lines and copy to clipboard
+alias pbcopy='xclip -selection clipboard'
+alias pbpaste='xclip -selection clipboard -o'
+alias copy='xclip -selection clipboard'
+alias yank='xclip -selection clipboard -o'
+
+alias pbcopy='xsel --clipboard --input'
+alias pbpaste='xsel --clipboard --output'
+
+alias C="tr -d '\n' | pbcopy"
+
+
+alias pacrepo='sudo reflector -l 20 -f 10 --save /etc/pacman.d/mirrorlist'
+alias pacu='sudo pacman -Syu --noconfirm'
+alias auru='yaourt -Syua --noconfirm'
+alias fe='find /sbin /bin /usr/sbin /usr/bin | grep'
+
+alias hs='history | tail -40 | more'
+alias tcs='ctags -R --fields=+lS . ; cscope -Rbq'
+
+#bsd
+export PACKAGEROOT=ftp://ftp.freebsdchina.org
+# export PACKAGESITE
+
+# Canonical hex dump; some systems have this symlinked
+[ -n "$ZSH_VERSION" ] && type hd > /dev/null || alias hd="hexdump -C"
+[ "$BASH_VERSINFO" -ge "4" ] && type -t hd > /dev/null || alias hd="hexdump -C"
+
+# source '~/google-cloud-sdk/path.bash.inc'
+
+alias scu='systemctl --user'
+alias journ='sudo journalctl -b -f'
+alias poweroff='sudo systemctl poweroff'
+alias reboot='sudo systemctl reboot'
+alias suspend='sudo systemctl suspend'
+
+alias lsblk='lsblk -o NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,UUID'
+alias strc="awk '!/^ *#/ && NF'"
+alias dmesg='clear; dmesg -eL -w'
+
+# Go
+alias sv='source ~/.config/vim/scripts/gb.bash sv'
+
+
+# Canonical hex dump; some systems have this symlinked
+type -t hd > /dev/null || alias hd="hexdump -C"
+
+# OS X has no `md5sum`, so use `md5` as a fallback
+type -t md5sum > /dev/null || alias md5sum="md5"
+
+# Recursively delete `.DS_Store` files
+alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
+
+# File size
+alias fs="stat -f \"%z bytes\""
+
+alias dos2unix='perl -pi -e "tr/\r//d"'
+alias unix2dos='perl -pi -e "s/\n$/\r\n/g"'
+alias mac2unix='perl -pi -e "tr/\r/\n/d"'
+
+# ROT13-encode text. Works for decoding, too! ;)
+alias rot13='tr a-zA-Z n-za-mN-ZA-M'
+
+# One of @janmoesen’s ProTip™s
+for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do alias "$method"="lwp-request -m '$method'"; done
+
+# Stuff I never really use but cannot delete either because of http://xkcd.com/530/
+alias stfu="osascript -e 'set volume output muted true'"
+alias pumpitup="osascript -e 'set volume 10'"
+alias hax="growlnotify -a 'Activity Monitor' 'System error' -m 'WTF R U DOIN'"
+
+# PostgreSQL
+alias start-psql="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
+alias stop-psql="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
+
+
+#alias wget="wget --no-check-certificate -c --content-disposition"
+alias wget="wget -U 'noleak'"
+alias wget="wget -U User-Agent -c --content-disposition"
+alias whence='type -a'                        # where, of a sort
+alias where="type -all"
+alias which='alias | which -a'
+#alias which="type -path"
+#alias which='alias | which --tty-only --read-alias --show-dot --show-tilde'
+alias whois="whois -h whois-servers.net"
+alias wt='curl http://wttr.in/'
+
+# Byzanz requires a 24bpp or 32bpp depth for recording.
+#alias xx='startx -- -nolisten tcp -depth 24'
+alias xx='startx -- -nolisten tcp -depth 24 -extension GLX'
+alias xfb='startx -- -nolisten tcp -fbbpp 24'
+alias x1='startx -- :1 -depth 32'
+alias x2='startx -- :2 -depth 32'
+alias yum='yum -v -y --color=auto'
+alias xorpsh='su xorp -p -c xorpsh'
+
+
+########################################
+#Shell Options
+#See man bash for more options...
+
+#Don't wait for job termination notification
+set -o notify
+
+#http://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html
+[ "${BASH_VERSINFO}" -ge "4" ] && shopt -s autocd cdspell dirspell
+
+# Use case-insensitive filename globbing
+# shopt -s nocaseglob
+
+# When changing directory small typos can be ignored by bash
+# for example, cd /vr/lgo/apaache would find /var/log/apache
+# shopt -s cdspell
+
+#$ tty
+#/dev/ttys003
+#$ uname -a
+#Darwin Mato.local 14.0.0 Darwin Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64 x86_64
+
+# Bash won't get SIGWINCH if another process is in the foreground.
+# Check terminal size when it regains control.
+# http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# Don't use ^D to exit
+#set -o ignoreeof  # Same as setting IGNOREEOF=10
+#set ignoreeof  # prevent accidental shell termination
+# sometimes, stty eof '^D' / stty eof undef
+#export IGNOREEOF=2
+IGNOREEOF=2
+
+# bind
+# Bash is using readline to handle the prompt.
+# $HOME/.inputrc is the configuration file for readline.
+#After modify $HOME/.inputrc, use Ctrl+X, Ctrl+R to tell it to re-read $HOME/.inputrc.
+## arrow up
+#"\e[A": history-search-backward
+## arrow down
+#"\e[B": history-search-forward
+#or equivalently,
+
+
+# If bond, Some systems lacking of "" would mess HOME/END??
+bind -r "\e[A"
+bind -r "\e[B"
+bind -r "\eOA"
+bind -r "\eOB"
+bind '"\e[A":history-search-backward'
+bind '"\eOA":history-search-backward'
+bind '"\e[B":history-search-forward'
+bind '"\eOB":history-search-forward'
+
+#Normally, Up and Down are bound to the Readline functions previous-history and
+# next-history respectively. I prefer to bind PgUp/PgDn to these functions,
+# instead of displacing the normal operation of Up/Down.
+
+# To get the escape codes for the arrow keys you can do the following:
+#Start cat in a terminal (just cat, no further arguments).
+#Type keys on keyboard, you will get ^[[A for up arrow and ^[[B for down arrow.
+#Replace ^[ with \e.
+#bind "set match-hidden-files off"
+bind "set bind-tty-special-chars on"  #punctuations are not word delimiters
+
+#ctrl-RIGHT got 5C
+
+
+# history
+# append to the history file, don't overwrite it
+shopt -s histappend
+shopt -s histverify
+
+#Don't put duplicate lines in the history.
+# See bash(1) for more options
+# Keep also space-starting lines, just in case
+export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
+
+#HISTCONTROL=ignoreboth
+# HISTCONTROL=ignoredups
+#HISTCONTROL=ignoredups:ignorespace
+
+#Ignore some controlling instructions
+#HISTIGNORE is a colon-delimited list of patterns which should be excluded.
+#The '&' is a special pattern which suppresses duplicate entries.
+HISTIGNORE=$'[ \t]*:&:[fb]g:pwd:date:exit:ls'
+#HISTIGNORE="[ \t]*:&:[fb]g:pwd:date:exit:* --help"
+
+HISTIMEFORMAT="%F %T"
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=50000
+HISTFILESIZE=60000
+
+### history end
 
 
 # Term
@@ -426,67 +839,127 @@ export YAOURT_COLORS="nb=1:pkg=1:ver=1;32:lver=1;45:installed=1;42:grp=1;34:od=1
 # ncurses will search ${HOME}/.terminfo first, then /etc/terminfo (this
 # directory), then /lib/terminfo, and last not least /usr/share/terminfo.
 
-#export TERM="xterm-256color"
+# It seems setting TERM to xterm-256color in your .bashrc overrides set -g default-terminal "screen-256color" from tmux and that causes issues. This makes sense as bash is running inside tmux and its setting override those from tmux.
+
+# You can easily verify this by running echo $TERM in bash within tmux. With your current setup it will be xterm-256color which is a no-go as Tmux explicitly requires this to be set to screen-256color.
+
+[ -z "$TMUX" ] && export TERM="xterm-256color"
 #export TERM=screen-256color
 safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
 
+#Whenever displaying the prompt, write the previous line to disk
+# to keep history even after abnormal bash quit,
+
+# This does mean sessions get interleaved when reading later on, but this
+# way the history is always up to date.  History is not synced across live
+# sessions though; that is what `history -n` does.
+# Disabled by default due to concerns related to system recovery when $HOME
+# is under duress, or lives somewhere flaky (like NFS).  Constantly syncing
+# the history will halt the shell prompt until it's finished.
+# export PROMPT_COMMAND="history -a"
+# PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+# #PROMPT_COMMAND='history -a $HOME/.bash_history; echo -ne "\033]0;$PWD\007"; $PROMPT_COMMAND;'
+
+# If this is an xterm set the title to user@host:dir
+
 # Commented out, don't overwrite xterm -T "title" -n "icontitle" by default.
 # Set the window title of X terminals
-case ${TERM} in
     # Commented out, don't overwrite xterm -T "title" -n "icontitle" by default.
     # If this is an xterm set the title to user@host:dir
-  [aEkx]term*|rxvt*|gnome*|konsole*|interix)
-    color_prompt=yes
-    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}"; echo -ne "\007"'
     #PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}\007"'
     #PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"'
-    TITLEBAR='\[\e]0;\u@\h:\w ${NEW_PWD}\007\]'
-    ;;
-  screen*)
+    TITLEBAR='\[\e]0;\u@\h:\w/ ${NEW_PWD}\007\]'
+# init it by setting PROMPT_COMMAND
     #PROMPT_COMMAND='printf "%b" "\033]0;${PWD/$HOME/~}\007"' ;;
-    PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}"; echo -ne "\033\\"'
-    # PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}\033\\"'
-    ;;
-esac
+#PROMPT_COMMAND=bash_prompt_command
+  PROMPT_COMMAND=__git_ps1
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}"; echo -ne "\007"'
 
 
-# extra backslash in front of \$ to make bash colorize the prompt
-#PS1='\u@$(hostname):$( printf "%s" "${PWD/${HOME}/~}")\n\$ '
-# man bash, PROMPTING
+# Even for non-interactive, non-login shells.
+# the default umask is set in /etc/profile
+# The default umask is now handled by pam_umask.
+# See pam_umask(8) and /etc/login.defs.
 
-# dircolors --print-database uses its own built-in database
-# instead of using /etc/DIR_COLORS.  Try to use the external file
-# first to take advantage of user additions.  Use internal bash
-# globbing instead of external grep binary.
-
-
-
-if type -P dircolors >/dev/null; then
-  LS_COLORS=
-
-  # If it isn't set, then `ls` will only colorize by default
-  # based on file attributes and ignore extensions (even the compiled
-  # in defaults of dircolors).
-
-  if [[ -n ${LS_COLORS:+set} ]] ; then
-    use_color=true
-  else
-    # Delete it if it's empty as it's useless in that case.
-    unset LS_COLORS
-  fi
-
+#/etc/profile sets 022, removing write perms to group + others.
+#Set a more restrictive umask: i.e. no exec perms for others
+#umask 027
+##Paranoid: neither group nor others have any perms:
+#umask 077
+# if [ "`id -gn`" = "`id -un`" -a `id -u` -gt 99 ]; then
+# id: cannot find name for group ID 1000
+if [ $UID -gt 99 ] && [ "`id -gn`" = "`id -un`" ]; then
+    umask 002
 else
-  # Some systems (e.g. BSD & embedded) don't typically come with
-  # dircolors so we need to hardcode some terminals in here.
-  case ${TERM} in
-  [aEkx]term*|rxvt*|gnome*|konsole*|screen|cons25|*color) use_color=true;;
-  esac
+    umask 022
 fi
 
-# Obseleted!!
-# enable color support of ls and also add handy aliases
+# for ssh logins, install and configure the libpam-umask package
 
-# Set colorful PS1 only on colorful terminals.
+if ! shopt -q login_shell ; then # We're not a login shell
+  # Need to redefine pathmunge, it get's undefined at the end of /etc/profile
+  pathmunge () {
+    if ! echo $PATH | egrep -q "(^|:)$1($|:)" ; then
+      if [ "$2" = "after" ] ; then
+        PATH=$PATH:$1
+      else
+        PATH=$1:$PATH
+      fi
+    fi
+  }
+
+##FIXME time consuming
+  for i in ~/etcfiles/profile.d/*.sh; do
+    [ -r "$i" ] && . $i
+  done
+  unset i
+  unset pathmunge
+fi
+
+
+
+function count {
+  I=$1
+  while [ $I -le $2 ];
+    do echo $I
+    I=$((I+1))
+  done
+}
+
+TITLEBAR_PREFIX=""
+function titlebar() {
+  TITLEBAR_PREFIX="$*"
+  echo -ne "\033]2;$*\a"
+}
+
+function color() {
+  tput setf $1
+}
+function nocolor() {
+  tput sgr0
+}
+
+# $(__git_ps1 "%s"): your current git branch if you're in a git directory, otherwise nothing
+function __git_ps1() {
+  if ! git root >/dev/null 2>&1; then
+    return
+  fi
+  B=$(git curbr)
+  U=$USER
+  R=$(basename $(git root))
+  H=$(hostname | cut -f1 -d.)
+  W=$(realpath . | sed "s|$(git root)/\?|/|")
+
+  #TODO: abstract the prefix, which sets titlebar and is duplicated
+  PS1='\[\e]0;${TITLEBAR_PREFIX} \w\a\]\[$(color 6)\]$U@$H \[$(color 1)\]$R \[$(color 3)\]$B \[$(color 6)\]$W\[$(nocolor)\] \$ '
+}
+
+##PS1 ----------------------------------------
+# extra backslash in front of \$ to make bash colorize the prompt
+# man bash, PROMPTING
+  # for a colored prompt, if the terminal has the capability; turned
+  # off by default to not distract the user: the focus in a terminal window
+  # should be on the output of commands, not on the prompt
 if ${use_color} ; then
   # Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
   if [[ -f ~/.dir_colors ]] ; then
@@ -497,54 +970,65 @@ if ${use_color} ; then
     eval "$(dircolors -b)"
   fi
 
-  if [[ ${EUID} == 0 ]] ; then
-    PS1='\[\033[01;31m\][\h\[\033[01;36m\] \W\[\033[01;31m\]]\$\[\033[00m\] '
-  else
-    PS1='\[\033[01;32m\][\u@\h\[\033[01;37m\] \W\[\033[01;32m\]]\$\[\033[00m\] '
-  fi
+  #gpg
+  #export GPGKEY=""
+  #export GPG_TTY="$(tty)"
+
+  TTY=$(tty)
+  TTY=${TTY##*/}
+
+  #PS1='\u@$(hostname):$( printf "%s" "${PWD/${HOME}/~}")/\n\$ '
+    PS1='$(titlebar)\u@\h:\w/\n\$ '
+  PS1="$BGreen\D{W%V.%u %m%d} \T$(__git_ps1) $NORMAL"$PS1
 
 else
-  if [[ ${EUID} == 0 ]] ; then
-    # show root@ when we don't have colors
-    PS1='\u@\h \W \$ '
-  else
-    PS1='\u@\h \w \$ '
-  fi
+  PS1='\u@\h \w \$ '
 fi
 
 
-match_lhs=""
-[[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(</etc/DIR_COLORS)"
-[[ -f $HOME/.dir_colors ]] && match_lhs="${match_lhs}$(<$HOME/.dir_colors)"
-[[ -z ${match_lhs} ]] \
-  && type -P dircolors >/dev/null \
-  && match_lhs=$(dircolors --print-database)
-[[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
+#if [ "`locale charmap 2>/dev/null`" = "UTF-8" ]
+#then
+  #stty iutf8
+#fi
 
 
-export LS_OPTIONS='--color=auto'
-export CLICOLOR='Yes'
-# for ls colors
-LS_COLORS="rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:"
-export LS_COLORS
+stty -ctlecho #don't show ^C when pressing Ctrl+C
 
-export LSCOLORS=gxfxbEaEBxxEhEhBaDaCaD
+
+## Timezone
+TZ='Asia/Shanghai'; export TZ
+
+# locale
+# export LANGUAGE="zh_CN:zh:en"
+#export LANGUAGE=en_US.UTF-8
+# export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+# Dont clear the screen after quitting a manual page
+export MANPAGER="less -X"
+## less not as chinese pager
+export LESSCHARSET=utf-8
+
+#eval "$(lessfile)"
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+
+# test -r ~/.vim/branch_prompt.sh && source ~/.vim/branch_prompt.sh
+# better yaourt colors
+export YAOURT_COLORS="nb=1:pkg=1:ver=1;32:lver=1;45:installed=1;42:grp=1;34:od=1;41;5:votes=1;44:dsc=0:other=1;35"
+
+
+##bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
+#if [ "$PS1" ] && [ $bmajor -eq 2 ] && [ $bminor '>' 04 ]
+#unset bash bmajor bminor
+
 
 # guideline 0: those not in command-not-found
 # guideline 1: standard cross-platform parameters, such as ps, tar.
 
 # Specific bashrc
 [[ -f $HOME/.bashrc.local ]] && . $HOME/.bashrc.local
-
-# Docker
-[ -f ~/.bashrc_docker ] && .  ~/.bashrc_docker
-
-#Functions
-#different file for functions
-if [ -f "~/.bash_functions" ]; then
-  source "~/.bash_functions"
-fi
-
 
 # Try to keep environment pollution down, EPA loves us.
 unset use_color safe_term match_lhs sh
@@ -554,10 +1038,247 @@ unset -f have
 unset UNAME RELEASE default dirnames filenames have nospace bashdefault plusdirs
 set notildeop
 
+#Functions
 
-# Functions
+# implementation refs from https://github.com/jpetazzo/nsenter/blob/master/docker-enter
+function docker-enter() {
+    #if [ -e $(dirname "$0")/nsenter ]; then
+    #Change for centos bash running
+    if [ -e $(dirname '$0')/nsenter ]; then
+        # with boot2docker, nsenter is not in the PATH but it is in the same folder
+        NSENTER=$(dirname "$0")/nsenter
+    else
+        # if nsenter has already been installed with path notified, here will be clarified
+        NSENTER=$(which nsenter)
+        #NSENTER=nsenter
+    fi
+    [ -z "$NSENTER" ] && echo "WARN Cannot find nsenter" && return
 
-extr() {
+    if [ -z "$1" ]; then
+        echo "Usage: `basename "$0"` CONTAINER [COMMAND [ARG]...]"
+        echo ""
+        echo "Enters the Docker CONTAINER and executes the specified COMMAND."
+        echo "If COMMAND is not specified, runs an interactive shell in CONTAINER."
+    else
+        PID=$(sudo docker inspect --format "{{.State.Pid}}" "$1")
+        if [ -z "$PID" ]; then
+            echo "WARN Cannot find the given container"
+            return
+        fi
+        shift
+
+        OPTS="--target $PID --mount --uts --ipc --net --pid"
+
+        if [ -z "$1" ]; then
+            # No command given.
+            # Use su to clear all host environment variables except for TERM,
+            # initialize the environment variables HOME, SHELL, USER, LOGNAME, PATH,
+            # and start a login shell.
+            #sudo $NSENTER "$OPTS" su - root
+            sudo $NSENTER --target $PID --mount --uts --ipc --net --pid su - root
+        else
+            # Use env to clear all host environment variables.
+            sudo $NSENTER --target $PID --mount --uts --ipc --net --pid env -i $@
+        fi
+    fi
+}
+
+
+# bring a feature branch back to master
+gum() { git checkout "$1" && git rebase master && git checkout master; }
+
+# Show which branches need to be rebased on master, typically after a pull.
+# commits listed between a branch and master. Then I know which branches to use with gum.
+# The list of excluded branches includes branches which should not be rebased against master (I could do some processing of git branch -r to not have those hardcoded) but the odd one is stale. Sometimes, I get an idea for a feature which is too intrusive, too messy or just too incomplete to be rebased against master. Rather than losing the idea or wasting time rebasing, I'm getting into the habit of renaming the branch foo as stale-foo and gsb then leaves it alone. Equally, there are frequently times when I need to have a feature branch based on another feature branch, sometimes several feature branches deep. Identifying these branches and avoiding rebasing on the wrong branch is important to not waste time.
+gsb() { LIST=`git branch|egrep -v '(release|staging|trusty|playground|stale)'|tr '\n' ' '|tr -d '*'`; git show-branch $LIST; }
+
+
+# Shows which feature branches can be dropped with git branch -d.
+gleaf(){ git branch --merged master | egrep -v '(release|staging|trusty|playground|pipeline|review|stale)'; }
+
+function chd {
+    local maxLength=100
+    if [ -z $dirstack ] ; then
+        dirstack=($PWD)
+    fi
+    builtin cd $@
+    local length=${#dirstack[@]}
+    local lastEntry=${dirstack[$length-1]}
+    if [ $PWD != $lastEntry ]; then
+        if [ $length -ge $maxLength ]; then
+            dirstack=(${dirstack[@]:1})
+            length=$(($length - 1))
+        fi
+        dirstack[$length]=$PWD
+    fi
+    return
+}
+
+# redefine 'cd' to push the current pwd to a stack before changing directory. 'cd--' is popping the stack and changing directory.
+function cd-- {
+    if [ -z $dirstack ] ; then
+        dirstack=($PWD)
+    fi
+    local length=${#dirstack[@]}
+    local folder=''
+    while [ $length -gt 1 ] && [ ! -d "$folder" ]; do
+        dirstack=(${dirstack[@]:0:$(($length - 1))})
+        length=$(($length -1))
+        folder=${dirstack[$length-1]}
+        if [ $PWD == $folder ]; then folder=""; fi
+    done
+    if [ -d "$folder" ]; then
+        builtin cd $folder
+    else
+        echo "Directory stack empty"
+    fi
+}
+
+# cs .... and it will step 4 dir's up.
+function cs () {
+    DEPTH=$1
+    for ((i=0; i< ${#DEPTH}; i++))
+        do cd ..
+    done;
+}
+
+
+# 'cd ..' will go back one dir
+# 'cd ...' will go back two dirs
+# function cd {
+#     local maxLength=100
+#     local lastArg=${!#}
+#
+#     if [ -z $dirstack ] ; then
+#         dirstack=($PWD)
+#     fi
+#
+#     if [ ! ${lastArg//[.]/} ] && [ ${#lastArg} -gt 2 ]; then
+#       local CD=".."
+#       for ((i=2; i < ${#lastArg}; i++)); do
+#         CD="${CD}/.."
+#       done;
+#       builtin cd $CD
+#     elif [ $lastArg == '-' ]; then
+#       cd-
+#     else
+#       builtin cd $@
+#     fi
+#
+#     local length=${#dirstack[@]}
+#     local lastEntry=${dirstack[$length-1]}
+#     if [ $PWD != $lastEntry ]; then
+#         if [ $length -ge $maxLength ]; then
+#             dirstack=(${dirstack[@]:1})
+#             length=$(($length - 1))
+#         fi
+#         dirstack[$length]=$PWD
+#     fi
+#     return
+# }
+
+
+
+
+# 'cd -' or 'cd-' will use history
+function cd- {
+    if [ -z $dirstack ] ; then
+        dirstack=($PWD)
+    fi
+    local length=${#dirstack[@]}
+    local folder=''
+    while [ $length -gt 1 ] && [ ! -d "$folder" ]; do
+        dirstack=(${dirstack[@]:0:$(($length - 1))})
+        length=$(($length -1))
+        folder=${dirstack[$length-1]}
+        if [ $PWD == $folder ]; then folder=""; fi
+    done
+    if [ -d "$folder" ]; then
+        builtin cd $folder
+    else
+        echo "Directory stack empty"
+    fi
+}
+
+
+#This function defines a 'cd' replacement function capable of keeping,
+#displaying and accessing history of visited directories, up to 10 entries.
+#To use it, uncomment it, source this file and try 'cd --'.
+#acd_func 1.0.5, 10-nov-2004
+function cd_func {
+  local x2 the_new_dir adir index
+  local -i cnt
+
+##  if [[ $1 ==  "--" ]]; then dirs -v; return 0; fi
+
+  the_new_dir=$1
+  [[ -z $1 ]] && the_new_dir=$HOME
+
+##  if [[ ${the_new_dir:0:1} == '-' ]]; then
+##    #
+##    # Extract dir N from dirs
+##    index=${the_new_dir:1}
+##    [[ -z $index ]] and index=1
+##    adir=$(dirs +$index)
+##    [[ -z $adir ]] and return 1
+##    the_new_dir=$adir
+##  fi
+
+  #
+  # '~' has to be substituted by ${HOME}
+  [[ ${the_new_dir:0:1} == '~' ]] && the_new_dir="${HOME}${the_new_dir:1}"
+
+  #
+  # Now change to the new dir and add to the top of the stack
+  pushd "${the_new_dir}" > /dev/null
+  [[ $? -ne 0 ]] && return 1
+  the_new_dir=$(pwd)
+
+  #
+  # Trim down everything beyond 11th entry
+  popd -n +11 2>/dev/null 1>/dev/null
+
+  #
+  # Remove any other occurence of this dir, skipping the top of the stack
+##  for ((cnt=1; cnt <= 10; cnt++)); do
+##    x2=$(dirs +${cnt} 2>/dev/null)
+##    [[ $? -ne 0 ]] and return 0
+##    [[ ${x2:0:1} == '~' ]] and x2="${HOME}${x2:1}"
+##    if [[ "${x2}" == "${the_new_dir}" ]]; then
+##      popd -n +$cnt 2>/dev/null 1>/dev/null
+##      cnt=cnt-1
+##    fi
+##  done
+
+  return 0
+}
+
+alias cd=cd_func
+
+# ex - archive extractor
+# usage: ex <file>
+function ex () {
+  if [ -f $1 ] ; then
+    case $1 in
+      *.tar.bz2)   tar xjf $1   ;;
+      *.tar.gz)    tar xzf $1   ;;
+      *.bz2)       bunzip2 $1   ;;
+      *.rar)       unrar x $1     ;;
+      *.gz)        gunzip $1    ;;
+      *.tar)       tar xf $1    ;;
+      *.tbz2)      tar xjf $1   ;;
+      *.tgz)       tar xzf $1   ;;
+      *.zip)       unzip $1     ;;
+      *.Z)         uncompress $1;;
+      *.7z)        7z x $1      ;;
+      *)           echo "'$1' cannot be extracted via ex()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
+function extr() {
   local c e i
 
   (($#)) || return
@@ -574,7 +1295,7 @@ extr() {
     case $i in
       *.t\(gz|lz|xz|b\(2|z?\(2\)\)|a\(z|r?\(.\(Z|bz?\(2\)|gz|lzma|xz\)\)\)\) ) c='bsdtar xvf';;
       *.7z)  c='7z x';;
-      *.Z)    c='uncompress';;
+      *.Z)   c='uncompress';;
       *.bz2) c='bunzip2';;
       *.exe) c='cabextract';;
       *.gz)  c='gunzip';;
@@ -600,29 +1321,6 @@ function xrpm() { rpm2cpio "$1" | cpio -idmv; }
 function vack() { vim `ack-grep -g $@`; }
 function mdcd() { mkdir "$1"; cd "$1"; }
 function settitle() { echo -ne "\e]2;$@\a\e]1;$@\a"; }
-
-# ex - archive extractor
-# usage: ex <file>
-function ex () {
-  if [ -f $1 ] ; then
-    case $1 in
-      *.tar.bz2)   tar xjf $1   ;;
-      *.tar.gz)    tar xzf $1   ;;
-      *.bz2)       bunzip2 $1   ;;
-      *.rar)       unrar x $1     ;;
-      *.gz)        gunzip $1    ;;
-      *.tar)       tar xf $1    ;;
-      *.tbz2)      tar xjf $1   ;;
-      *.tgz)       tar xzf $1   ;;
-      *.zip)       unzip $1     ;;
-      *.Z)         uncompress $1;;
-      *.7z)        7z x $1      ;;
-      *)           echo "'$1' cannot be extracted via ex()" ;;
-    esac
-  else
-    echo "'$1' is not a valid file"
-  fi
-}
 
 
 # dir for `rm` backup:
@@ -699,7 +1397,7 @@ if [ ! -e "$HOME/.sudo_as_admin_successful" ]; then
   case " $(groups) " in *\ admin\ *)
     if [ -x /usr/bin/sudo ]; then
     cat <<-EOF
-  To run a command as administrator (user "root"), use "sudo <command>".
+  To run a command as root, use "sudo <command>".
   See "man sudo_root" for details.
 
 EOF
@@ -707,23 +1405,6 @@ EOF
   esac
 fi
 
-
-########################################
-## Timezone
-TZ='Asia/Shanghai'; export TZ
-
-
-########################################
-# locale
-# export LANGUAGE="zh_CN:zh:en"
-#export LANGUAGE=en_US.UTF-8
-# export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-
-# Dont clear the screen after quitting a manual page
-export MANPAGER="less -X"
-## less not as chinese pager
-export LESSCHARSET=utf-8
 
 
 # test -r ~/.vim/branch_prompt.sh && source ~/.vim/branch_prompt.sh
@@ -781,9 +1462,9 @@ function prompt_git() {
 
 ### PATH
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+# Original PATH is set in /etc/profile
 # NEVER export PATH without quoting $PATH
 # Deal with PATH only in .bashrc, and source it in ~/.bash_profile
-# Original PATH is set in /etc/profile
 
 #For Java
 # export JAVA_HOME=/usr/lib/jvm/java-6-sun-1.6.0.14/jre/
@@ -826,7 +1507,10 @@ export LD_LIBRARY_PATH=/opt/j2sdk1.4.2_04/jre:$LD_LIBRARY_PATH
 
 [ -d "/snap/bin" ] && export PATH="/snap/bin:$PATH"
 
-###Go
+[ -d "$HOME/.gem/ruby/bin" ] && export PATH="$HOME/.gem/ruby/bin:$PATH"
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
 [ -d "$HOME/.cargo/bin" ] && export PATH="$HOME/.cargo/bin:$PATH"
 
 #perl5
@@ -835,11 +1519,6 @@ PERL5LIB="$HOME/.local/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LI
 PERL_LOCAL_LIB_ROOT="$HOME/.local/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
 PERL_MB_OPT="--install_base \"$HOME/.local/perl5\""; export PERL_MB_OPT;
 PERL_MM_OPT="INSTALL_BASE=$HOME/.local/perl5"; export PERL_MM_OPT;
-
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
-fi
 
 # ruby
 #[ -f "${HOME}/.rvm/bin" ] && export PATH="${PATH}:${HOME}/.rvm/bin"
@@ -864,66 +1543,10 @@ if [ -f '$HOME/google-cloud-sdk/path.bash.inc' ]; then
   source '$HOME/google-cloud-sdk/path.bash.inc'
 fi
 
-export GOPATH=~/gopath
-
-# Dont clear the screen after quitting a manual page
-export MANPAGER="less -X"
-## less not as chinese pager
-export LESSCHARSET=utf-8
-
-#eval "$(lessfile)"
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-
-export PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig:/usr/lib/pkgconfig
-#export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/share/lib:/usr/local/lib:/usr/local/share/lib:/usr/X11R6/lib:/opt/lib
-
-export PATH
-
-
-# export BBSHOME="/home/bbs"
-# export WWWHOME="/home/bbs/www"
-# export PHPHOME="/home/bbs/www/php"
-# export SRCDIR="/home/"
-
-# Original PATH is set in /etc/profile
-# NEVER export PATH without quoting $PATH
-
-#never
-## [ "$UID" = "0" ] || export PATH=".:$PATH"
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
-export EDITOR=vim
-# export INPUTRC=/etc/inputrc
-export USER LOGNAME MAIL HOSTNAME
-export VISUAL=$EDITOR
-export CSCOPE_EDITOR="$EDITOR"
-export WCDHOME="${HOME}/.wcd"
-#export BROWSER="chromium"
-export BROWSER="x-www-browser"
-
-# export RESIN_HOME
-
-export SHLVL=1
-export G_BROKEN_FILENAMES=1
-
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-
-export PATH
-
-# if ! -z $CROSS_
-# export CROSS_COMPILE=ppc_85xx-
-# export TARGET_OS=linux
-
-
-#gpg
-#export GPGKEY=""
-#export GPG_TTY="$(tty)"
-
-#fix java ugliness
-export _JAVA_OPTIONS="-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel"
-#}2
+# The next line enables bash completion for gcloud.
+if [ -f '$HOME/google-cloud-sdk/completion.bash.inc' ]; then
+  source '$HOME/google-cloud-sdk/completion.bash.inc'
+fi
 
 
 bash_prompt_command() {
@@ -942,12 +1565,8 @@ bash_prompt_command() {
   fi
 }
 
-# init it by setting PROMPT_COMMAND
-#PROMPT_COMMAND=bash_prompt_command
-
 shopt -s checkhash cmdhist expand_aliases histreedit mailwarn
 shopt -s hostcomplete
-
 
 ########################################
 #Completion options
@@ -962,10 +1581,9 @@ shopt -s no_empty_cmd_completion
 # match all files and zero or more directories and subdirectories.
 #shopt -s globstar
 
-
 # Completion options
 #These completion tuning parameters change the default behavior of bash_completion:
-#
+
 #Define to avoid stripping description in --option=description of './configure --help'
 COMP_CONFIGURE_HINTS=1
 
@@ -978,30 +1596,27 @@ COMP_TAR_INTERNAL_PATHS=1
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
-fi
+#if ! shopt -oq posix; then
 
 #trap '. /etc/bash_completion ; trap USR2' USR2
 #{ sleep 0.01 ; builtin kill -USR2 $$ ; } & disown
 #[ -z "${BASH_COMPLETION_COMPAT_DIR}" ] && [ -f /etc/bash_completion ] && . /etc/bash_completion
 
 #   https://github.com/scop/bash-completion
+## source files
+#[ -r /usr/share/bash-completion/completions ] &&
+#  . /usr/share/bash-completion/completions/*
 
 # Check for interactive bash and that we haven't already been sourced.
 if [ -n "${BASH_VERSION-}" -a -n "${PS1-}" -a -z "${BASH_COMPLETION_COMPAT_DIR-}" ]; then
-
     # Check for recent enough version of bash.
-    if [ ${BASH_VERSINFO[0]} -gt 4 ] || \
-       [ ${BASH_VERSINFO[0]} -eq 4 -a ${BASH_VERSINFO[1]} -ge 1 ]; then
+    if [ ${BASH_VERSINFO[0]} -gt 4 ] || [ ${BASH_VERSINFO[0]} -eq 4 -a ${BASH_VERSINFO[1]} -ge 1 ]; then
         [ -r "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion" ] && \
             . "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion"
         if shopt -q progcomp && [ -r /usr/share/bash-completion/bash_completion ]; then
             . /usr/share/bash-completion/bash_completion
+        elif [ -f /etc/bash_completion ]; then
+            . /etc/bash_completion
         fi
     fi
 
@@ -1017,8 +1632,6 @@ complete -cf sudo
 #certutil: function failed: SEC_ERROR_PKCS11_GENERAL_ERROR: A PKCS #11 module returned CKR_GENERAL_ERROR, indicating that an unrecoverable error has occurred.
 
 ##startup programs ----------------------------------------
-#export calendar=$HOME/.calendar/calendar.all
-
 #! ps aux | grep -q fetchmail && fetchmail &
 #! ( ps aux | grep -q fetchmail ) && fetchmail &
 
@@ -1031,7 +1644,6 @@ complete -cf sudo
 #xfconf-query -c xfce4-session -p /startup/ssh-agent/type -n -t string -s ssh-agent
 
 # SSH agent
-
 SSH_ENV=$HOME/.ssh/environment
 
 function start_agent {
@@ -1069,34 +1681,41 @@ fi
 # if the command-not-found package is installed, use it
 if [ -x /usr/lib/command-not-found ]; then
   function command_not_found_handle {
-  # check because c-n-f could've been removed in the meantime
-  if [ -x /usr/lib/command-not-found ]; then
-    /usr/lib/command-not-found -- "$1"
-    return $?
-  else
-    printf "%s: command not found\n" "$1" >&2
-    return 127
-  fi
+    # check because c-n-f could've been removed in the meantime
+    if [ -x /usr/lib/command-not-found ]; then
+      /usr/lib/command-not-found -- "$1"
+      return $?
+    else
+      printf "%s: command not found\n" "$1" >&2
+      return 127
+    fi
   }
 fi
 
 # only in Util-Linux; not work for BSD
 #setterm -blength 0
 
-
 export QT_STYLE_OVERRIDE=gtk
 export QT_SELECT=qt5
 
 
-# Alias definitions.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-#If these are enabled they will be used instead of original
-#To override alias instruction use a \ before, ie \rm will call the real rm
-# use a different file for aliases
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+#TODO if domainname=cnbj/seld
+#[[ $(hostname) = "et.local" ]] || (\
+[[ $(hostname) = cnbj* || $(hostname) = CNBJ* || $(hostname) = seld* ]] && \
+  [[ $(ifconfig | egrep '10.147' | awk '{print $2} ') = 'addr:10.147'* ]] \
+  && . ~/.myvar
 
+#export ftp_proxy=http://proxy.global.net:8080
+#export http_proxy=http://proxy.global.net:8080
+#export https_proxy=http://proxy.global.net:8080
+#export no_proxy=localhost,127.0.0.1,10.*,.corpusers.net
+
+export IPOD_MOUNTPOINT=/media/
+
+# export BBSHOME="/home/bbs"
+# export WWWHOME="/home/bbs/www"
+# export PHPHOME="/home/bbs/www/php"
+# export SRCDIR="/home/"
 
 # Start X if login from the first console.
 #[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
@@ -1112,13 +1731,6 @@ if [ ! $DISPLAY ] ; then
   fi
 fi
 
-# If running trom tty
-if [ $(tty) == "/dev/tty3" ]; then
-  sway
-  exit 0
-fi
-
-
 #eval `keychain --eval --agents ssh id_rsa`
 #eval `keychain --eval ~/.ssh/id_dsa`
 #eval `keychain --eval ~/.ssh/id_rsa`
@@ -1126,130 +1738,63 @@ fi
 # curl https://mirrors.tuna.tsinghua.edu.cn/git/git-repo -o repo
 export REPO_URL='https://mirrors.tuna.tsinghua.edu.cn/git/git-repo/'
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# If running trom tty
+if [ $(tty) == "/dev/tty3" ]; then
+  sway
+  exit 0
 fi
 
-function count {
-  I=$1
-  while [ $I -le $2 ];
-    do echo $I
-    I=$((I+1))
-  done
-}
+### BlackArch Linux settings ###
 
-function defaultps1() {
-  PS1='\[\e]0;${TITLEBAR_PREFIX} \w\a\]\u@\h:\w\$ '
-}
-defaultps1 # call it
+# colors
+darkgrey="$(tput bold ; tput setaf 0)"
+white="$(tput bold ; tput setaf 7)"
+red="$(tput bold; tput setaf 1)"
+nc="$(tput sgr0)"
 
-TITLEBAR_PREFIX=""
-function titlebar {
-  TITLEBAR_PREFIX="$*"
-  echo -ne "\033]2;$*\a"
-}
+# exports
+export PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig:/usr/lib/pkgconfig
+#export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/share/lib:/usr/local/lib:/usr/local/share/lib:/usr/X11R6/lib:/opt/lib
 
-function color() {
-  tput setf $1
-}
-function nocolor() {
-  tput sgr0
-}
+export EDITOR=vim
+# export INPUTRC=/etc/inputrc
+export USER LOGNAME MAIL HOSTNAME
+export VISUAL=$EDITOR
+export CSCOPE_EDITOR="$EDITOR"
+export WCDHOME="${HOME}/.wcd"
+export BROWSER="x-www-browser"
 
-function gitps1() {
-  PROMPT_COMMAND=gitps1
+# export RESIN_HOME
+export SHLVL=1
+export G_BROKEN_FILENAMES=1
 
-  if ! git root >/dev/null 2>&1; then
-    defaultps1
-    return
-  fi
-
-  B=$(git curbr)
-  U=$USER
-  R=$(basename $(git root))
-  H=$(hostname | cut -f1 -d.)
-  W=$(realpath . | sed "s|$(git root)/\?|/|")
-
-  #TODO: abstract the prefix, which sets titlebar and is duplicated
-  #TODO: with defaultps1
-  PS1='\[\e]0;${TITLEBAR_PREFIX} \w\a\]\[$(color 6)\]$U@$H \[$(color 1)\]$R \[$(color 3)\]$B \[$(color 6)\]$W\[$(nocolor)\] \$ '
-}
+export PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:"
+export PATH="${PATH}/opt/bin:/usr/bin/core_perl:/usr/games/bin:"
+## [ "$UID" = "0" ] || export PATH=".:$PATH"
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
 
 export PRINTER=tahiti-color
 export PRINTER2=waikiki-color
 export ENV=$HOME/.bashrc
 
-export PATH=~/src/go/bin:/usr/local/go/bin:$PATH
 export GOPATH=~/src/go
 function KUBEGOPATH {
   export GOPATH=`pwd`/Godeps/_workspace:`pwd`/_output/local/go:$GOPATH
 }
 
-##PS1 ----------------------------------------
-unset PS1
-if [ "$PS1" ]; then
-  if [ "$BASH" ]; then
-    PS1='\u@\h:\w\$ '
-    # Source global definitions
-    if [ -f /etc/bashrc ]; then
-      . /etc/bashrc
-    fi
-
-    if [ -f /etc/bash.bashrc ]; then
-      . /etc/bash.bashrc
-    fi
-
-  else
-    if [ "`id -u`" -eq 0 ]; then
-      PS1='# '
-    else
-      PS1='$ '
-    fi
-  fi
-fi
-
-# Setup a red prompt for root and a green one for users.
-RED="\[\e[1;31m\]"
-GREEN="\[\e[1;32m\]"
-if [[ $EUID == 0 ]] ; then
-  PS1="$RED\u [ $NORMAL\w$RED ]# $NORMAL"
-else
-  PS1="$GREEN\u [ $NORMAL\w$GREEN ]\$ $NORMAL"
-fi
-
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-  xterm-color|*-256color) color_prompt=yes;;
-esac
-
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-force_color_prompt=yes
-
-if [ "$color_prompt" = yes ]; then
-    PS1='\[\033[01;31m\]\u@\h\[\033[01;36m\]:\w/\[\033[00m\]\n\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
+# if ! -z $CROSS_
+# export CROSS_COMPILE=ppc_85xx-
+# export TARGET_OS=linux
 
 
-TTY=$(tty)
-TTY=${TTY##*/}
+#fix java ugliness
+export _JAVA_OPTIONS="-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel"
+#}2
 
-##bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
-#if [ "$PS1" ] && [ $bmajor -eq 2 ] && [ $bminor '>' 04 ]
-#unset bash bmajor bminor
-
-#PS1=$BYellow"@$TTY@\\s-\\v "$Cyan$PS1
-#PS1='\u@$(hostname):$( printf "%s" "${PWD/${HOME}/~}")\n\$ '
-#PS1="${ON_YELLOW}\u@\h${GREEN}:\w/${NORMAL}$(__git_ps1)\n\$ "
-#PS1="$BGreen\D{W%V.%u %m%d} $UPurple\t$NORMAL $BBlue"$PS1$NORMAL
-PS1="$BGreen\D{W%V.%u %m%d} $UPurple\T$NORMAL $BBlue"$PS1$NORMAL
-
-[ -d "$HOME/.gem/ruby/bin" ] && export PATH="$HOME/.gem/ruby/bin:$PATH"
-
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export LD_PRELOAD=""
 
