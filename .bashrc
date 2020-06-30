@@ -32,6 +32,376 @@
 #QUOTE END
 
 
+#
+# Check which shell is reading this file
+# check if variables are read-only before setting them
+# for example in a restricted shell
+if unset noprofile 2>/dev/null ; then
+  noprofile=false
+fi
+if unset restricted 2>/dev/null ; then
+  restricted=false
+fi
+: ${_is_save:=unset}
+if test -z "$is" ; then
+ if test -f /proc/mounts ; then
+  if ! is=$(readlink /proc/$$/exe 2>/dev/null) ; then
+    case "$0" in
+    *pcksh)	is=ksh	;;
+    *bash)	is=bash	;;
+    *)		is=sh	;;
+    esac
+  fi
+  case "$is" in
+    */bash)	is=bash
+	while read -r -d $'\0' a ; do
+	    case "$a" in
+	    --noprofile)
+		readonly noprofile=true ;;
+	    --restricted)
+		readonly restricted=true ;;
+	    esac
+	done < /proc/$$/cmdline
+	case "$0" in
+	sh|-sh|*/sh)
+		is=sh	;;
+	esac		;;
+    */ash)	is=ash  ;;
+    */dash)	is=ash  ;;
+    */mksh)	is=ksh  ;;
+    */*pcksh)	is=ksh  ;;
+    */zsh)	is=zsh  ;;
+    */*)	is=sh   ;;
+  esac
+  #
+  # `r' in $- occurs *after* system files are parsed
+  #
+  for a in $SHELL ; do
+    case "$a" in
+      */r*sh)
+        readonly restricted=true ;;
+      -r*|-[!-]r*|-[!-][!-]r*)
+        readonly restricted=true ;;
+      --restricted)
+        readonly restricted=true ;;
+    esac
+  done
+  unset a
+ else
+  is=sh
+ fi
+fi
+
+#
+# Call common progams from /bin or /usr/bin only
+#
+path ()
+{
+    if test -x /usr/bin/$1 ; then
+	${1+"/usr/bin/$@"}
+    elif test -x   /bin/$1 ; then
+	${1+"/bin/$@"}
+    fi
+}
+
+
+#
+# ksh/ash sometimes do not know
+#
+test -z "$UID"  && readonly  UID=`path id -ur 2> /dev/null`
+test -z "$EUID" && readonly EUID=`path id -u  2> /dev/null`
+
+test -s /etc/profile.d/ls.bash && . /etc/profile.d/ls.bash
+
+#
+# Avoid trouble with Emacs shell mode
+#
+if test "$EMACS" = "t" ; then
+    path tset -I -Q
+    path stty cooked pass8 dec nl -echo
+fi
+
+#
+# Set prompt and aliases to something useful for an interactive shell
+#
+case "$-" in
+*i*)
+    #
+    # Set prompt to something useful
+    #
+    case "$is" in
+    bash)
+	# If COLUMNS are within the environment the shell should update
+	# the winsize after each job otherwise the values are wrong
+	case "$(declare -p COLUMNS 2> /dev/null)" in
+	*-x*COLUMNS=*) shopt -s checkwinsize
+	esac
+	# Append history list instead of override
+	shopt -s histappend
+	# All commands of root will have a time stamp
+	if test "$UID" -eq 0  ; then
+	    HISTTIMEFORMAT=${HISTTIMEFORMAT:-"%F %H:%M:%S "}
+	fi
+	# Force a reset of the readline library
+	unset TERMCAP
+	#
+	# Returns short path (last two directories)
+	#
+	spwd () {
+	  ( IFS=/
+	    set $PWD
+	    if test $# -le 3 ; then
+		echo "$PWD"
+	    else
+		eval echo \"..\${$(($#-1))}/\${$#}\"
+	    fi ) ; }
+	#
+	# Set xterm prompt with short path (last 18 characters)
+	#
+	if path tput hs 2>/dev/null || path tput -T $TERM+sl hs 2>/dev/null ; then
+	    #
+	    # Mirror prompt in terminal "status line", which for graphical
+	    # terminals usually is the window title. KDE konsole in
+	    # addition needs to have "%w" in the "tabs" setting, ymmv for
+	    # other console emulators.
+	    #
+	    if [[ $TERM = *xterm* ]] ; then
+		_tsl=$(echo -en '\e]2;')
+		_isl=$(echo -en '\e]1;')
+		_fsl=$(echo -en '\007')
+	    elif path tput -T $TERM+sl tsl 2>/dev/null ; then
+		_tsl=$(path tput -T $TERM+sl tsl 2>/dev/null)
+		_isl=''
+		_fsl=$(path tput -T $TERM+sl fsl 2>/dev/null)
+	    else
+		_tsl=$(path tput tsl 2>/dev/null)
+		_isl=''
+		_fsl=$(path tput fsl 2>/dev/null)
+	    fi
+	    _sc=$(tput sc 2>/dev/null)
+	    _rc=$(tput rc 2>/dev/null)
+	    if test -n "$_tsl" -a -n "$_isl" -a "$_fsl" ; then
+		TS1="$_sc$_tsl%s@%s:%s$_fsl$_isl%s$_fsl$_rc"
+	    elif test -n "$_tsl" -a "$_fsl" ; then
+		TS1="$_sc$_tsl%s@%s:%s$_fsl$_rc"
+	    fi
+	    unset _isl _tsl _fsl _sc _rc
+	    ppwd () {
+		local dir
+		local -i width
+		test -n "$TS1" || return;
+		dir="$(dirs +0)"
+		let width=${#dir}-18
+		test ${#dir} -le 18 || dir="...${dir#$(printf "%.*s" $width "$dir")}"
+		if test ${#TS1} -gt 17 ; then
+		    printf "$TS1" "$USER" "$HOST" "$dir" "$HOST"
+		else
+		    printf "$TS1" "$USER" "$HOST" "$dir"
+		fi
+	    }
+	else
+	    ppwd () { true; }
+	fi
+	# If set: do not follow sym links
+	# set -P
+	#
+	# Other prompting for root
+	if test "$UID" -eq 0  ; then
+	    if test -n "$TERM" -a -t ; then
+	    	_bred="$(path tput bold 2> /dev/null; path tput setaf 1 2> /dev/null)"
+	    	_sgr0="$(path tput sgr0 2> /dev/null)"
+	    fi
+	    # Colored root prompt (see bugzilla #144620)
+	    if test -n "$_bred" -a -n "$_sgr0" ; then
+		_u="\[$_bred\]\h"
+		_p=" #\[$_sgr0\]"
+	    else
+		_u="\h"
+		_p=" #"
+	    fi
+	    unset _bred _sgr0
+	else
+	    _u="\u@\h"
+	    _p=">"
+	fi
+	if test -z "$EMACS" -a -z "$MC_SID" -a "$restricted" != true -a \
+		-z "$STY" -a -n "$DISPLAY" -a ! -r $HOME/.bash.expert
+	then
+	    _t="\[\$(ppwd)\]"
+	else
+	    _t=""
+	fi
+	case "$(declare -p PS1 2> /dev/null)" in
+	*-x*PS1=*)
+	    ;;
+	*)
+	    # With full path on prompt
+	    PS1="${_t}${_u}:\w${_p} "
+#	    # With short path on prompt
+#	    PS1="${_t}${_u}:\$(spwd)${_p} "
+#	    # With physical path even if reached over sym link
+#	    PS1="${_t}${_u}:\$(pwd -P)${_p} "
+	    ;;
+	esac
+	unset _u _p _t
+	;;
+    ash)
+	cd () {
+	    local ret
+	    command cd "$@"
+	    ret=$?
+	    PWD=$(pwd)
+	    if test "$UID" = 0 ; then
+		PS1="${HOST}:${PWD} # "
+	    else
+		PS1="${USER}@${HOST}:${PWD}> "
+	    fi
+	    return $ret
+	}
+	cd .
+	;;
+    ksh)
+	# Some users of the ksh are not common with the usage of PS1.
+	# This variable should not be exported, because normally only
+	# interactive shells set this variable by default to ``$ ''.
+	if test "${PS1-\$ }" = '$ ' -o "${PS1-\$ }" = '# ' ; then
+	    if test "$UID" = 0 ; then
+		PS1="${HOST}:"'${PWD}'" # "
+	    else
+		PS1="${USER}@${HOST}:"'${PWD}'"> "
+	    fi
+	fi
+	;;
+    zsh)
+#	setopt chaselinks
+	if test "$UID" = 0; then
+	    PS1='%n@%m:%~ # '
+	else
+	    PS1='%n@%m:%~> '
+	fi
+	;;
+    *)
+	if test "$UID" = 0 ; then
+	    PS1="${HOST}:"'${PWD}'" # "
+	else
+	    PS1="${USER}@${HOST}:"'${PWD}'"> "
+	fi
+	;;
+    esac
+    PS2='> '
+
+    if test "$is" = "ash" ; then
+	# The ash shell does not have an alias builtin in
+	# therefore we use functions here. This is a seperate
+	# file because other shells may run into trouble
+	# if they parse this even if they do not expand.
+	test -s /etc/profile.d/alias.ash && . /etc/profile.d/alias.ash
+    else
+	test -s /etc/profile.d/alias.bash && . /etc/profile.d/alias.bash
+	test -s $HOME/.alias && . $HOME/.alias
+    fi
+
+    #
+    # Expert mode: if we find $HOME/.bash.expert we skip our settings
+    # used for interactive completion and read in the expert file.
+    #
+    if test "$is" = "bash" -a -r $HOME/.bash.expert ; then
+	. $HOME/.bash.expert
+    elif test "$is" = "bash" ; then
+	# Complete builtin of the bash 2.0 and higher
+	case "$BASH_VERSION" in
+	[2-9].*)
+	    if test -e /etc/bash_completion ; then
+		. /etc/bash_completion
+	    elif test -s /etc/profile.d/bash_completion.sh ; then
+		. /etc/profile.d/bash_completion.sh
+	    elif test -s /etc/profile.d/complete.bash ; then
+		. /etc/profile.d/complete.bash
+	    fi
+	    # Do not source twice if already handled by bash-completion
+	    if [[ -n $BASH_COMPLETION_COMPAT_DIR && $BASH_COMPLETION_COMPAT_DIR != /etc/bash_completion.d ]]; then
+		for s in /etc/bash_completion.d/*.sh ; do
+		    test -r $s && . $s
+		done
+	    fi
+	    if test -e $HOME/.bash_completion ; then
+		. $HOME/.bash_completion
+	    fi
+	    if test -f /etc/bash_command_not_found ; then
+		. /etc/bash_command_not_found
+	    fi
+	    ;;
+	*)  ;;
+	esac
+    fi
+
+    # Do not save dupes and lines starting by space in the bash history file
+    HISTCONTROL=ignoreboth
+    if test "$is" = "ksh" ; then
+	# Use a ksh specific history file and enable
+    	# emacs line editor
+    	: ${HISTFILE=$HOME/.kshrc_history}
+    	: ${VISUAL=emacs}
+	case $(set -o) in
+	*multiline*) set -o multiline
+	esac
+    fi
+    # command not found handler in zsh version
+    if test "$is" = "zsh" ; then
+	if test -f /etc/zsh_command_not_found ; then
+	    . /etc/zsh_command_not_found
+	fi
+    fi
+    ;;
+esac
+
+#/etc/profile.d/vte-2.91.sh
+# Source /etc/profile.d/vte.sh, which improvies usage of VTE based terminals.
+# It is vte.sh's responsibility to 'not load' when it's not applicable (not inside a VTE term)
+# If you want to 'disable' this functionality, set the sticky bit on /etc/profile.d/vte.sh
+if test -r /etc/profile.d/vte.sh -a ! -k /etc/profile.d/vte.sh; then
+  . /etc/profile.d/vte.sh
+fi
+
+if test "$_is_save" = "unset" ; then
+    #
+    # Just in case the user excutes a command with ssh or sudo
+    #
+    if test \( -n "$SSH_CONNECTION" -o -n "$SUDO_COMMAND" \) -a -z "$PROFILEREAD" -a "$noprofile" != true ; then
+	_is_save="$is"
+	_SOURCED_FOR_SSH=true
+	. /etc/profile > /dev/null 2>&1
+	unset _SOURCED_FOR_SSH
+	is="$_is_save"
+	_is_save=unset
+    fi
+fi
+
+#
+# Set GPG_TTY for curses pinentry
+# (see man gpg-agent and bnc#619295)
+#
+if test -t && type -p tty > /dev/null 2>&1 ; then
+    GPG_TTY="`tty`"
+    export GPG_TTY
+fi
+
+case "$is" in
+zsh)  test -s /etc/zsh.zshrc.local   && . /etc/zsh.zshrc.local ;;
+ash)  test -s /etc/ash.ashrc&& . /etc/ash.ashrc.local
+esac
+
+if test "$_is_save" = "unset" ; then
+    unset is _is_save
+fi
+
+if test "$restricted" = true -a -z "$PROFILEREAD" ; then
+    PATH=/usr/lib/restricted/bin
+    export PATH
+fi
+
+
+
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color) color_prompt=yes;;
@@ -41,15 +411,16 @@ esac
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
 #force_color_prompt=yes
+force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
 	# We have color support; assume it's compliant with Ecma-48
 	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
 	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
+	    color_prompt=yes
     else
-	color_prompt=
+	    color_prompt=
     fi
 fi
 
@@ -142,8 +513,6 @@ fi
 ########################################
 # colorful
 unset color_prompt force_color_prompt
-color_prompt=yes
-force_color_prompt=yes
 
 #Color scheme
 # 033 = e
@@ -176,6 +545,7 @@ force_color_prompt=yes
 # \n: newline
 # \r: carriage return
 # \\: backslash
+
 # Colors & Styles
 # colors have to be escaped (see General), color codes should be followed by an m
 # put \[\e[‹code›m\] and \[\e[0m\] around the part of your prompt you want to style
@@ -197,6 +567,10 @@ force_color_prompt=yes
 # 5 magenta
 # 6 cyan
 # 7 white
+darkgrey="$(tput bold ; tput setaf 0)"
+white="$(tput bold ; tput setaf 7)"
+red="$(tput bold; tput setaf 1)"
+nc="$(tput sgr0)"
 
 # Regular Colors
 Black='\e[0;30m'        # Black
@@ -272,17 +646,6 @@ On_IWhite='\e[0;107m'   # White
 
 # unsets color to term's fg color
 NORMAL="\[\e[0m\]"
-
-if [ -n "$force_color_prompt" ]; then
-  if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-    # We have color support; assume it is compliant with Ecma-48
-    # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-    # a case would tend to support setf rather than setaf.)
-    color_prompt=yes
-  else
-    color_prompt=
-  fi
-fi
 
 # colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
@@ -543,7 +906,8 @@ alias nano='nano -i -m -w -B -F -L -xcSr68'
 alias netstat='netstat -an'
 alias np='nano -w PKGBUILD'
 
-alias open='xdg-open'
+#alias open='xdg-open'
+alias open='xdg-open &> /dev/null'
 
 alias pacman='sudo pacman -v'
 alias pacrepo='sudo reflector -l 20 -f 10 --save /etc/pacman.d/mirrorlist'
@@ -713,6 +1077,7 @@ alias start-psql="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/s
 alias stop-psql="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
 
 
+alias w='w -s'
 #alias wget="wget --no-check-certificate -c --content-disposition"
 alias wget="wget -U 'noleak'"
 alias wget="wget -U User-Agent -c --content-disposition"
@@ -916,7 +1281,11 @@ if ! shopt -q login_shell ; then # We're not a login shell
   unset pathmunge
 fi
 
-
+function genpasswd() {
+	local l=$1
+	[ "$l" == "" ] && l=20
+	tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs
+}
 
 function count {
   I=$1
@@ -1748,13 +2117,6 @@ if [ $(tty) == "/dev/tty3" ]; then
   exit 0
 fi
 
-### BlackArch Linux settings ###
-
-# colors
-darkgrey="$(tput bold ; tput setaf 0)"
-white="$(tput bold ; tput setaf 7)"
-red="$(tput bold; tput setaf 1)"
-nc="$(tput sgr0)"
 
 # exports
 export PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig:/usr/lib/pkgconfig
@@ -1778,14 +2140,13 @@ export PATH="${PATH}/opt/bin:/usr/bin/core_perl:/usr/games/bin:"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
-export PRINTER=tahiti-color
-export PRINTER2=waikiki-color
-export ENV=$HOME/.bashrc
-
-export GOPATH=~/src/go
 function KUBEGOPATH {
   export GOPATH=`pwd`/Godeps/_workspace:`pwd`/_output/local/go:$GOPATH
 }
+
+export PRINTER=tahiti-color
+export PRINTER2=waikiki-color
+export ENV=$HOME/.bashrc
 
 # if ! -z $CROSS_
 # export CROSS_COMPILE=ppc_85xx-
@@ -1797,4 +2158,13 @@ export _JAVA_OPTIONS="-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswi
 #}2
 
 export LD_PRELOAD=""
+
+
+# In ~/.xprofile for DM session
+# See http://fcitx-im.org/wiki/Input_method_related_environment_variables#XMODIFIERS
+###export GTK_IM_MODULE=xim
+#export GTK_IM_MODULE=fcitx
+##export QT_IM_MODULE=xim
+#export QT_IM_MODULE=fcitx
+#export XMODIFIERS=@im=fcitx
 
