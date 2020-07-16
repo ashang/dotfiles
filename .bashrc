@@ -15,7 +15,6 @@
 # that can't tolerate any output.  So make sure this doesn't display
 # anything or bad things will happen !
 
-##[ -z "${PS1}" ]
 # Shell is non-interactive. Be done now!
 [[ $- != *i* ]] && return
 
@@ -32,7 +31,6 @@
 #QUOTE END
 
 
-#
 # Check which shell is reading this file
 # check if variables are read-only before setting them
 # for example in a restricted shell
@@ -66,7 +64,6 @@ if test -z "$is" ; then
 	sh|-sh|*/sh)
 		is=sh	;;
 	esac		;;
-    */ash)	is=ash  ;;
     */dash)	is=ash  ;;
     */mksh)	is=ksh  ;;
     */*pcksh)	is=ksh  ;;
@@ -105,30 +102,11 @@ path ()
 }
 
 
-#
-# ksh/ash sometimes do not know
-#
-test -z "$UID"  && readonly  UID=`path id -ur 2> /dev/null`
-test -z "$EUID" && readonly EUID=`path id -u  2> /dev/null`
-
-test -s /etc/profile.d/ls.bash && . /etc/profile.d/ls.bash
-
-#
-# Avoid trouble with Emacs shell mode
-#
-if test "$EMACS" = "t" ; then
-    path tset -I -Q
-    path stty cooked pass8 dec nl -echo
-fi
-
-#
 # Set prompt and aliases to something useful for an interactive shell
 #
 case "$-" in
 *i*)
-    #
     # Set prompt to something useful
-    #
     case "$is" in
     bash)
 	# If COLUMNS are within the environment the shell should update
@@ -136,17 +114,15 @@ case "$-" in
 	case "$(declare -p COLUMNS 2> /dev/null)" in
 	*-x*COLUMNS=*) shopt -s checkwinsize
 	esac
-	# Append history list instead of override
-	shopt -s histappend
+
 	# All commands of root will have a time stamp
 	if test "$UID" -eq 0  ; then
 	    HISTTIMEFORMAT=${HISTTIMEFORMAT:-"%F %H:%M:%S "}
 	fi
 	# Force a reset of the readline library
 	unset TERMCAP
-	#
+
 	# Returns short path (last two directories)
-	#
 	spwd () {
 	  ( IFS=/
 	    set $PWD
@@ -155,9 +131,8 @@ case "$-" in
 	    else
 		eval echo \"..\${$(($#-1))}/\${$#}\"
 	    fi ) ; }
-	#
+
 	# Set xterm prompt with short path (last 18 characters)
-	#
 	if path tput hs 2>/dev/null || path tput -T $TERM+sl hs 2>/dev/null ; then
 	    #
 	    # Mirror prompt in terminal "status line", which for graphical
@@ -202,9 +177,9 @@ case "$-" in
 	else
 	    ppwd () { true; }
 	fi
+
 	# If set: do not follow sym links
 	# set -P
-	#
 	# Other prompting for root
 	if test "$UID" -eq 0  ; then
 	    if test -n "$TERM" -a -t ; then
@@ -224,6 +199,7 @@ case "$-" in
 	    _u="\u@\h"
 	    _p=">"
 	fi
+
 	if test -z "$EMACS" -a -z "$MC_SID" -a "$restricted" != true -a \
 		-z "$STY" -a -n "$DISPLAY" -a ! -r $HOME/.bash.expert
 	then
@@ -231,6 +207,7 @@ case "$-" in
 	else
 	    _t=""
 	fi
+
 	case "$(declare -p PS1 2> /dev/null)" in
 	*-x*PS1=*)
 	    ;;
@@ -243,6 +220,7 @@ case "$-" in
 #	    PS1="${_t}${_u}:\$(pwd -P)${_p} "
 	    ;;
 	esac
+
 	unset _u _p _t
 	;;
     ash)
@@ -260,55 +238,13 @@ case "$-" in
 	}
 	cd .
 	;;
-    ksh)
-	# Some users of the ksh are not common with the usage of PS1.
-	# This variable should not be exported, because normally only
-	# interactive shells set this variable by default to ``$ ''.
-	if test "${PS1-\$ }" = '$ ' -o "${PS1-\$ }" = '# ' ; then
-	    if test "$UID" = 0 ; then
-		PS1="${HOST}:"'${PWD}'" # "
-	    else
-		PS1="${USER}@${HOST}:"'${PWD}'"> "
-	    fi
-	fi
-	;;
-    zsh)
-#	setopt chaselinks
-	if test "$UID" = 0; then
-	    PS1='%n@%m:%~ # '
-	else
-	    PS1='%n@%m:%~> '
-	fi
-	;;
     *)
-	if test "$UID" = 0 ; then
-	    PS1="${HOST}:"'${PWD}'" # "
-	else
 	    PS1="${USER}@${HOST}:"'${PWD}'"> "
-	fi
 	;;
     esac
     PS2='> '
+    PS4='+ '
 
-    if test "$is" = "ash" ; then
-	# The ash shell does not have an alias builtin in
-	# therefore we use functions here. This is a seperate
-	# file because other shells may run into trouble
-	# if they parse this even if they do not expand.
-	test -s /etc/profile.d/alias.ash && . /etc/profile.d/alias.ash
-    else
-	test -s /etc/profile.d/alias.bash && . /etc/profile.d/alias.bash
-	test -s $HOME/.alias && . $HOME/.alias
-    fi
-
-    #
-    # Expert mode: if we find $HOME/.bash.expert we skip our settings
-    # used for interactive completion and read in the expert file.
-    #
-    if test "$is" = "bash" -a -r $HOME/.bash.expert ; then
-	. $HOME/.bash.expert
-    elif test "$is" = "bash" ; then
-	# Complete builtin of the bash 2.0 and higher
 	case "$BASH_VERSION" in
 	[2-9].*)
 	    if test -e /etc/bash_completion ; then
@@ -327,36 +263,18 @@ case "$-" in
 	    if test -e $HOME/.bash_completion ; then
 		. $HOME/.bash_completion
 	    fi
-	    if test -f /etc/bash_command_not_found ; then
-		. /etc/bash_command_not_found
-	    fi
+
 	    ;;
 	*)  ;;
 	esac
-    fi
 
-    # Do not save dupes and lines starting by space in the bash history file
-    HISTCONTROL=ignoreboth
-    if test "$is" = "ksh" ; then
-	# Use a ksh specific history file and enable
-    	# emacs line editor
-    	: ${HISTFILE=$HOME/.kshrc_history}
-    	: ${VISUAL=emacs}
-	case $(set -o) in
-	*multiline*) set -o multiline
-	esac
-    fi
-    # command not found handler in zsh version
-    if test "$is" = "zsh" ; then
-	if test -f /etc/zsh_command_not_found ; then
-	    . /etc/zsh_command_not_found
-	fi
-    fi
+		case $(set -o) in
+			*multiline*) set -o multiline
+		esac
     ;;
 esac
 
 #/etc/profile.d/vte-2.91.sh
-# Source /etc/profile.d/vte.sh, which improvies usage of VTE based terminals.
 # It is vte.sh's responsibility to 'not load' when it's not applicable (not inside a VTE term)
 # If you want to 'disable' this functionality, set the sticky bit on /etc/profile.d/vte.sh
 if test -r /etc/profile.d/vte.sh -a ! -k /etc/profile.d/vte.sh; then
@@ -377,20 +295,6 @@ if test "$_is_save" = "unset" ; then
     fi
 fi
 
-#
-# Set GPG_TTY for curses pinentry
-# (see man gpg-agent and bnc#619295)
-#
-if test -t && type -p tty > /dev/null 2>&1 ; then
-    GPG_TTY="`tty`"
-    export GPG_TTY
-fi
-
-case "$is" in
-zsh)  test -s /etc/zsh.zshrc.local   && . /etc/zsh.zshrc.local ;;
-ash)  test -s /etc/ash.ashrc&& . /etc/ash.ashrc.local
-esac
-
 if test "$_is_save" = "unset" ; then
     unset is _is_save
 fi
@@ -399,7 +303,6 @@ if test "$restricted" = true -a -z "$PROFILEREAD" ; then
     PATH=/usr/lib/restricted/bin
     export PATH
 fi
-
 
 
 # set a fancy prompt (non-color, unless we know we "want" color)
@@ -424,11 +327,6 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
 
 if [[ "`uname -s`" == "FreeBSD" ]]
 #if [[ "$OSTYPE" =~ *BSD ]]; then
@@ -480,6 +378,7 @@ export LSCOLORS=gxfxbEaEBxxEhEhBaDaCaD
 
 use_color=false
 
+safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
 
 match_lhs=""
 [[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(</etc/DIR_COLORS)"
@@ -512,7 +411,6 @@ fi
 
 ########################################
 # colorful
-unset color_prompt force_color_prompt
 
 #Color scheme
 # 033 = e
@@ -534,10 +432,8 @@ unset color_prompt force_color_prompt
 
 ## for color and non-color terminals, as well as shells that don't
 ## understand sequences such as \h, don't put anything special in it.
-#PS1="${USER:-$(whoami 2>/dev/null)}@$(uname -n 2>/dev/null) \$ "
 
 # \u: current username
-# \h: hostname up to the first ., \H: full hostname
 # \w: current working directory, \W: same, but only the basename
 # \$: if the effective UID is 0: #, otherwise $
 # \d: the date in "Weekday Month Date" format (e.g., "Tue May 26")
@@ -645,7 +541,8 @@ On_ICyan='\e[0;106m'    # Cyan
 On_IWhite='\e[0;107m'   # White
 
 # unsets color to term's fg color
-NORMAL="\[\e[0m\]"
+#NORMAL="\[\e[0m\]"
+NORMAL="\[\e[m\]"
 
 # colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
@@ -676,8 +573,6 @@ colors() {
     echo; echo
   done
 }
-
-
 
 
 # Alias
@@ -732,18 +627,6 @@ alias T='|tail'
 alias V='| vim -'
 
 alias cd..="cd .."
-
-alias cp='cp -i -v -a'
-
-# -a = -pPR
-#  -R If source_file designates a directory, cp copies the directory and the entire subtree connected at that point.  If the source_file ends in a /, the
-#     contents of the directory are copied rather than the directory itself.  This option also causes symbolic links to be copied, rather than indirected
-#     through, and for cp to create special files rather than copying them as normal files.  Created directories have the same mode as the corresponding
-#     source directory, unmodified by the process' umask.
-#
-#     In -R mode, cp will continue copying even if errors are detected.
-#
-#     Note that cp copies hard-linked files as separate files.  If you need to preserve hard links, consider using tar(1), cpio(1), or pax(1) instead.
 
 alias chmod='chmod -v'
 which colordiff &>/dev/null && alias diff='colordiff'
@@ -953,6 +836,7 @@ alias sls='screen -ls'
 # surfraw - a fast unix command line interface to WWW
 alias sr='screen -r'
 alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=30 -o StrictHostKeyChecking=yes'
+alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=30'
 ## ignore ~/.ssh/known_hosts entries
 #alias insecssh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -o "PreferredAuthentications=keyboard-interactive"'
 alias svi='sudo vi'
@@ -965,7 +849,7 @@ alias tmux='tmux -2'
 alias tad='tmux a -d'
 alias tou8='iconv -f gbk -t utf-8'
 
-alias ua='uname -a'
+alias un='uname -a'
 # Disabled because some version has no this option
 # UnZip 6.00 of 20 April 2009, by Debian. Original by Info-ZIP.
 # alias unzip='unzip -O CP936'
@@ -1098,7 +982,6 @@ alias x2='startx -- :2 -depth 32'
 alias yum='yum -v -y --color=auto'
 alias xorpsh='su xorp -p -c xorpsh'
 
-
 ########################################
 #Shell Options
 #See man bash for more options...
@@ -1168,9 +1051,7 @@ bind "set bind-tty-special-chars on"  #punctuations are not word delimiters
 
 #ctrl-RIGHT got 5C
 
-
 # history
-# append to the history file, don't overwrite it
 shopt -s histappend
 shopt -s histverify
 
@@ -1195,50 +1076,10 @@ HISTIMEFORMAT="%F %T"
 HISTSIZE=50000
 HISTFILESIZE=60000
 
-### history end
-
-
-# Term
-#/etc/terminfo/*
-# This directory is for system-local terminfo descriptions. By default,
-# ncurses will search ${HOME}/.terminfo first, then /etc/terminfo (this
-# directory), then /lib/terminfo, and last not least /usr/share/terminfo.
-
-# It seems setting TERM to xterm-256color in your .bashrc overrides set -g default-terminal "screen-256color" from tmux and that causes issues. This makes sense as bash is running inside tmux and its setting override those from tmux.
-
-# You can easily verify this by running echo $TERM in bash within tmux. With your current setup it will be xterm-256color which is a no-go as Tmux explicitly requires this to be set to screen-256color.
-
-[ -z "$TMUX" ] && export TERM="xterm-256color"
-#export TERM=screen-256color
-safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
-
 #Whenever displaying the prompt, write the previous line to disk
 # to keep history even after abnormal bash quit,
 
-# This does mean sessions get interleaved when reading later on, but this
-# way the history is always up to date.  History is not synced across live
-# sessions though; that is what `history -n` does.
-# Disabled by default due to concerns related to system recovery when $HOME
-# is under duress, or lives somewhere flaky (like NFS).  Constantly syncing
-# the history will halt the shell prompt until it's finished.
-# export PROMPT_COMMAND="history -a"
-# PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
-# #PROMPT_COMMAND='history -a $HOME/.bash_history; echo -ne "\033]0;$PWD\007"; $PROMPT_COMMAND;'
-
-# If this is an xterm set the title to user@host:dir
-
-# Commented out, don't overwrite xterm -T "title" -n "icontitle" by default.
-# Set the window title of X terminals
-    # Commented out, don't overwrite xterm -T "title" -n "icontitle" by default.
-    # If this is an xterm set the title to user@host:dir
-    #PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}\007"'
-    #PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"'
-    TITLEBAR='\[\e]0;\u@\h:\w/ ${NEW_PWD}\007\]'
-# init it by setting PROMPT_COMMAND
-    #PROMPT_COMMAND='printf "%b" "\033]0;${PWD/$HOME/~}\007"' ;;
-#PROMPT_COMMAND=bash_prompt_command
-  PROMPT_COMMAND=__git_ps1
-    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}"; echo -ne "\007"'
+### history end
 
 
 # Even for non-interactive, non-login shells.
@@ -1295,12 +1136,6 @@ function count {
   done
 }
 
-TITLEBAR_PREFIX=""
-function titlebar() {
-  TITLEBAR_PREFIX="$*"
-  echo -ne "\033]2;$*\a"
-}
-
 function color() {
   tput setf $1
 }
@@ -1320,40 +1155,29 @@ function __git_ps1() {
   W=$(realpath . | sed "s|$(git root)/\?|/|")
 
   #TODO: abstract the prefix, which sets titlebar and is duplicated
+  TITLEBAR_PREFIX="$*"
   PS1='\[\e]0;${TITLEBAR_PREFIX} \w\a\]\[$(color 6)\]$U@$H \[$(color 1)\]$R \[$(color 3)\]$B \[$(color 6)\]$W\[$(nocolor)\] \$ '
 }
 
-##PS1 ----------------------------------------
-# extra backslash in front of \$ to make bash colorize the prompt
-# man bash, PROMPTING
-  # for a colored prompt, if the terminal has the capability; turned
-  # off by default to not distract the user: the focus in a terminal window
-  # should be on the output of commands, not on the prompt
-if ${use_color} ; then
-  # Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
-  if [[ -f ~/.dir_colors ]] ; then
-    eval "$(dircolors -b ~/.dir_colors)"
-  elif [[ -f /etc/DIR_COLORS ]] ; then
-    eval "$(dircolors -b /etc/DIR_COLORS)"
-  else
-    eval "$(dircolors -b)"
-  fi
+  PROMPT_COMMAND=__git_ps1
+#PROMPT_COMMAND=bash_prompt_command
 
-  #gpg
-  #export GPGKEY=""
-  #export GPG_TTY="$(tty)"
+# This does mean sessions get interleaved when reading later on, but this
+# way the history is always up to date.  History is not synced across live
+# sessions though; that is what `history -n` does.
+# Disabled by default due to concerns related to system recovery when $HOME
+# is under duress, or lives somewhere flaky (like NFS).  Constantly syncing
+# the history will halt the shell prompt until it's finished.
+# export PROMPT_COMMAND="history -a"
+# PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+# #PROMPT_COMMAND='history -a $HOME/.bash_history; echo -ne "\033]0;$PWD\007"; $PROMPT_COMMAND;'
 
-  TTY=$(tty)
-  TTY=${TTY##*/}
-
-  #PS1='\u@$(hostname):$( printf "%s" "${PWD/${HOME}/~}")/\n\$ '
-    PS1='$(titlebar)\u@\h:\w/\n\$ '
-  PS1="$BGreen\D{W%V.%u %m%d} \T$(__git_ps1) $NORMAL"$PS1
-
-else
-  PS1='\u@\h \w \$ '
-fi
-
+# Commented out, don't overwrite xterm -T "title" -n "icontitle" by default.
+    # If this is an xterm set the title to user@host:dir
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}\007"'
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"'
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}"; echo -ne "\007"'
+    #PROMPT_COMMAND='printf "%b" "\033]0;${PWD/$HOME/~}\007"' ;;
 
 #if [ "`locale charmap 2>/dev/null`" = "UTF-8" ]
 #then
@@ -1404,7 +1228,7 @@ unset use_color safe_term match_lhs sh
 unset color_prompt force_color_prompt
 
 unset -f have
-unset UNAME RELEASE default dirnames filenames have nospace bashdefault plusdirs
+unset RELEASE default dirnames filenames have nospace bashdefault plusdirs
 set notildeop
 
 #Functions
@@ -1917,6 +1741,40 @@ if [ -f '$HOME/google-cloud-sdk/completion.bash.inc' ]; then
   source '$HOME/google-cloud-sdk/completion.bash.inc'
 fi
 
+##PS1 ----------------------------------------
+# extra backslash in front of \$ to make bash colorize the prompt
+# man bash, PROMPTING
+  # for a colored prompt, if the terminal has the capability; turned
+  # off by default to not distract the user: the focus in a terminal window
+  # should be on the output of commands, not on the prompt
+
+  if [[ -f ~/.dir_colors ]] ; then
+    eval "$(dircolors -b ~/.dir_colors)"
+  elif [[ -f /etc/DIR_COLORS ]] ; then
+    eval "$(dircolors -b /etc/DIR_COLORS)"
+  else
+    eval "$(dircolors -b)"
+  fi
+
+# Set GPG_TTY for curses pinentry # man gpg-agent
+if test -t && type -p tty > /dev/null 2>&1 ; then
+  #export GPGKEY=""
+   export GPG_TTY="$(tty)"
+fi
+  TTY=$(tty)
+  TTY=${TTY##*/}
+
+# Elegant code courtesy of nitrous.io:
+parse_git_dirty () {
+  git diff --no-ext-diff --quiet --exit-code &>/dev/null || echo "!"
+}
+parse_git_branch () {
+  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/ \1$(parse_git_dirty)/"
+}
+powerpercent() {
+   test -r /sys/class/power_supply/BAT?/capacity &&\
+   cat /sys/class/power_supply/BAT?/capacity
+}
 
 bash_prompt_command() {
   # How many characters of the $PWD should be kept
@@ -1933,6 +1791,25 @@ bash_prompt_command() {
     NEW_PWD=${trunc_symbol}/${NEW_PWD#*/}
   fi
 }
+
+function proml {
+	case $TERM in
+	    xterm*|rxvt*)
+	        local TITLEBAR='\[\e]0;\u@\h:\w/ \007\]'
+	        ;;
+	    *)
+	        local TITLEBAR=''
+	        ;;
+	esac
+	PS1='\u@\h:\w/\n\$ \[\e[m\]'
+	PS1="${TITLEBAR}$BGreen# \D{W%V.%u %m%d} \t$(__git_ps1)\$(parse_git_branch) \$(powerpercent)% tty/\l $NORMAL"$PS1
+	PS1="\[\e[\$(( (\$? == 0 ) ? 31 : 41 ))m\]"$PS1
+}
+
+proml
+unset proml
+
+
 
 shopt -s checkhash cmdhist expand_aliases histreedit mailwarn
 shopt -s hostcomplete
@@ -2047,19 +1924,6 @@ fi
 ##fi
 
 
-# if the command-not-found package is installed, use it
-if [ -x /usr/lib/command-not-found ]; then
-  function command_not_found_handle {
-    # check because c-n-f could've been removed in the meantime
-    if [ -x /usr/lib/command-not-found ]; then
-      /usr/lib/command-not-found -- "$1"
-      return $?
-    else
-      printf "%s: command not found\n" "$1" >&2
-      return 127
-    fi
-  }
-fi
 
 # only in Util-Linux; not work for BSD
 #setterm -blength 0
@@ -2086,13 +1950,6 @@ export IPOD_MOUNTPOINT=/media/
 # export PHPHOME="/home/bbs/www/php"
 # export SRCDIR="/home/"
 
-# Start X if login from the first console.
-#[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
-    # now use nodm, comment out
-#if [ "$(tty)" = "/dev/tty1" -o "$(tty)" = "/dev/vc/1" ] ; then
-    #startx
-    #startxfce4
-#fi
 
 if [ ! $DISPLAY ] ; then
   if [ "$SSH_CLIENT" ] ; then
@@ -2110,13 +1967,6 @@ export REPO_URL='https://mirrors.tuna.tsinghua.edu.cn/git/git-repo/'
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-
-# If running trom tty
-if [ $(tty) == "/dev/tty3" ]; then
-  sway
-  exit 0
-fi
-
 
 # exports
 export PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig:/usr/lib/pkgconfig
@@ -2152,13 +2002,29 @@ export ENV=$HOME/.bashrc
 # export CROSS_COMPILE=ppc_85xx-
 # export TARGET_OS=linux
 
-
 #fix java ugliness
 export _JAVA_OPTIONS="-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel"
 #}2
 
 export LD_PRELOAD=""
 
+[ -r /usr/share/byobu/profiles/bashrc ] && . /usr/share/byobu/profiles/bashrc  #byobu-prompt#
+
+# Term
+#/etc/terminfo/*
+# This directory is for system-local terminfo descriptions. By default,
+# ncurses will search ${HOME}/.terminfo first, then /etc/terminfo (this
+# directory), then /lib/terminfo, and last not least /usr/share/terminfo.
+
+# Tmux explicitly requires this to be set to screen-256color.
+#export TERM=screen-256color
+# TERM in .bashrc overrides `set -g default-terminal` from tmux
+# set TERM to xterm-256color if bash is running standalone (no tmux)
+[ -z "$TMUX" ] && export TERM="xterm-256color"
+# http://invisible-island.net/xterm/xterm.faq.html#xterm_terminfo
+# http://invisible-island.net/ncurses/terminfo.src.html#tic-screen-256color-bce
+# http://invisible-island.net/ncurses/ncurses.faq.html#bce_mismatches
+# tmux doesn't support the terminfo capability bce (back color erase), which vim checks for, to decide whether to use its "default color" scheme.
 
 # In ~/.xprofile for DM session
 # See http://fcitx-im.org/wiki/Input_method_related_environment_variables#XMODIFIERS
@@ -2168,3 +2034,20 @@ export LD_PRELOAD=""
 #export QT_IM_MODULE=fcitx
 #export XMODIFIERS=@im=fcitx
 
+# Start X if login from the first console.
+#[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
+    # now use nodm, comment out
+# if [ "$(tty)" == "/dev/tty3" -o "$(tty)" = "/dev/vc/1" ] ; then
+#     #startx
+#     sway
+#     exit 0    # exit login after sway quits
+# fi
+
+case "$(tty)" in
+    "/dev/tty5")	sway; exit 0;;
+    "/dev/tty6")	startxfce4; exit 0;;
+    "/dev/vc/1")	sway; exit 0;;
+esac
+
+
+# TODO: log out after idle long time
