@@ -30,7 +30,6 @@
     #fi
 #QUOTE END
 
-
 # Check which shell is reading this file
 # check if variables are read-only before setting them
 # for example in a restricted shell
@@ -100,7 +99,6 @@ path ()
 	${1+"/bin/$@"}
     fi
 }
-
 
 # Set prompt and aliases to something useful for an interactive shell
 #
@@ -304,7 +302,6 @@ if test "$restricted" = true -a -z "$PROFILEREAD" ; then
     export PATH
 fi
 
-
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color) color_prompt=yes;;
@@ -327,7 +324,6 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
-
 if [[ "`uname -s`" == "FreeBSD" ]]
 #if [[ "$OSTYPE" =~ *BSD ]]; then
 then
@@ -338,13 +334,12 @@ elif [[ "$OSTYPE" =~ ^darwin ]]; then
   alias ls="command ls -bFG"
 else # Assume Linux
   #alias ls="command ls -FG"
-  alias ls='\ls -F -X --show-control-chars'
+  alias ls='\ls -F -X --color=auto --show-control-chars'
   #alias ls='\ls -F -X --color=tty --show-control-chars'
   export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:'
 fi
 
 # Obseleted!!
-# enable color support of ls and also add handy aliases
 # eval "`dircolors -b`"
 
 # dircolors --print-database uses its own built-in database
@@ -355,10 +350,8 @@ fi
 # guideline 0: those not in command-not-found
 # guideline 1: standard cross-platform parameters, such as ps, tar.
 
-# enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
     # Never use 'grep --colour=always', control characters apply!
@@ -588,10 +581,11 @@ colors() {
 #        a percent sign (`%') after each whiteout, and
 #        a vertical bar (`|') after each that is a FIFO.
 
-# alias l='ls -ah --color'
-alias l='ls'
+alias l='ls -ah --color'
 alias la='ls -A'
-alias ll='ls -lh --color=tty'                 # classify files in colour
+alias ll='ls -lh'                 # classify files in colour
+hash exa 2>/dev/null && alias ll='exa -F -l -B --git'
+
 #-a, --all						do not ignore entries starting with .
 #-A, --almost-all			do not list implied . and ..
 # List all files colorized in long format, including dot files
@@ -606,26 +600,8 @@ alias lt='ls -ltA'
 alias ltr='ls -ltAr'
 
 alias ..='cd ..'
-
-alias N='&>/dev/null'
 alias '...'='../..'
 alias '....'='../../..'
-alias BG='& exit'
-alias C='|wc -l'
-alias G='|grep'
-alias H='|head'
-alias Hl=' --help |& less -r'
-alias K='|keep'
-alias L='|less'
-alias LL='|& less -r'
-alias M='|most'
-alias N='&>/dev/null'
-alias R='| tr A-z N-za-m'
-alias SL='| sort | less'
-alias S='| sort'
-alias T='|tail'
-alias V='| vim -'
-
 alias cd..="cd .."
 
 alias chmod='chmod -v'
@@ -638,6 +614,8 @@ alias cv='convmv -f gbk -t utf-8 -r --notest'
 alias curl="curl --user-agent 'noleak'"
 alias curl='curl -L -C'
 alias curl='curl -L -C -'
+alias ch='curl -D- -o/dev/null'
+
 
 alias dd="dd bs=8M status=progress"
 alias debug_on="sed -i 's/^\/\/#define LOG_NDEBUG 0/#define LOG_NDEBUG 0/g' "
@@ -667,7 +645,6 @@ alias es='emerge --search'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 # program 'notify-send' is in libnotify-bin
 
-
 alias a='alias'
 #alias adb='adb wait-for-device'
 alias adbw='adb wait-for-device'
@@ -691,7 +668,6 @@ alias cp='\cp -i -v -a'
 #     In -R mode, cp will continue copying even if errors are detected.
 #
 #     Note that cp copies hard-linked files as separate files.  If you need to preserve hard links, consider using tar(1), cpio(1), or pax(1) instead.
-
 
 alias file="file -k"
 alias fn="find -iname"
@@ -737,10 +713,12 @@ alias gpp='git pull --rebase && git push'
 alias gr="git remote -v"
 alias grss="git remote show origin"
 alias gpr='git pull --rebase --recurse-submodules'
+alias gpr='git pull --rebase --stat'
 
 alias gss='git show --stat'
 #alias gst='git status --ignore-submodules=dirty'
 alias gst='git status -suno --ignore-submodules=dirty && git branch -vv'
+alias gsq='git status -sb'
 
 alias gup='git pull --rebase --prune && git submodule update --init --recursive'
 alias gsl='git stash list'
@@ -750,8 +728,6 @@ alias gdb='gdb -q'
 
 alias cg='grep -in --color -I'
 alias cgr='grep -in --color -rI'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
 alias grpe=grep
 alias gerp=grep
 
@@ -834,6 +810,7 @@ alias shred="shred -zf"
 alias sls='screen -ls'
 # acct - The GNU Accounting utilities for process and login accounting
 # surfraw - a fast unix command line interface to WWW
+alias sq='sqlite3'
 alias sr='screen -r'
 alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=30 -o StrictHostKeyChecking=yes'
 alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=30'
@@ -859,7 +836,6 @@ alias vd="vimdiff"
 which nvim &>/dev/null && alias vd="nvim -d"
 which nvim &>/dev/null && alias nv="nvim -p"
 alias vi="vim -p"
-
 
 # Undo a `git push`
 alias undopush="git push -f origin HEAD^:master"
@@ -896,7 +872,6 @@ alias pbpaste='xsel --clipboard --output'
 
 alias C="tr -d '\n' | pbcopy"
 
-
 alias pacrepo='sudo reflector -l 20 -f 10 --save /etc/pacman.d/mirrorlist'
 alias pacu='sudo pacman -Syu --noconfirm'
 alias auru='yaourt -Syua --noconfirm'
@@ -928,7 +903,6 @@ alias dmesg='clear; dmesg -eL -w'
 # Go
 alias sv='source ~/.config/vim/scripts/gb.bash sv'
 
-
 # Canonical hex dump; some systems have this symlinked
 type -t hd > /dev/null || alias hd="hexdump -C"
 
@@ -959,7 +933,6 @@ alias hax="growlnotify -a 'Activity Monitor' 'System error' -m 'WTF R U DOIN'"
 # PostgreSQL
 alias start-psql="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
 alias stop-psql="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
-
 
 alias w='w -s'
 #alias wget="wget --no-check-certificate -c --content-disposition"
@@ -1027,7 +1000,6 @@ IGNOREEOF=2
 #"\e[B": history-search-forward
 #or equivalently,
 
-
 # If bond, Some systems lacking of "" would mess HOME/END??
 bind -r "\e[A"
 bind -r "\e[B"
@@ -1080,7 +1052,6 @@ HISTFILESIZE=60000
 # to keep history even after abnormal bash quit,
 
 ### history end
-
 
 # Even for non-interactive, non-login shells.
 # the default umask is set in /etc/profile
@@ -1142,6 +1113,9 @@ function color() {
 function nocolor() {
   tput sgr0
 }
+function sqd() {
+  sqlite3 $1 .dump | less
+}
 
 # $(__git_ps1 "%s"): your current git branch if you're in a git directory, otherwise nothing
 function __git_ps1() {
@@ -1184,9 +1158,7 @@ function __git_ps1() {
   #stty iutf8
 #fi
 
-
 stty -ctlecho #don't show ^C when pressing Ctrl+C
-
 
 ## Timezone
 TZ='Asia/Shanghai'; export TZ
@@ -1206,16 +1178,13 @@ export LESSCHARSET=utf-8
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-
 # test -r ~/.vim/branch_prompt.sh && source ~/.vim/branch_prompt.sh
 # better yaourt colors
 export YAOURT_COLORS="nb=1:pkg=1:ver=1;32:lver=1;45:installed=1;42:grp=1;34:od=1;41;5:votes=1;44:dsc=0:other=1;35"
 
-
 ##bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
 #if [ "$PS1" ] && [ $bmajor -eq 2 ] && [ $bminor '>' 04 ]
 #unset bash bmajor bminor
-
 
 # guideline 0: those not in command-not-found
 # guideline 1: standard cross-platform parameters, such as ps, tar.
@@ -1276,18 +1245,16 @@ function docker-enter() {
     fi
 }
 
-
-# bring a feature branch back to master
-gum() { git checkout "$1" && git rebase master && git checkout master; }
+function gum() { git checkout "$1" && git rebase master && git checkout master; }
 
 # Show which branches need to be rebased on master, typically after a pull.
 # commits listed between a branch and master. Then I know which branches to use with gum.
 # The list of excluded branches includes branches which should not be rebased against master (I could do some processing of git branch -r to not have those hardcoded) but the odd one is stale. Sometimes, I get an idea for a feature which is too intrusive, too messy or just too incomplete to be rebased against master. Rather than losing the idea or wasting time rebasing, I'm getting into the habit of renaming the branch foo as stale-foo and gsb then leaves it alone. Equally, there are frequently times when I need to have a feature branch based on another feature branch, sometimes several feature branches deep. Identifying these branches and avoiding rebasing on the wrong branch is important to not waste time.
-gsb() { LIST=`git branch|egrep -v '(release|staging|trusty|playground|stale)'|tr '\n' ' '|tr -d '*'`; git show-branch $LIST; }
+function gsb() { LIST=`git branch|egrep -v '(release|staging|trusty|playground|stale)'|tr '\n' ' '|tr -d '*'`; git show-branch $LIST; }
 
 
 # Shows which feature branches can be dropped with git branch -d.
-gleaf(){ git branch --merged master | egrep -v '(release|staging|trusty|playground|pipeline|review|stale)'; }
+function gleaf(){ git branch --merged master | egrep -v '(release|staging|trusty|playground|pipeline|review|stale)'; }
 
 function chd {
     local maxLength=100
@@ -1515,7 +1482,6 @@ function vack() { vim `ack-grep -g $@`; }
 function mdcd() { mkdir "$1"; cd "$1"; }
 function settitle() { echo -ne "\e]2;$@\a\e]1;$@\a"; }
 
-
 # dir for `rm` backup:
   [ -z $MYSAV ] && MYSAV="/$HOME/.local/share/Trash"
   [ -d $MYSAV ] || mkdir -p $MYSAV
@@ -1574,9 +1540,7 @@ function rm {
 
 } # end of function rm
 
-
 # Functions end
-
 
 #!?command
 
@@ -1597,8 +1561,6 @@ EOF
     fi
   esac
 fi
-
-
 
 # test -r ~/.vim/branch_prompt.sh && source ~/.vim/branch_prompt.sh
 
@@ -1651,7 +1613,6 @@ function prompt_git() {
   return;
   fi;
 }
-
 
 ### PATH
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
@@ -1764,13 +1725,6 @@ fi
   TTY=$(tty)
   TTY=${TTY##*/}
 
-# Elegant code courtesy of nitrous.io:
-parse_git_dirty () {
-  git diff --no-ext-diff --quiet --exit-code &>/dev/null || echo "!"
-}
-parse_git_branch () {
-  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/ \1$(parse_git_dirty)/"
-}
 powerpercent() {
    test -r /sys/class/power_supply/BAT?/capacity &&\
    cat /sys/class/power_supply/BAT?/capacity
@@ -1802,14 +1756,12 @@ function proml {
 	        ;;
 	esac
 	PS1='\u@\h:\w/\n\$ \[\e[m\]'
-	PS1="${TITLEBAR}$BGreen# \D{W%V.%u %m%d} \t$(__git_ps1)\$(parse_git_branch) \$(powerpercent)% tty/\l $NORMAL"$PS1
+	PS1="${TITLEBAR}$BGreen# \D{W%V.%u %m%d} \t$(__git_ps1) \$(powerpercent)% tty/\l $NORMAL"$PS1
 	PS1="\[\e[\$(( (\$? == 0 ) ? 31 : 41 ))m\]"$PS1
 }
 
 proml
 unset proml
-
-
 
 shopt -s checkhash cmdhist expand_aliases histreedit mailwarn
 shopt -s hostcomplete
@@ -1873,7 +1825,6 @@ complete -cf sudo
 
 #[[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && . $HOME/.autojump/etc/profile.d/autojump.sh
 
-
 #FIXME
 #certutil: function failed: SEC_ERROR_PKCS11_GENERAL_ERROR: A PKCS #11 module returned CKR_GENERAL_ERROR, indicating that an unrecoverable error has occurred.
 
@@ -1923,14 +1874,11 @@ fi
   ##ssh-add < /dev/null
 ##fi
 
-
-
 # only in Util-Linux; not work for BSD
 #setterm -blength 0
 
 export QT_STYLE_OVERRIDE=gtk
 export QT_SELECT=qt5
-
 
 #TODO if domainname=cnbj/seld
 #[[ $(hostname) = "et.local" ]] || (\
@@ -1949,7 +1897,6 @@ export IPOD_MOUNTPOINT=/media/
 # export WWWHOME="/home/bbs/www"
 # export PHPHOME="/home/bbs/www/php"
 # export SRCDIR="/home/"
-
 
 if [ ! $DISPLAY ] ; then
   if [ "$SSH_CLIENT" ] ; then
@@ -2032,7 +1979,8 @@ export LD_PRELOAD=""
 #export GTK_IM_MODULE=fcitx
 ##export QT_IM_MODULE=xim
 #export QT_IM_MODULE=fcitx
-#export XMODIFIERS=@im=fcitx
+#export QT_IM_MODULE=xim
+export XMODIFIERS=@im=fcitx
 
 # Start X if login from the first console.
 #[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
