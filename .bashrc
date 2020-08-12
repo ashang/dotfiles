@@ -597,6 +597,7 @@ alias lh='ls -A | egrep "^\."'
 alias lS='ls -lS'
 alias lSr='ls -lSr'
 alias lt='ls -ltA'
+alias lrt='ls -ltAr'
 alias ltr='ls -ltAr'
 
 alias ..='cd ..'
@@ -615,6 +616,7 @@ alias curl="curl --user-agent 'noleak'"
 alias curl='curl -L -C'
 alias curl='curl -L -C -'
 alias ch='curl -D- -o/dev/null'
+alias co='curl -O'
 
 
 alias dd="dd bs=8M status=progress"
@@ -639,6 +641,7 @@ alias enprint='enscript -h -G -E -2 -r --rotate-even-pages -DDuplex:true'
 alias equo='equo --color --ask -v'
 alias es='emerge --search'
 #alias expemerge="ACCEPT_KEYWORDS=\"~x86\" emerge"
+
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -745,7 +748,6 @@ alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A -geometry 125x43+0+0 &'
 alias lc='locate -i'
 alias less='less -r'                          # raw control characters
 
-alias make='make -j4'
 alias mm="make menuconfig"
 alias moer=more
 alias mplayer='mplayer -vf screenshot -msgcolor'
@@ -782,7 +784,8 @@ alias ps='ps auxwf'
 alias pS='sudo pacman -S'
 alias pss='pacman -Ss'
 #alias psg='ps -Af | grep $1'
-alias psg='\ps aux | grep -v without-match | grep'
+#alias psg='\ps aux | grep -v without-match | grep'
+alias psg='\ps aux | grep -v exclude-dir=.git | grep'
 alias pqg='pacman -Q|egrep -i'
 alias pqi='pacman -Qi'
 alias pql='pacman -Ql'
@@ -791,9 +794,6 @@ alias pacrf='sudo pacman -Rns'
 alias pS='sudo pacman -S'
 alias pss='pacman -Ss'
 alias py="python2"
-
-#if type pgrep &>/dev/null; then xxx; fi
-which pgrep &>/dev/null && alias pgrep='ps -C polkitd -o pid='
 
 alias rpi='rpm -qi'
 alias rx='LANG=zh_CN.GB2312 LC_CTYPE=zh_CN.GB2312 rxvt -ls -sl 500 -fn 8x16 -bg black -fg grey80 -ls&'
@@ -818,6 +818,8 @@ alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=30'
 #alias insecssh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -o "PreferredAuthentications=keyboard-interactive"'
 alias svi='sudo vi'
 
+type multitail &>/dev/null && alias tail='multitail -c'
+alias th='history | tail'
 alias tmars='telnet 210.77.17.19 1012'
 
 # alias tail='tail -f'
@@ -833,6 +835,7 @@ alias un='uname -a'
 
 alias vd="vimdiff"
 #alias vim="vim -p"
+#if type pgrep &>/dev/null; then xxx; fi
 which nvim &>/dev/null && alias vd="nvim -d"
 which nvim &>/dev/null && alias nv="nvim -p"
 alias vi="vim -p"
@@ -887,8 +890,6 @@ export PACKAGEROOT=ftp://ftp.freebsdchina.org
 # Canonical hex dump; some systems have this symlinked
 [ -n "$ZSH_VERSION" ] && type hd > /dev/null || alias hd="hexdump -C"
 [ "$BASH_VERSINFO" -ge "4" ] && type -t hd > /dev/null || alias hd="hexdump -C"
-
-# source '~/google-cloud-sdk/path.bash.inc'
 
 alias scu='systemctl --user'
 alias journ='sudo journalctl -b -f'
@@ -1107,6 +1108,15 @@ function count {
   done
 }
 
+function make() {
+  pathpat="(/[^/]*)+:[0-9]+"
+  ccred=$(echo -e "\033[0;31m")
+  ccyellow=$(echo -e "\033[0;33m")
+  ccend=$(echo -e "\033[0m")
+  /usr/bin/make "$@" 2>&1 | sed -E -e "/[Ee]rror[: ]/ s%$pathpat%$ccred&$ccend%g" -e "/[Ww]arning[: ]/ s%$pathpat%$ccyellow&$ccend%g"
+  return ${PIPESTATUS[0]}
+}
+
 function color() {
   tput setf $1
 }
@@ -1115,6 +1125,17 @@ function nocolor() {
 }
 function sqd() {
   sqlite3 $1 .dump | less
+}
+
+function defaultps1() {
+  PS1='\[\e]0;${TITLEBAR_PREFIX} \w\a\]\u@\h:\w\$ '
+}
+#defaultps1 # call it
+
+TITLEBAR_PREFIX=""
+function titlebar {
+  TITLEBAR_PREFIX="$*"
+  echo -ne "\033]2;$*\a"
 }
 
 # $(__git_ps1 "%s"): your current git branch if you're in a git directory, otherwise nothing
@@ -1130,6 +1151,7 @@ function __git_ps1() {
 
   #TODO: abstract the prefix, which sets titlebar and is duplicated
   TITLEBAR_PREFIX="$*"
+  defaultps1
   PS1='\[\e]0;${TITLEBAR_PREFIX} \w\a\]\[$(color 6)\]$U@$H \[$(color 1)\]$R \[$(color 3)\]$B \[$(color 6)\]$W\[$(nocolor)\] \$ '
 }
 
@@ -1683,24 +1705,33 @@ if which rbenv 2 >&/dev/null ; then
   export PATH="$HOME/.rbenv/shims:$PATH"
 fi
 
+# exports
+export PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig:/usr/lib/pkgconfig
+#export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/share/lib:/usr/local/lib:/usr/local/share/lib:/usr/X11R6/lib:/opt/lib
+
+#export EDITOR=vim
+# export INPUTRC=/etc/inputrc
+export USER LOGNAME MAIL HOSTNAME
+export VISUAL=$EDITOR
+export CSCOPE_EDITOR="$EDITOR"
+export WCDHOME="${HOME}/.wcd"
+export BROWSER="x-www-browser"
+
+# export RESIN_HOME
+export SHLVL=1
+export G_BROKEN_FILENAMES=1
+
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+export ENV=$HOME/.bashrc
+
 # set PATH so it includes user's private bin if it exists
 [ -d $HOME/.local/bin ] && PATH=$HOME/.local/bin:$PATH
-
-[ -d $HOME/.gem/ruby/2.4.0/bin ] && PATH=$HOME/.gem/ruby/2.4.0/bin:$PATH
 
 [ -d $HOME/.gem/ruby/2.5.0/bin ] && PATH=$HOME/.gem/ruby/2.5.0/bin:$PATH
 
 [ -d $HOME/swift-3.1/usr/bin/ ] && PATH=$HOME/swift-3.1/usr/bin:$PATH
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '$HOME/google-cloud-sdk/path.bash.inc' ]; then
-  source '$HOME/google-cloud-sdk/path.bash.inc'
-fi
-
-# The next line enables bash completion for gcloud.
-if [ -f '$HOME/google-cloud-sdk/completion.bash.inc' ]; then
-  source '$HOME/google-cloud-sdk/completion.bash.inc'
-fi
 
 ##PS1 ----------------------------------------
 # extra backslash in front of \$ to make bash colorize the prompt
@@ -1915,35 +1946,6 @@ export REPO_URL='https://mirrors.tuna.tsinghua.edu.cn/git/git-repo/'
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-# exports
-export PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig:/usr/lib/pkgconfig
-#export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/share/lib:/usr/local/lib:/usr/local/share/lib:/usr/X11R6/lib:/opt/lib
-
-export EDITOR=vim
-# export INPUTRC=/etc/inputrc
-export USER LOGNAME MAIL HOSTNAME
-export VISUAL=$EDITOR
-export CSCOPE_EDITOR="$EDITOR"
-export WCDHOME="${HOME}/.wcd"
-export BROWSER="x-www-browser"
-
-# export RESIN_HOME
-export SHLVL=1
-export G_BROKEN_FILENAMES=1
-
-export PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:"
-export PATH="${PATH}/opt/bin:/usr/bin/core_perl:/usr/games/bin:"
-## [ "$UID" = "0" ] || export PATH=".:$PATH"
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
-
-function KUBEGOPATH {
-  export GOPATH=`pwd`/Godeps/_workspace:`pwd`/_output/local/go:$GOPATH
-}
-
-export PRINTER=tahiti-color
-export PRINTER2=waikiki-color
-export ENV=$HOME/.bashrc
 
 # if ! -z $CROSS_
 # export CROSS_COMPILE=ppc_85xx-
@@ -1999,3 +2001,12 @@ esac
 
 
 # TODO: log out after idle long time
+
+# The next line enables shell command completion for gcloud.
+if [ -f '$HOME/google-cloud-sdk/completion.bash.inc' ]; then
+  source '$HOME/google-cloud-sdk/completion.bash.inc'
+fi
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '$HOME/google-cloud-sdk/path.bash.inc' ]; then . '$HOME/google-cloud-sdk/path.bash.inc'; fi
+

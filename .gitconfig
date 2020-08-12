@@ -145,6 +145,29 @@ mergeoptions = --no-commit --no-ff
     required = true
 
 [alias]
+	amend = commit --amend
+	br = branch
+	ci = commit
+	co = checkout
+	copr = "!f() { git fetch upstream pull/$1/head:pr-$1; git co pr-$1;}; f"
+	curbr = rev-parse --abbrev-ref HEAD
+	fup = fetch upstream
+	po = push origin
+	pocur = !git po $(git curbr)
+	pofcur = !git po -f $(git curbr)
+	rb = rebase
+	rbup = rebase upstream/master
+	revert = checkout --
+	root = rev-parse --show-toplevel
+	st = status
+	track = "!f() { git co -b $1 origin/$1; }; f"
+	wdiff = diff --color-words
+[merge]
+	conflictstyle = diff3
+[http "https://gopkg.in"]
+	followRedirects = true
+
+
 	co = checkout
 	ci = commit
 	st = status

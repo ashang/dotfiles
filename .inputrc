@@ -37,6 +37,7 @@ $if mode=emacs
   "\e[5~": beginning-of-history
   "\e[6~": end-of-history
 
+
 $endif
 
 
