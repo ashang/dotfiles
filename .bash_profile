@@ -7,4 +7,4 @@
 # Refer also to /etc/default
 
 # Get the aliases and functions, recommended by the bash info pages.
-[[ -f ~/.bashrc ]] && . ~/.bashrc
+[ -r ~/.bashrc ] && source ~/.bashrc

@@ -350,8 +350,10 @@ fi
 # guideline 0: those not in command-not-found
 # guideline 1: standard cross-platform parameters, such as ps, tar.
 
+# enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
     # Never use 'grep --colour=always', control characters apply!
@@ -581,7 +583,7 @@ colors() {
 #        a percent sign (`%') after each whiteout, and
 #        a vertical bar (`|') after each that is a FIFO.
 
-alias l='ls -ah --color'
+alias l='ls -ah'
 alias la='ls -A'
 alias ll='ls -lh'                 # classify files in colour
 hash exa 2>/dev/null && alias ll='exa -F -l -B --git'
@@ -641,7 +643,6 @@ alias enprint='enscript -h -G -E -2 -r --rotate-even-pages -DDuplex:true'
 alias equo='equo --color --ask -v'
 alias es='emerge --search'
 #alias expemerge="ACCEPT_KEYWORDS=\"~x86\" emerge"
-
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -746,8 +747,10 @@ alias ms='gpm -m /dev/psaux -t imps2'
 #alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A &'
 alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A -geometry 125x43+0+0 &'
 alias lc='locate -i'
+#alias less='less -R'                          # raw control characters
 alias less='less -r'                          # raw control characters
 
+alias make='make -j4'
 alias mm="make menuconfig"
 alias moer=more
 alias mplayer='mplayer -vf screenshot -msgcolor'
@@ -935,7 +938,13 @@ alias hax="growlnotify -a 'Activity Monitor' 'System error' -m 'WTF R U DOIN'"
 alias start-psql="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
 alias stop-psql="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
 
-alias w='w -s'
+if [[ "$OSTYPE" =~ *BSD ]]
+then
+  alias w='w -i'    # sorted by idle time.
+else
+  alias w='w -s'    # short format, no login time, JCPU or PCPU times.
+fi
+
 #alias wget="wget --no-check-certificate -c --content-disposition"
 alias wget="wget -U 'noleak'"
 alias wget="wget -U User-Agent -c --content-disposition"
@@ -1193,8 +1202,9 @@ export LC_ALL=en_US.UTF-8
 
 # Dont clear the screen after quitting a manual page
 export MANPAGER="less -X"
-## less not as chinese pager
+
 export LESSCHARSET=utf-8
+#export LESS="-R"
 
 #eval "$(lessfile)"
 # make less more friendly for non-text input files, see lesspipe(1)
@@ -1685,7 +1695,18 @@ export LD_LIBRARY_PATH=/opt/j2sdk1.4.2_04/jre:$LD_LIBRARY_PATH
 
 [ -d "$HOME/.gem/ruby/bin" ] && export PATH="$HOME/.gem/ruby/bin:$PATH"
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+# fzf {{{
+if test -d $HOME/.fzf ; then
+  if [[ ! "$PATH" == *$HOME/.fzf/bin* ]]; then
+    export PATH="${PATH:+${PATH}:}$HOME/.fzf/bin"
+  fi
+
+  # Auto-completion
+  [[ $- == *i* ]] && source "$HOME/.fzf/shell/completion.bash" 2> /dev/null
+
+  # Key bindings
+  test -f $HOME/.fzf/shell/key-bindings.bash && source "$HOME/.fzf/shell/key-bindings.bash"
+fi # fzf }}}
 
 [ -d "$HOME/.cargo/bin" ] && export PATH="$HOME/.cargo/bin:$PATH"
 
@@ -1709,8 +1730,9 @@ fi
 export PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig:/usr/lib/pkgconfig
 #export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/share/lib:/usr/local/lib:/usr/local/share/lib:/usr/X11R6/lib:/opt/lib
 
-#export EDITOR=vim
+# export EDITOR=vim
 # export INPUTRC=/etc/inputrc
+export MAIL=$HOME/Maildir/
 export USER LOGNAME MAIL HOSTNAME
 export VISUAL=$EDITOR
 export CSCOPE_EDITOR="$EDITOR"
@@ -1731,6 +1753,18 @@ export ENV=$HOME/.bashrc
 [ -d $HOME/.gem/ruby/2.5.0/bin ] && PATH=$HOME/.gem/ruby/2.5.0/bin:$PATH
 
 [ -d $HOME/swift-3.1/usr/bin/ ] && PATH=$HOME/swift-3.1/usr/bin:$PATH
+
+PATH="$PATH:./node_modules/.bin"
+export PATH=$HOME/.local/bin:$PATH
+
+#export LANG=fr_CA
+
+# Begin protected block
+if [ -t 0 ]; then       # check for a terminal
+  [ x"$TERM" = x"wy30" ] && stty erase ^h       # sample legacy environment
+  #/usr/games/fortune
+fi
+# End protected block
 
 
 ##PS1 ----------------------------------------
@@ -1911,16 +1945,10 @@ fi
 export QT_STYLE_OVERRIDE=gtk
 export QT_SELECT=qt5
 
-#TODO if domainname=cnbj/seld
-#[[ $(hostname) = "et.local" ]] || (\
-[[ $(hostname) = cnbj* || $(hostname) = CNBJ* || $(hostname) = seld* ]] && \
-  [[ $(ifconfig | egrep '10.147' | awk '{print $2} ') = 'addr:10.147'* ]] \
-  && . ~/.myvar
-
 #export ftp_proxy=http://proxy.global.net:8080
 #export http_proxy=http://proxy.global.net:8080
 #export https_proxy=http://proxy.global.net:8080
-#export no_proxy=localhost,127.0.0.1,10.*,.corpusers.net
+#export no_proxy=localhost,127.0.0.1,10.*,.local
 
 export IPOD_MOUNTPOINT=/media/
 
@@ -1975,14 +2003,15 @@ export LD_PRELOAD=""
 # http://invisible-island.net/ncurses/ncurses.faq.html#bce_mismatches
 # tmux doesn't support the terminfo capability bce (back color erase), which vim checks for, to decide whether to use its "default color" scheme.
 
-# In ~/.xprofile for DM session
+# These should be in ~/.xprofile for DM session
+## Take care of dbus-launch
 # See http://fcitx-im.org/wiki/Input_method_related_environment_variables#XMODIFIERS
 ###export GTK_IM_MODULE=xim
 #export GTK_IM_MODULE=fcitx
-##export QT_IM_MODULE=xim
+###export QT_IM_MODULE=xim
 #export QT_IM_MODULE=fcitx
-#export QT_IM_MODULE=xim
-export XMODIFIERS=@im=fcitx
+##export QT_IM_MODULE=xim
+#export XMODIFIERS=@im=fcitx
 
 # Start X if login from the first console.
 #[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
@@ -2010,3 +2039,16 @@ fi
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '$HOME/google-cloud-sdk/path.bash.inc' ]; then . '$HOME/google-cloud-sdk/path.bash.inc'; fi
 
+## alacritty
+test -d  ~/.config/alacritty/alacritty.bash && source ~/.config/alacritty/alacritty.bash
+
+# kitty
+which kitty &>/dev/null && source <(kitty + complete setup bash)
+##Older versions do not support process substitution with the source command
+##try an alternative:
+# source /dev/stdin <<<"$(kitty + complete setup bash)"
+
+
+#export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

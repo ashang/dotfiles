@@ -12,5 +12,4 @@
 :set autowrite
 :set magic
 :set bg=dark
-:source $HOME/.vi/wordlist
 :set textwidth=79
