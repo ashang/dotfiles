@@ -302,6 +302,29 @@ if test "$restricted" = true -a -z "$PROFILEREAD" ; then
     export PATH
 fi
 
+# Obseleted!!
+# eval "`dircolors -b`"
+
+# dircolors --print-database uses its own built-in database
+# instead of using /etc/DIR_COLORS.  Try to use the external file
+# first to take advantage of user additions.  Use internal bash
+# globbing instead of external grep binary.
+
+# guideline 0: those not in command-not-found
+# guideline 1: standard cross-platform parameters, such as ps, tar.
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+    # Never use 'grep --colour=always', control characters apply!
+    alias grep='grep --color=auto --exclude-dir=.git -s -I'
+fi
+
+# For dircolors-solarized
+# - https://github.com/seebi/dircolors-solarized
+
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color) color_prompt=yes;;
@@ -327,41 +350,17 @@ fi
 if [[ "`uname -s`" == "FreeBSD" ]]
 #if [[ "$OSTYPE" =~ *BSD ]]; then
 then
-  alias ls='\ls -FG'
+  alias ls='ls -FG'
 elif [[ "$OSTYPE" =~ ^darwin ]]; then
 #elif [ "`uname -s`" == "Darwin" ]
 	# uname also works
   alias ls="command ls -bFG"
 else # Assume Linux
   #alias ls="command ls -FG"
-  alias ls='\ls -F -X --color=auto --show-control-chars'
+  alias ls='ls -F -G -X -C -h --color=auto --show-control-chars'
   #alias ls='\ls -F -X --color=tty --show-control-chars'
   export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:'
 fi
-
-# Obseleted!!
-# eval "`dircolors -b`"
-
-# dircolors --print-database uses its own built-in database
-# instead of using /etc/DIR_COLORS.  Try to use the external file
-# first to take advantage of user additions.  Use internal bash
-# globbing instead of external grep binary.
-
-# guideline 0: those not in command-not-found
-# guideline 1: standard cross-platform parameters, such as ps, tar.
-
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-    # Never use 'grep --colour=always', control characters apply!
-    alias grep='grep --color=auto --exclude-dir=.git -s -I'
-fi
-
-# For dircolors-solarized
-# - https://github.com/seebi/dircolors-solarized
 
 export LS_OPTIONS='--color=auto'
 export CLICOLOR='Yes'
@@ -433,7 +432,6 @@ fi
 # \$: if the effective UID is 0: #, otherwise $
 # \d: the date in "Weekday Month Date" format (e.g., "Tue May 26")
 # \t: the current time in 24-hour HH:MM:SS format, \T: same, but 12-hour format, \@: same, but in 12-hour am/pm format
-# \n: newline
 # \r: carriage return
 # \\: backslash
 
@@ -583,8 +581,11 @@ colors() {
 #        a percent sign (`%') after each whiteout, and
 #        a vertical bar (`|') after each that is a FIFO.
 
-alias l='ls -ah'
+alias l='ls -Ah'
 alias la='ls -A'
+alias la='ls -A'
+alias l='ls -CF'
+
 alias ll='ls -lh'                 # classify files in colour
 hash exa 2>/dev/null && alias ll='exa -F -l -B --git'
 
@@ -599,7 +600,6 @@ alias lh='ls -A | egrep "^\."'
 alias lS='ls -lS'
 alias lSr='ls -lSr'
 alias lt='ls -ltA'
-alias lrt='ls -ltAr'
 alias ltr='ls -ltAr'
 
 alias ..='cd ..'
@@ -683,7 +683,6 @@ alias findsi='find . -regex ".*\.\(h\|cpp\|c\|java\|aidl\|py\|pl\|pm\)" | xargs 
 alias findgrep="find . -print0 | xargs -0 grep"
 
 # git
-alias gits='git status --ignore-submodules=dirty'
 
 # git reset --hard `gitorigin`
 #alias gitorigin="git branch -r | head -1 | cut -d' ' -f 5"
@@ -706,9 +705,9 @@ alias gg="git log --abbrev=10 --color --all --graph --pretty=format:\"%h %ad %an
 alias gg='git grep -a -i'
 alias gup='git pull --rebase --prune && git submodule update --init --recursive'
 alias gi="git commit -v"
-alias g='echo; git log -n 12 --graph --oneline --decorate; echo; git status --ignore-submodules=dirty; echo'
 alias gl="git log --abbrev=10 --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%C(yellow)%d%Creset %Cblue[%an]%Creset\" --graph --date=iso"
-alias gl='git log --abbrev=10 --oneline --decorate --graph'
+alias g='echo; git log -n 12 --graph --oneline --decorate=full; echo; git status --ignore-submodules=dirty; echo'
+alias gl='git log --abbrev=10 --oneline --graph --decorate=full'
 alias glp='git log -p'
 alias glss='git log --abbrev=10 --stat'
 alias gmb="git merge-base"
@@ -720,9 +719,7 @@ alias gpr='git pull --rebase --recurse-submodules'
 alias gpr='git pull --rebase --stat'
 
 alias gss='git show --stat'
-#alias gst='git status --ignore-submodules=dirty'
-alias gst='git status -suno --ignore-submodules=dirty && git branch -vv'
-alias gsq='git status -sb'
+alias gst='git branch -vv && git status -suno --ignore-submodules=dirty'
 
 alias gup='git pull --rebase --prune && git submodule update --init --recursive'
 alias gsl='git stash list'
@@ -741,18 +738,12 @@ alias jobs="jobs -l"
 alias jq="jq -C -S"
 alias ka="killall"
 
-alias mpl='mplayer -vf screenshot -msgcolor'
-alias mm="make menuconfig"
-alias ms='gpm -m /dev/psaux -t imps2'
-#alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A &'
-alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A -geometry 125x43+0+0 &'
 alias lc='locate -i'
 #alias less='less -R'                          # raw control characters
 alias less='less -r'                          # raw control characters
 
 alias make='make -j4'
 alias mm="make menuconfig"
-alias moer=more
 alias mplayer='mplayer -vf screenshot -msgcolor'
 alias mpv="mpv --audio-display=no"
 alias ms='gpm -m /dev/psaux -t imps2'
@@ -819,7 +810,6 @@ alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=30 -o StrictHostKe
 alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=30'
 ## ignore ~/.ssh/known_hosts entries
 #alias insecssh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -o "PreferredAuthentications=keyboard-interactive"'
-alias svi='sudo vi'
 
 type multitail &>/dev/null && alias tail='multitail -c'
 alias th='history | tail'
@@ -906,6 +896,8 @@ alias dmesg='clear; dmesg -eL -w'
 
 # Go
 alias sv='source ~/.config/vim/scripts/gb.bash sv'
+#source ~/.config/vim/branch_prompt.sh
+alias gg='git grep -a -i'
 
 # Canonical hex dump; some systems have this symlinked
 type -t hd > /dev/null || alias hd="hexdump -C"
@@ -1137,7 +1129,7 @@ function sqd() {
 }
 
 function defaultps1() {
-  PS1='\[\e]0;${TITLEBAR_PREFIX} \w\a\]\u@\h:\w\$ '
+  PS1='\[\e]0;${TITLEBAR_PREFIX} \w\]\u@\h:\w\$ '
 }
 #defaultps1 # call it
 
@@ -1177,12 +1169,6 @@ function __git_ps1() {
 # PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 # #PROMPT_COMMAND='history -a $HOME/.bash_history; echo -ne "\033]0;$PWD\007"; $PROMPT_COMMAND;'
 
-# Commented out, don't overwrite xterm -T "title" -n "icontitle" by default.
-    # If this is an xterm set the title to user@host:dir
-    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}\007"'
-    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"'
-    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}"; echo -ne "\007"'
-    #PROMPT_COMMAND='printf "%b" "\033]0;${PWD/$HOME/~}\007"' ;;
 
 #if [ "`locale charmap 2>/dev/null`" = "UTF-8" ]
 #then
@@ -1226,7 +1212,6 @@ export YAOURT_COLORS="nb=1:pkg=1:ver=1;32:lver=1;45:installed=1;42:grp=1;34:od=1
 
 # Try to keep environment pollution down, EPA loves us.
 unset use_color safe_term match_lhs sh
-unset color_prompt force_color_prompt
 
 unset -f have
 unset RELEASE default dirnames filenames have nospace bashdefault plusdirs
@@ -1732,7 +1717,7 @@ export PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig:/usr/lib/pkgconfig
 
 # export EDITOR=vim
 # export INPUTRC=/etc/inputrc
-export MAIL=$HOME/Maildir/
+export MAIL=$HOME/Mail/
 export USER LOGNAME MAIL HOSTNAME
 export VISUAL=$EDITOR
 export CSCOPE_EDITOR="$EDITOR"
@@ -1811,23 +1796,6 @@ bash_prompt_command() {
   fi
 }
 
-function proml {
-	case $TERM in
-	    xterm*|rxvt*)
-	        local TITLEBAR='\[\e]0;\u@\h:\w/ \007\]'
-	        ;;
-	    *)
-	        local TITLEBAR=''
-	        ;;
-	esac
-	PS1='\u@\h:\w/\n\$ \[\e[m\]'
-	PS1="${TITLEBAR}$BGreen# \D{W%V.%u %m%d} \t$(__git_ps1) \$(powerpercent)% tty/\l $NORMAL"$PS1
-	PS1="\[\e[\$(( (\$? == 0 ) ? 31 : 41 ))m\]"$PS1
-}
-
-proml
-unset proml
-
 shopt -s checkhash cmdhist expand_aliases histreedit mailwarn
 shopt -s hostcomplete
 
@@ -1882,11 +1850,49 @@ if [ -n "${BASH_VERSION-}" -a -n "${PS1-}" -a -z "${BASH_COMPLETION_COMPAT_DIR-}
             . /etc/bash_completion
         fi
     fi
-
 fi
 
 complete -W menuconfig make
 complete -cf sudo
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]'
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\a'
+fi
+unset color_prompt force_color_prompt
+
+function proml {
+    # Commented out, don't overwrite xterm -T "title" -n "icontitle" by default.
+    # If this is an xterm set the title to user@host:dir
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}\007"'
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"'
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}"; echo -ne "\007"'
+    #PROMPT_COMMAND='printf "%b" "\033]0;${PWD/$HOME/~}\007"' ;;
+
+	case $TERM in
+	    xterm*|rxvt*)
+	        local TITLEBAR='\[\e]0;\u@\h:\w/ \007\]'
+	        ;;
+	    *)
+	        local TITLEBAR=''
+	        ;;
+	esac
+}
+
+proml
+unset proml
+
+function PWD {
+  tmp=${PWD%/*/*};
+  [ ${#tmp} -gt 0 -a "$tmp" != "$PWD" ] && echo ${PWD:${#tmp}+1} || echo $PWD;
+}
+
+#PS1=$PS1"$(PWD)/\n$ "
+PS1=$PS1"\w/\n$ "
+PS1="${TITLEBAR}$BGreen# \D{W%V.%u %m%d} \t$(__git_ps1) \$(powerpercent)% tty/\l "$PS1
+PS1="\[\e[\$(( (\$? == 0 ) ? 31 : 41 ))m\]"$PS1
+PS1=$PS1$NORMAL
 
 #[[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && . $HOME/.autojump/etc/profile.d/autojump.sh
 
@@ -1994,7 +2000,7 @@ export LD_PRELOAD=""
 # directory), then /lib/terminfo, and last not least /usr/share/terminfo.
 
 # Tmux explicitly requires this to be set to screen-256color.
-#export TERM=screen-256color
+export TERM=screen-256color
 # TERM in .bashrc overrides `set -g default-terminal` from tmux
 # set TERM to xterm-256color if bash is running standalone (no tmux)
 [ -z "$TMUX" ] && export TERM="xterm-256color"
@@ -2006,12 +2012,12 @@ export LD_PRELOAD=""
 # These should be in ~/.xprofile for DM session
 ## Take care of dbus-launch
 # See http://fcitx-im.org/wiki/Input_method_related_environment_variables#XMODIFIERS
-###export GTK_IM_MODULE=xim
-#export GTK_IM_MODULE=fcitx
+##export GTK_IM_MODULE=xim
+export GTK_IM_MODULE=fcitx
 ###export QT_IM_MODULE=xim
-#export QT_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
 ##export QT_IM_MODULE=xim
-#export XMODIFIERS=@im=fcitx
+export XMODIFIERS=@im=fcitx
 
 # Start X if login from the first console.
 #[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
@@ -2021,6 +2027,12 @@ export LD_PRELOAD=""
 #     sway
 #     exit 0    # exit login after sway quits
 # fi
+
+# for sway and alike
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+
 
 case "$(tty)" in
     "/dev/tty5")	sway; exit 0;;
@@ -2039,6 +2051,7 @@ fi
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '$HOME/google-cloud-sdk/path.bash.inc' ]; then . '$HOME/google-cloud-sdk/path.bash.inc'; fi
 
+
 ## alacritty
 test -d  ~/.config/alacritty/alacritty.bash && source ~/.config/alacritty/alacritty.bash
 
@@ -2052,3 +2065,11 @@ which kitty &>/dev/null && source <(kitty + complete setup bash)
 #export NVM_DIR="$HOME/.nvm"
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 #[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+source ~/.git-completion.bash
+source ~/.git-prompt.sh
+export GIT_PS1_SHOWDIRTYSTATE=1
+#
+#source ~/.vim/scripts/branch_prompt.sh
