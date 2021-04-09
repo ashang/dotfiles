@@ -1,5 +1,4 @@
-# ~/.bashrc: executed by bash(1) for interactive shells.
-# ~/.bashrc: executed by bash(1) for non-login shells.
+# ~/.bashrc: executed by bash(1) for non-login interactive shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
@@ -16,8 +15,30 @@
 # anything or bad things will happen !
 
 # Shell is non-interactive. Be done now!
-[[ $- != *i* ]] && return
+# bash only
+#[[ $- != *i* ]] && return
 
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+# some more ls aliases
+#alias ll='ls -l'
+#alias la='ls -A'
+#alias l='ls -CF'
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
 #QUOTE BEGIN
     ## System-wide .profile for sh(1)
 
@@ -132,12 +153,12 @@ case "$-" in
 
 	# Set xterm prompt with short path (last 18 characters)
 	if path tput hs 2>/dev/null || path tput -T $TERM+sl hs 2>/dev/null ; then
-	    #
+
 	    # Mirror prompt in terminal "status line", which for graphical
 	    # terminals usually is the window title. KDE konsole in
 	    # addition needs to have "%w" in the "tabs" setting, ymmv for
 	    # other console emulators.
-	    #
+
 	    if [[ $TERM = *xterm* ]] ; then
 		_tsl=$(echo -en '\e]2;')
 		_isl=$(echo -en '\e]1;')
@@ -325,11 +346,6 @@ fi
 # For dircolors-solarized
 # - https://github.com/seebi/dircolors-solarized
 
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color) color_prompt=yes;;
-esac
-
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
@@ -341,11 +357,43 @@ if [ -n "$force_color_prompt" ]; then
 	# We have color support; assume it's compliant with Ecma-48
 	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
 	# a case would tend to support setf rather than setaf.)
-	    color_prompt=yes
+	color_prompt=yes
     else
-	    color_prompt=
+	color_prompt=
     fi
 fi
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    #alias grep='grep --color=auto'
+    #alias fgrep='fgrep --color=auto'
+    #alias egrep='egrep --color=auto'
+fi
+
+# colored GCC warnings and errors
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
 
 if [[ "`uname -s`" == "FreeBSD" ]]
 #if [[ "$OSTYPE" =~ *BSD ]]; then
@@ -537,9 +585,6 @@ On_IWhite='\e[0;107m'   # White
 #NORMAL="\[\e[0m\]"
 NORMAL="\[\e[m\]"
 
-# colored GCC warnings and errors
-export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
 colors() {
   local fgc bgc vals seq0
 
@@ -627,7 +672,7 @@ alias debug_off="sed -i 's/^#define LOG_NDEBUG 0/\/\/#define LOG_NDEBUG 0/g' "
 # debug_on MediaExtractor.cpp
 # debug_off *.*
 
-alias df='df -h -T | grep -v tmpfs'
+alias df='df -T'
 alias diff='diff -x.git'
 alias dl='dpkg -L'
 alias dlg='dpkg -l | grep'
@@ -703,13 +748,17 @@ alias gg="git log --abbrev=10 --graph --all --format='%C(auto)%h%d %C(auto,bold 
 alias gg="git log --abbrev=10 --graph --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'"
 alias gg="git log --abbrev=10 --color --all --graph --pretty=format:\"%h %ad %an %s%d\" --date=iso"
 alias gg='git grep -a -i'
+#source ~/.vim/branch_prompt.sh
+# ALL GO SCRIPT ALIASES.
+#alias g='source ~/.vim/scripts/gb.bash'
+#alias sv='source ~/.vim/scripts/gb.bash sv'
+alias hs='history | tail -40 | more'
 alias gup='git pull --rebase --prune && git submodule update --init --recursive'
 alias gi="git commit -v"
 alias gl="git log --abbrev=10 --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%C(yellow)%d%Creset %Cblue[%an]%Creset\" --graph --date=iso"
-alias g='echo; git log -n 12 --graph --oneline --decorate=full; echo; git status --ignore-submodules=dirty; echo'
-alias gl='git log --abbrev=10 --oneline --graph --decorate=full'
+alias gl='git log --abbrev=10 --pretty=format:"%C(yellow)%h%C(reset) %s%C(bold red)%d%C(reset) %C(green)%ad%C(reset) %C(blue)[%an]%C(reset)" --graph'
 alias glp='git log -p'
-alias glss='git log --abbrev=10 --stat'
+alias gls='git log --abbrev=10 --stat'
 alias gmb="git merge-base"
 alias gpa='for i in `git remote | grep -v upstream`; do echo; echo To remote $i ......; echo; git push $i;done'
 alias gpp='git pull --rebase && git push'
@@ -717,13 +766,11 @@ alias gr="git remote -v"
 alias grss="git remote show origin"
 alias gpr='git pull --rebase --recurse-submodules'
 alias gpr='git pull --rebase --stat'
-
-alias gss='git show --stat'
-alias gst='git branch -vv && git status -suno --ignore-submodules=dirty'
-
-alias gup='git pull --rebase --prune && git submodule update --init --recursive'
 alias gsl='git stash list'
-alias gss='git stash save'
+alias gss='git show --stat'
+#alias gst='git branch -vv && git status -suno --ignore-submodules=dirty'
+alias gst='git branch -vv && git status -uno --ignore-submodules'
+alias gup='git pull --rebase --prune && git submodule update --init --recursive'
 
 alias gdb='gdb -q'
 
@@ -739,8 +786,6 @@ alias jq="jq -C -S"
 alias ka="killall"
 
 alias lc='locate -i'
-#alias less='less -R'                          # raw control characters
-alias less='less -r'                          # raw control characters
 
 alias make='make -j4'
 alias mm="make menuconfig"
@@ -755,6 +800,7 @@ alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A -geometry 125x43+0+0 &'
 alias mo=more
 alias moer=more
 alias mroe=more
+#alias more=less
 
 alias nano='nano -i -m -w -B -F -L'
 alias nano='nano -i -m -w -B -F -L -xcSr68'
@@ -985,7 +1031,7 @@ set -o notify
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-# Don't use ^D to exit
+# how many ^D to exit
 #set -o ignoreeof  # Same as setting IGNOREEOF=10
 #set ignoreeof  # prevent accidental shell termination
 # sometimes, stty eof '^D' / stty eof undef
@@ -1026,6 +1072,7 @@ bind "set bind-tty-special-chars on"  #punctuations are not word delimiters
 #ctrl-RIGHT got 5C
 
 # history
+# append to the history file, don't overwrite it
 shopt -s histappend
 shopt -s histverify
 
@@ -1033,9 +1080,9 @@ shopt -s histverify
 # See bash(1) for more options
 # Keep also space-starting lines, just in case
 export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
-
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
 #HISTCONTROL=ignoreboth
-# HISTCONTROL=ignoredups
 #HISTCONTROL=ignoredups:ignorespace
 
 #Ignore some controlling instructions
@@ -1191,6 +1238,8 @@ export MANPAGER="less -X"
 
 export LESSCHARSET=utf-8
 #export LESS="-R"
+alias less='less -R'                          # raw control characters
+#alias less='less -r'                          # raw control characters
 
 #eval "$(lessfile)"
 # make less more friendly for non-text input files, see lesspipe(1)
@@ -1268,7 +1317,6 @@ function gum() { git checkout "$1" && git rebase master && git checkout master; 
 # commits listed between a branch and master. Then I know which branches to use with gum.
 # The list of excluded branches includes branches which should not be rebased against master (I could do some processing of git branch -r to not have those hardcoded) but the odd one is stale. Sometimes, I get an idea for a feature which is too intrusive, too messy or just too incomplete to be rebased against master. Rather than losing the idea or wasting time rebasing, I'm getting into the habit of renaming the branch foo as stale-foo and gsb then leaves it alone. Equally, there are frequently times when I need to have a feature branch based on another feature branch, sometimes several feature branches deep. Identifying these branches and avoiding rebasing on the wrong branch is important to not waste time.
 function gsb() { LIST=`git branch|egrep -v '(release|staging|trusty|playground|stale)'|tr '\n' ' '|tr -d '*'`; git show-branch $LIST; }
-
 
 # Shows which feature branches can be dropped with git branch -d.
 function gleaf(){ git branch --merged master | egrep -v '(release|staging|trusty|playground|pipeline|review|stale)'; }
@@ -1631,27 +1679,11 @@ function prompt_git() {
   fi;
 }
 
-### PATH
-PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-# Original PATH is set in /etc/profile
-# NEVER export PATH without quoting $PATH
-# Deal with PATH only in .bashrc, and source it in ~/.bash_profile
+# exports
+#export PKG_CONFIG_PATH=/usr/lib/pkgconfig
+#export LD_LIBRARY_PATH=/lib:/usr/lib
+#export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/share/lib:/usr/local/lib:/usr/local/share/lib:/usr/X11R6/lib:/opt/lib
 
-#For Java
-# export JAVA_HOME=/usr/lib/jvm/java-6-sun-1.6.0.14/jre/
-# [ ! -z $JAVA_HOME ] && export PATH=$JAVA_HOME/bin:$PATH
-# export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/td.jar:$JAVA_HOME/lib/rt.jar:.
-#export PATH=$JAVA_HOME/bin:/$HOME/.local/my-cross/bin:$PATH
-
-# linuxbrew
-export PATH="$HOME/.linuxbrew/bin:$PATH"
-export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
-export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
-export HOMEBREW_BUILD_FROM_SOURCE=1
-
-export LABS="${HOME}/.local"
-export BBDIR="${LABS}/bitbake"
-export PATH="${BBDIR}/bin:$PATH"
 
 #QUILT
 #export QUILT_PATCHES="debian/patches"
@@ -1660,64 +1692,11 @@ export PATH="${BBDIR}/bin:$PATH"
 #export QUILT_REFRESH_ARGS="--no-timestamps --no-index -p ab"
 #export QUILT_DIFF_OPTS='-p'
 
-#{3
-if [ -f "$(command -v "ccache")" ]; then
-    export PATH="${PATH}:/usr/lib/ccache"
-    export CCACHE_DIR="${HOME}/.ccache"
-    export CCACHE_SIZE="2G"
-    #export CCACHE_PREFIX="distcc"
-fi
-#}3
 
-export PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig:/usr/lib/pkgconfig
-export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/share/lib:/usr/local/lib:/usr/X11R6/lib:/opt/lib
-export LD_LIBRARY_PATH=/opt/j2sdk1.4.2_04/jre:$LD_LIBRARY_PATH
-
-###Heroku Toolbelt
-[ -d "$HOME/.local/heroku/bin" ] && export PATH="$HOME/.local/heroku/bin:$PATH"
-
-[ -d "/snap/bin" ] && export PATH="/snap/bin:$PATH"
-
-[ -d "$HOME/.gem/ruby/bin" ] && export PATH="$HOME/.gem/ruby/bin:$PATH"
-
-# fzf {{{
-if test -d $HOME/.fzf ; then
-  if [[ ! "$PATH" == *$HOME/.fzf/bin* ]]; then
-    export PATH="${PATH:+${PATH}:}$HOME/.fzf/bin"
-  fi
-
-  # Auto-completion
-  [[ $- == *i* ]] && source "$HOME/.fzf/shell/completion.bash" 2> /dev/null
-
-  # Key bindings
-  test -f $HOME/.fzf/shell/key-bindings.bash && source "$HOME/.fzf/shell/key-bindings.bash"
-fi # fzf }}}
-
-[ -d "$HOME/.cargo/bin" ] && export PATH="$HOME/.cargo/bin:$PATH"
-
-#perl5
-[ -d "$HOME/.local/perl5/bin" ] && export PATH="$HOME/.local/perl5/bin${PATH:+:${PATH}}";
-PERL5LIB="$HOME/.local/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
-PERL_LOCAL_LIB_ROOT="$HOME/.local/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
-PERL_MB_OPT="--install_base \"$HOME/.local/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=$HOME/.local/perl5"; export PERL_MM_OPT;
-
-# ruby
-#[ -f "${HOME}/.rvm/bin" ] && export PATH="${PATH}:${HOME}/.rvm/bin"
-#[ -f "$HOME/.rvm/scripts/rvm" ] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
-if which rbenv 2 >&/dev/null ; then
-  eval "$(rbenv init -)"
-  export PATH="$HOME/.rbenv/shims:$PATH"
-fi
-
-# exports
-export PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig:/usr/lib/pkgconfig
-#export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/share/lib:/usr/local/lib:/usr/local/share/lib:/usr/X11R6/lib:/opt/lib
-
-# export EDITOR=vim
 # export INPUTRC=/etc/inputrc
 export MAIL=$HOME/Mail/
+export MAIL=$HOME/Maildir/
+export EDITOR=vim
 export USER LOGNAME MAIL HOSTNAME
 export VISUAL=$EDITOR
 export CSCOPE_EDITOR="$EDITOR"
@@ -1727,20 +1706,6 @@ export BROWSER="x-www-browser"
 # export RESIN_HOME
 export SHLVL=1
 export G_BROKEN_FILENAMES=1
-
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
-export ENV=$HOME/.bashrc
-
-# set PATH so it includes user's private bin if it exists
-[ -d $HOME/.local/bin ] && PATH=$HOME/.local/bin:$PATH
-
-[ -d $HOME/.gem/ruby/2.5.0/bin ] && PATH=$HOME/.gem/ruby/2.5.0/bin:$PATH
-
-[ -d $HOME/swift-3.1/usr/bin/ ] && PATH=$HOME/swift-3.1/usr/bin:$PATH
-
-PATH="$PATH:./node_modules/.bin"
-export PATH=$HOME/.local/bin:$PATH
 
 #export LANG=fr_CA
 
@@ -1776,8 +1741,8 @@ fi
   TTY=${TTY##*/}
 
 powerpercent() {
-   test -r /sys/class/power_supply/BAT?/capacity &&\
-   cat /sys/class/power_supply/BAT?/capacity
+   test -r /sys/class/power_supply/BAT0/capacity &&\
+   cat /sys/class/power_supply/BAT?/capacity | tr '\n' '%'
 }
 
 bash_prompt_command() {
@@ -1803,10 +1768,6 @@ shopt -s hostcomplete
 #Completion options
 bind "set show-all-if-ambiguous on"   #enable single tab completion
 bind "set completion-ignore-case on"
-
-# Disable completion when the input buffer is empty.  i.e. Hitting tab
-# and waiting a long time for bash to expand all of $PATH.
-shopt -s no_empty_cmd_completion
 
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
@@ -1855,13 +1816,6 @@ fi
 complete -W menuconfig make
 complete -cf sudo
 
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]'
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\a'
-fi
-unset color_prompt force_color_prompt
-
 function proml {
     # Commented out, don't overwrite xterm -T "title" -n "icontitle" by default.
     # If this is an xterm set the title to user@host:dir
@@ -1888,9 +1842,9 @@ function PWD {
   [ ${#tmp} -gt 0 -a "$tmp" != "$PWD" ] && echo ${PWD:${#tmp}+1} || echo $PWD;
 }
 
-#PS1=$PS1"$(PWD)/\n$ "
-PS1=$PS1"\w/\n$ "
-PS1="${TITLEBAR}$BGreen# \D{W%V.%u %m%d} \t$(__git_ps1) \$(powerpercent)% tty/\l "$PS1
+#PS1=$PS1"$(PWD)\/\n "
+PS1=$PS1"\n$ "
+PS1="${TITLEBAR}$BGreen# \D{W%V.%u %m%d} \t$(__git_ps1) \$(powerpercent) tty/\l "$PS1
 PS1="\[\e[\$(( (\$? == 0 ) ? 31 : 41 ))m\]"$PS1
 PS1=$PS1$NORMAL
 
@@ -2044,13 +1998,9 @@ esac
 # TODO: log out after idle long time
 
 # The next line enables shell command completion for gcloud.
-if [ -f '$HOME/google-cloud-sdk/completion.bash.inc' ]; then
-  source '$HOME/google-cloud-sdk/completion.bash.inc'
+if [ -f "$HOME/google-cloud-sdk/completion.bash.inc" ]; then
+  source "$HOME/google-cloud-sdk/completion.bash.inc"
 fi
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '$HOME/google-cloud-sdk/path.bash.inc' ]; then . '$HOME/google-cloud-sdk/path.bash.inc'; fi
-
 
 ## alacritty
 test -d  ~/.config/alacritty/alacritty.bash && source ~/.config/alacritty/alacritty.bash
@@ -2061,7 +2011,6 @@ which kitty &>/dev/null && source <(kitty + complete setup bash)
 ##try an alternative:
 # source /dev/stdin <<<"$(kitty + complete setup bash)"
 
-
 #export NVM_DIR="$HOME/.nvm"
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 #[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -2071,5 +2020,163 @@ which kitty &>/dev/null && source <(kitty + complete setup bash)
 source ~/.git-completion.bash
 source ~/.git-prompt.sh
 export GIT_PS1_SHOWDIRTYSTATE=1
-#
+
 #source ~/.vim/scripts/branch_prompt.sh
+
+# highlight syntax in man pages
+export LESS_TERMCAP_mb=$'\e[1;32m'
+export LESS_TERMCAP_mb=$'\E[01;31m'       # begin blinking
+export LESS_TERMCAP_md=$'\E[01;38;5;74m'  # begin bold
+export LESS_TERMCAP_md=$'\e[1;32m'
+export LESS_TERMCAP_me=$'\E[0m'           # end mode
+
+export LESS_TERMCAP_so=$'\E[34;7;246m'    # begin standout-mode - info box
+export LESS_TERMCAP_se=$'\E[0m'           # end standout-mode
+
+export LESS_TERMCAP_us=$'\E[04;38;5;146m' # begin underline
+export LESS_TERMCAP_us=$'\e[1;4;31m'
+export LESS_TERMCAP_ue=$'\E[0m'           # end underline
+
+#man() {
+#    LESS_TERMCAP_md=$'\e[01;31m' \
+#    LESS_TERMCAP_me=$'\e[0m' \
+#    LESS_TERMCAP_us=$'\e[01;32m' \
+#    LESS_TERMCAP_ue=$'\e[0m' \
+#    LESS_TERMCAP_so=$'\e[45;93m' \
+#    LESS_TERMCAP_se=$'\e[0m' \
+#
+#    command man "$@"
+#}
+
+## PATH
+# Append our default paths
+appendpath () {
+    case ":$PATH:" in
+        *:"$1":*)
+            ;;
+        *)
+            PATH="$PATH:$1"
+    esac
+}
+
+export PATH="/bin:/sbin:/usr/bin:/usr/sbin"
+appendpath '/usr/local/bin'
+appendpath '/opt/bin'
+appendpath '/usr/games/bin'
+appendpath '/usr/games'
+
+unset appendpath
+
+
+# Original PATH is set in /etc/profile
+# NEVER export PATH without quoting $PATH
+# Deal with PATH only in .bashrc, and source it in ~/.bash_profile
+
+#For Java
+# export JAVA_HOME=/usr/lib/jvm/java-6-sun-1.6.0.14/jre/
+[ ! -z $JAVA_HOME ] && export PATH=$JAVA_HOME/bin:$PATH
+[ ! -z $JAVA_HOME ] && export LD_LIBRARY_PATH=$JAVA_HOME:$LD_LIBRARY_PATH
+[ ! -z $JAVA_HOME ] && export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/td.jar:$JAVA_HOME/lib/rt.jar:.
+
+# linuxbrew
+export PATH="$HOME/.linuxbrew/bin:$PATH"
+export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
+export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
+export HOMEBREW_BUILD_FROM_SOURCE=1
+
+export LABS="${HOME}/.local"
+export BBDIR="${LABS}/bitbake"
+export PATH="${BBDIR}/bin:$PATH"
+
+function PWD {
+  tmp=${PWD%/*/*};
+  [ ${#tmp} -gt 0 -a "$tmp" != "$PWD" ] && echo ${PWD:${#tmp}+1} || echo $PWD;
+}
+
+
+#{3
+if [ -f "$(command -v "ccache")" ]; then
+    export PATH="${PATH}:/usr/lib/ccache"
+    export CCACHE_DIR="${HOME}/.ccache"
+    export CCACHE_SIZE="2G"
+    #export CCACHE_PREFIX="distcc"
+fi
+#}3
+
+###Heroku Toolbelt
+[ -d "$HOME/.local/heroku/bin" ] && export PATH="$HOME/.local/heroku/bin:$PATH"
+
+[ -d "/snap/bin" ] && export PATH="/snap/bin:$PATH"
+
+[ -d "$HOME/.gem/ruby/bin" ] && export PATH="$HOME/.gem/ruby/bin:$PATH"
+[ -d $HOME/.gem/ruby/2.7.0/bin ] && PATH=$HOME/.gem/ruby/2.7.0/bin:$PATH
+
+# fzf {{{
+if test -d $HOME/.fzf ; then
+  if [[ ! "$PATH" == *$HOME/.fzf/bin* ]]; then
+    export PATH="${PATH:+${PATH}:}$HOME/.fzf/bin"
+  fi
+
+  # Auto-completion
+  [[ $- == *i* ]] && source "$HOME/.fzf/shell/completion.bash" 2> /dev/null
+
+  # Key bindings
+  test -f $HOME/.fzf/shell/key-bindings.bash && source "$HOME/.fzf/shell/key-bindings.bash"
+fi # fzf }}}
+
+[ -d "$HOME/.cargo/bin" ] && export PATH="$HOME/.cargo/bin:$PATH"
+
+#perl5
+[ -d "$HOME/.local/perl5/bin" ] && export PATH="$HOME/.local/perl5/bin${PATH:+:${PATH}}";
+PERL5LIB="$HOME/.local/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="$HOME/.local/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"$HOME/.local/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=$HOME/.local/perl5"; export PERL_MM_OPT;
+
+# ruby
+#[ -f "${HOME}/.rvm/bin" ] && export PATH="${PATH}:${HOME}/.rvm/bin"
+#[ -f "$HOME/.rvm/scripts/rvm" ] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+if which rbenv 2>/dev/null ; then
+  eval "$(rbenv init -)"
+  export PATH="$HOME/.rbenv/shims:$PATH"
+fi
+
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+export ENV=$HOME/.bashrc
+
+[ -d $HOME/swift-3.1/usr/bin/ ] && PATH=$HOME/swift-3.1/usr/bin:$PATH
+
+PATH="$PATH:./node_modules/.bin"
+export NODE_MIRROR=https://mirrors.tuna.tsinghua.edu.cn/nodejs-release/
+
+# Disable completion when the input buffer is empty.  i.e. Hitting tab
+# and waiting a long time for bash to expand all of $PATH.
+shopt -s no_empty_cmd_completion
+
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f "$HOME/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/google-cloud-sdk/path.bash.inc"; fi
+
+TZ='Asia/Shanghai'; export TZ
+
+## [ "$UID" = "0" ] || export PATH=".:$PATH"
+
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+
+# Load RVM into a shell session *as a function*
+#export PATH="$PATH:$HOME/.rvm/bin"
+# Use the following; Add RVM to PATH for scripting
+#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+# set PATH so it includes user's private bin if it exists
+[ -d $HOME/.local/bin ] && PATH=$HOME/.local/bin:$PATH
+export PATH
+
+function box() {
+  test -f ~/.ssh/known_hosts && ssh-keygen -f ~/.ssh/known_hosts -R $1 2>/dev/null 1>&2
+  ssh-keyscan $1 >> ~/.ssh/known_hosts 2>/dev/null 1>&2
+  for p in pica8 12345678; do sshpass -p $p ssh admin@$1 && break; done
+}

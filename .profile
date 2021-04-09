@@ -1,16 +1,12 @@
-# ~/.profile: executed by Bourne-compatible login shells.
-
-# This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login
-# exists.
-
+# ~/.profile: executed by Bourne-compatible command interpreter for LOGIN shells
 #~/.profile is *NOT* read by bash IF ~/.bash_profile or ~/.bash_login exists
-#~/.profile is executed by command interpreter (also /bin/sh ) for LOGIN shells
+# NOTE that other shells might also read it.
 
-# NOTE that other shells will also read it.
-
+# TODO
 # see /usr/share/doc/bash/examples/startup-files for examples.
 # the files are located in the bash-doc package.
 
+# TODO
 # dpkg -s base-files | grep Description: -A50
 # Description: Debian base system miscellaneous files
 # This package contains the basic filesystem hierarchy of a Debian system, and
@@ -21,9 +17,28 @@
 # /usr/share/base-files/dot.profile
 # /usr/share/base-files/profile
 
+# TODO
 ##### COPY from /usr/share/base-files/profile, starts
 # /etc/profile: system-wide .profile file for the Bourne shell (sh(1))
 # and Bourne compatible shells (bash(1), ksh(1), ash(1), ...).
+
+# the default umask is set in /etc/profile; for setting the umask
+# for ssh logins, install and configure the libpam-umask package.
+#umask 022
+#[[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && . $HOME/.autojump/etc/profile.d/autojump.sh
+
+# if running bash
+if [ -n "$BASH_VERSION" ]; then
+    # include .bashrc if it exists
+    if [ -f "$HOME/.bashrc" ]; then
+	. "$HOME/.bashrc"
+    fi
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
 
 if [ "${PS1-}" ]; then
   if [ "${BASH-}" ] && [ "$BASH" != "/bin/sh" ]; then
@@ -63,11 +78,6 @@ fi
 mesg n || true
 ##### COPY from /usr/share/base-files/dot.profile, ends
 
-
-#[[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && . $HOME/.autojump/etc/profile.d/autojump.sh
-# the default umask is set in /etc/profile; for setting the umask
-# for ssh logins, install and configure the libpam-umask package.
-#umask 022
 
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
@@ -150,26 +160,3 @@ export EDITOR=vim
 # export INPUTRC=/etc/inputrc
 export USER LOGNAME MAIL HOSTNAME
 
-# Append our default paths
-appendpath () {
-    case ":$PATH:" in
-        *:"$1":*)
-            ;;
-        *)
-            PATH="$PATH:$1"
-    esac
-}
-
-export PATH="/bin:/sbin:/usr/bin:/usr/sbin"
-appendpath '/usr/local/sbin'
-appendpath '/usr/local/bin'
-appendpath '/opt/bin'
-appendpath '/usr/games/bin'
-appendpath '/usr/games'
-
-if [ -d "$HOME/.local/bin" ] ; then
-    PATH="$HOME/.local/bin:$PATH"
-fi
-unset appendpath
-
-export PATH
