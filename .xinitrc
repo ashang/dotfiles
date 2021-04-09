@@ -22,7 +22,6 @@ done
 # default entry, use e.g. 'grml-x windowmanager' for changing or just adjust manually
 #exec /usr/bin/x-window-manager
 
-## END OF FILE #################################################################
 
 # init dbus for im module
 eval `dbus-launch --sh-syntax --exit-with-session`
@@ -167,4 +166,4 @@ case $1 in
     #mkfifo "$PANEL_FIFO"
     #exec dbus-launch bspwm -c /home/sunn/.config/bspwm/autostart -s "$PANEL_FIFO" -p W
 esac
-#!/bin/sh
+
