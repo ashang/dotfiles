@@ -8,18 +8,26 @@
     logallrefupdates = true
     ignorecase = false
     editor = vim
-	#autocrlf = input
-	#safecrlf = false
-	#safecrlf = true
+    #pager       = less -R
+    #autocrlf = input
+    #safecrlf = false
+    #safecrlf = true
 
 [format]
     numbered = auto
 
 [color]
-	branch      = auto
-	diff        = auto
-	interactive = auto
-	status      = auto
+    log = auto
+    branch      = auto
+# Use shell environment for these
+# GIT_AUTHOR_NAME
+# GIT_AUTHOR_EMAIL
+# GIT_COMMITTER_NAME
+# GIT_COMMITTER_EMAIL
+
+    diff        = auto
+    interactive = auto
+    status      = auto
     #branch = yes
     ui = auto
     #ui = true
@@ -63,24 +71,24 @@
     helper = cache --timeout=360000
 
 [push]
-	#default = matching
-	default = current
-	followTags = true
-	#When push.default is set to 'matching', git will push local branches
-	#to the remote branches that already exist with the same name.
-	#
-	#Since Git 2.0, Git defaults to the more conservative 'simple'
-	#behavior, which only pushes the current branch to the corresponding
-	#remote branch that 'git pull' uses to update the current branch.
-	#
-	#See 'git help config' and search for 'push.default' for further information.
-	#(the 'simple' mode was introduced in Git 1.7.11. Use the similar mode
-	#'current' instead of 'simple' if you sometimes use older versions of Git)
+    #default = matching
+    default = current
+    followTags = true
+    #When push.default is set to 'matching', git will push local branches
+    #to the remote branches that already exist with the same name.
+    #
+    #Since Git 2.0, Git defaults to the more conservative 'simple'
+    #behavior, which only pushes the current branch to the corresponding
+    #remote branch that 'git pull' uses to update the current branch.
+    #
+    #See 'git help config' and search for 'push.default' for further information.
+    #(the 'simple' mode was introduced in Git 1.7.11. Use the similar mode
+    #'current' instead of 'simple' if you sometimes use older versions of Git)
 
 # to ignore sub mobule changes
-	#ignore = dirty
-	# http://git-scm.com/docs/git-status
-	# https://www.kernel.org/pub/software/scm/git/docs/git-status.html
+    #ignore = dirty
+    # http://git-scm.com/docs/git-status
+    # https://www.kernel.org/pub/software/scm/git/docs/git-status.html
 
 #[filter "lfs"]
     #required = true
@@ -89,26 +97,27 @@
     #process = git-lfs filter-process
 [status]
     submoduleSummary = true
-[merge]
-    tool = vimdiff
-	conflictstyle = diff3
-	ff = false
 
+[merge]
+    conflictstyle = diff3
+    tool = vimdiff
+    ff = false
+    renamelimit = 16816
 
 [filter "media"]
-	clean = git media clean %f
-	smudge = git media smudge %f
-	required = true
+    clean = git media clean %f
+    smudge = git media smudge %f
+    required = true
 
 [include]
-	path = ~/.gitconfig.local
+    path = ~/.gitconfig.local
 
 
 #[filter "lfs"]
-	#required = true
-	#clean = git-lfs clean -- %f
-	#smudge = git-lfs smudge -- %f
-	#process = git-lfs filter-process
+    #required = true
+    #clean = git-lfs clean -- %f
+    #smudge = git-lfs smudge -- %f
+    #process = git-lfs filter-process
 
 [commit]
   template = ~/.gitmessage
@@ -145,47 +154,42 @@ mergeoptions = --no-commit --no-ff
     required = true
 
 [alias]
-	amend = commit --amend
-	br = branch
-	ci = commit
-	co = checkout
-	copr = "!f() { git fetch upstream pull/$1/head:pr-$1; git co pr-$1;}; f"
-	curbr = rev-parse --abbrev-ref HEAD
-	fup = fetch upstream
-	po = push origin
-	pocur = !git po $(git curbr)
-	pofcur = !git po -f $(git curbr)
-	rb = rebase
-	rbup = rebase upstream/master
-	revert = checkout --
-	root = rev-parse --show-toplevel
-	st = status
-	track = "!f() { git co -b $1 origin/$1; }; f"
-	wdiff = diff --color-words
-[merge]
-	conflictstyle = diff3
-[http "https://gopkg.in"]
-	followRedirects = true
+    has = !sh -c 'git branch -a --contains $1' -
+    amend = commit --amend
+    br = branch
+    ci = commit
+    co = checkout
+    copr = "!f() { git fetch upstream pull/$1/head:pr-$1; git co pr-$1;}; f"
+    curbr = rev-parse --abbrev-ref HEAD
+    fup = fetch upstream
+    po = push origin
+    pocur = !git po $(git curbr)
+    pofcur = !git po -f $(git curbr)
+    rb = rebase
+    rbup = rebase upstream/master
+    revert = checkout --
+    root = rev-parse --show-toplevel
+    st = status
+    track = "!f() { git co -b $1 origin/$1; }; f"
 
-
-	co = checkout
-	ci = commit
-	st = status
-	br = branch
+    co = checkout
+    ci = commit
+    st = status
+    br = branch
     b     = branch
-	revert = checkout --
-	amend = commit --amend
-	curbr = rev-parse --abbrev-ref HEAD
-	root = rev-parse --show-toplevel
-	fup = fetch upstream
-	rb = rebase
-	rbup = rebase upstream/master
-	po = push origin
-	pocur = !git po $(git curbr)
-	pofcur = !git po -f $(git curbr)
-	wdiff = diff --color-words
-	track = "!f() { git co -b $1 origin/$1; }; f"
-	copr = "!f() { git fetch upstream pull/$1/head:pr-$1; git co pr-$1;}; f"
+    revert = checkout --
+    amend = commit --amend
+    curbr = rev-parse --abbrev-ref HEAD
+    root = rev-parse --show-toplevel
+    fup = fetch upstream
+    rb = rebase
+    rbup = rebase upstream/master
+    po = push origin
+    pocur = !git po $(git curbr)
+    pofcur = !git po -f $(git curbr)
+    wdiff = diff --color-words
+    track = "!f() { git co -b $1 origin/$1; }; f"
+    copr = "!f() { git fetch upstream pull/$1/head:pr-$1; git co pr-$1;}; f"
     cob = checkout -b
     ca    = commit -a
     chgd  = diff HEAD
@@ -200,24 +204,37 @@ mergeoptions = --no-commit --no-ff
     stgd  = diff --cached
     tagme = !sh -c '[ -z "$1" ] && exit 1 || git tag -s v\"$1\" -m \"release \"$1\"\"' sh
     who   = "!sh -c 'git log -1 --pretty=\"format:%an <%ae>\" --author=\"$1\"' -"
-	cm = !git add -A && git commit
-	save = !git add -A && git commit -m 'SAVEPOINT'
-	wip = commit -am "WIP" 
+    cm = !git add -A && git commit
+    save = !git add -A && git commit -m 'SAVEPOINT'
+    wip = commit -am "WIP" 
 #undo which resets the previous commit, but keeps changes from that commit in the working directory.
-	undo = reset HEAD~1 --mixed
+    undo = reset HEAD~1 --mixed
 # for "subtree add"
-	sba = "!f() { git subtree add --prefix $2 $1 master --squash; }; f"
+    sba = "!f() { git subtree add --prefix $2 $1 master --squash; }; f"
 # for "subtree update"
-	sbu = "!f() { git subtree pull --prefix $2 $1 master --squash; }; f"
+    sbu = "!f() { git subtree pull --prefix $2 $1 master --squash; }; f"
 
-	#lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-	lg = log --graph --all --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'
-	hist = log --color --pretty=format:\"%C(yellow)%h%C(reset) %s%C(bold red)%d%C(reset) %C(green)%ad%C(reset) %C(blue)[%an]%C(reset)\" --relative-date --decorate
-	#unstage = reset HEAD --
-	unstage = reset HEAD
-	restore = checkout --
-	cn = commit --no-verify
-	praise = blame
-	visualise = !gitk
-	graph = log --color --graph --pretty=format:\"%h | %ad | %an | %s%d\" --date=short
-	up = !git pull --rebase --prune $@ && git submodule update --init --recursive
+    #lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    lg = log --graph --all --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'
+    hist = log --color --pretty=format:\"%C(yellow)%h%C(reset) %s%C(bold red)%d%C(reset) %C(green)%ad%C(reset) %C(blue)[%an]%C(reset)\" --relative-date --decorate
+    #unstage = reset HEAD --
+    unstage = reset HEAD
+    restore = checkout --
+    cn = commit --no-verify
+    praise = blame
+    visualise = !gitk
+    graph = log --color --graph --pretty=format:\"%h | %ad | %an | %s%d\" --date=short
+    up = !git pull --rebase --prune $@ && git submodule update --init --recursive
+
+# print first commit hash
+first=rev-list --max-parents=0 HEAD
+
+# check out the first commit
+cof=!git checkout $(git first)
+
+# checkout child commit
+k=!git checkout $(git log --oneline HEAD..master | tail -1 | cut -d' ' -f1)
+
+# checkout parent commit
+j=!git checkout HEAD^$(git show --pretty=raw HEAD | grep ^parent | wc -l)
+

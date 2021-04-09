@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
-# source ~/.gitignore
+
 #/*
 # Never ignore these
 !.gitignore
 
-# VCS
+## VCS
 .git
 .svn
 .hgignore
 
-# Repo
+## Repo
 !/.gitignore
 !/README
 !/README.md
 !/CONTRIBUTING.md
 !/SUPPORTERS.md
 /bin/*
-
 
 # gcc coverage testing tool files
 *.gcno
@@ -83,10 +82,11 @@ modules.order
 *.a
 
 # Shared objects
+*.o
 *.so
 *.so.*
 
-# Executables
+## Executables
 *.out
 *.i*86
 *.x86_64
@@ -146,25 +146,27 @@ pickle-email-*.html
 # module files
 *.mod
 
-# Editor/IDE
-## Vi
-*.sw[po]
-*.un~
-.*.un~
+## Editor/IDE
+### Vi
+*.sw[a-z]
+*~
+._*
 
-## Eclipse
-.project
-.classpath
-.settings
-
-# Idea
-.idea
+### Idea
+.idea/
 *.iml
 *.iws
 *.ipr
 
+*.un~
+.*.un~
 
-# Packages
+### Eclipse
+.project
+.classpath
+.settings
+
+## Packages
 *.7z
 *.xz
 *.txz
@@ -178,29 +180,6 @@ pickle-email-*.html
 *.tar
 *.zip
 
-
-# OS generated files #
-
-## Mac
-.DS_Store*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Icon?
-*.dmg
-!/bin/brew
-!/share/man/man1/brew.1
-!/Library/
-/Library/LinkedKegs
-/Library/PinnedKegs
-/Library/Taps
-/Library/Formula/.gitignore
-
-## Windows:
-*.com
-*.dll
-*.exe
-[Dd]esktop.ini
 
 
 # Temporary files
@@ -252,14 +231,13 @@ cscope.files
 #cscope.out
 #cscope.po.out
 
-
-## Nodejs
+### Nodejs
 node_modules
 
-## Tcl
+### Tcl
 test-driver
 
-## Java
+### Java
 *.class
 *.war
 *.oar
@@ -321,6 +299,7 @@ mkdocs.egg-info/
 
 ## sensitive information
 sites/*/settings*.php
+
 ## Comment out these rules if you are OK with secrets being uploaded to the repo
 config/initializers/secret_token.rb
 config/secrets.yml
@@ -404,3 +383,55 @@ Downloads/
 .vim/
 .ssh/environment
 .local/
+
+## Compiled source
+
+*.com
+*.dll
+*.exe
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sqlite
+
+## OS generated files
+
+### Mac
+.DS_Store*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Icon?
+*.dmg
+!/bin/brew
+!/share/man/man1/brew.1
+!/Library/
+/Library/LinkedKegs
+/Library/PinnedKegs
+/Library/Taps
+/Library/Formula/.gitignore
+
+### Windows:
+Thumbs.db
+[Dd]esktop.ini
+
+
+# md
+*.md~
+
+# python compiled binary
+*.pyc
