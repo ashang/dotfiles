@@ -24,21 +24,7 @@ case $- in
       *) return;;
 esac
 
-# some more ls aliases
-#alias ll='ls -l'
-#alias la='ls -A'
-#alias l='ls -CF'
 
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
-fi
 #QUOTE BEGIN
     ## System-wide .profile for sh(1)
 
@@ -122,7 +108,6 @@ path ()
 }
 
 # Set prompt and aliases to something useful for an interactive shell
-#
 case "$-" in
 *i*)
     # Set prompt to something useful
@@ -153,12 +138,10 @@ case "$-" in
 
 	# Set xterm prompt with short path (last 18 characters)
 	if path tput hs 2>/dev/null || path tput -T $TERM+sl hs 2>/dev/null ; then
-
 	    # Mirror prompt in terminal "status line", which for graphical
 	    # terminals usually is the window title. KDE konsole in
 	    # addition needs to have "%w" in the "tabs" setting, ymmv for
 	    # other console emulators.
-
 	    if [[ $TERM = *xterm* ]] ; then
 		_tsl=$(echo -en '\e]2;')
 		_isl=$(echo -en '\e]1;')
@@ -323,33 +306,11 @@ if test "$restricted" = true -a -z "$PROFILEREAD" ; then
     export PATH
 fi
 
-# Obseleted!!
-# eval "`dircolors -b`"
-
-# dircolors --print-database uses its own built-in database
-# instead of using /etc/DIR_COLORS.  Try to use the external file
-# first to take advantage of user additions.  Use internal bash
-# globbing instead of external grep binary.
-
-# guideline 0: those not in command-not-found
-# guideline 1: standard cross-platform parameters, such as ps, tar.
-
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-    # Never use 'grep --colour=always', control characters apply!
-    alias grep='grep --color=auto --exclude-dir=.git -s -I'
-fi
 
 # For dircolors-solarized
 # - https://github.com/seebi/dircolors-solarized
 
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-#force_color_prompt=yes
+# for a colored prompt, if the terminal has the capability
 force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
@@ -379,21 +340,6 @@ xterm*|rxvt*)
     ;;
 esac
 
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-
-    #alias grep='grep --color=auto'
-    #alias fgrep='fgrep --color=auto'
-    #alias egrep='egrep --color=auto'
-fi
-
-# colored GCC warnings and errors
-export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
 
 if [[ "`uname -s`" == "FreeBSD" ]]
 #if [[ "$OSTYPE" =~ *BSD ]]; then
@@ -407,52 +353,11 @@ else # Assume Linux
   #alias ls="command ls -FG"
   alias ls='ls -F -G -X -C -h --color=auto --show-control-chars'
   #alias ls='\ls -F -X --color=tty --show-control-chars'
-  export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:'
 fi
-
-export LS_OPTIONS='--color=auto'
-export CLICOLOR='Yes'
-# for ls colors
-LS_COLORS="rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:"
-export LS_COLORS
-
-export LSCOLORS=gxfxbEaEBxxEhEhBaDaCaD
-
-use_color=false
-
-safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
-
-match_lhs=""
-[[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(</etc/DIR_COLORS)"
-[[ -f $HOME/.dir_colors ]] && match_lhs="${match_lhs}$(<$HOME/.dir_colors)"
-[[ -z ${match_lhs} ]] && type -P dircolors >/dev/null && match_lhs=$(dircolors --print-database)
-[[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
-
-if type -P dircolors >/dev/null; then
-  LS_COLORS=
-
-  # If it isn't set, then `ls` will only colorize by default
-  # based on file attributes and ignore extensions (even the compiled
-  # in defaults of dircolors).
-
-  if [[ -n ${LS_COLORS:+set} ]] ; then
-    use_color=true
-  else
-    # Delete it if it's empty as it's useless in that case.
-    unset LS_COLORS
-  fi
-
-else
-  # Some systems (e.g. BSD & embedded) don't typically come with
-  # dircolors so we need to hardcode some terminals in here.
-  case ${TERM} in
-    [aEkx]term*|rxvt*|gnome*|konsole*|screen|cons25|*color) use_color=true;;
-  esac
-fi
-
 
 ########################################
 # colorful
+
 
 #Color scheme
 # 033 = e
@@ -613,397 +518,77 @@ colors() {
 }
 
 
-# Alias
-## translate
-#alias u='translate -i'
+export LS_OPTIONS='--color=auto'
+export CLICOLOR='Yes'
+# for ls colors
+LS_COLORS="rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:"
+export LS_COLORS
 
-#-C										list entries by columns
-#-F, --classify                append indicator (one of */=>@|) to entries
-#-F      Display a slash (`/') immediately after each pathname that is a directory,
-#        an asterisk (`*') after each that is executable,
-#        an at sign (`@') after each symbolic link,
-#        an equals sign (`=') after each socket,
-#        a percent sign (`%') after each whiteout, and
-#        a vertical bar (`|') after each that is a FIFO.
+export LSCOLORS=gxfxbEaEBxxEhEhBaDaCaD
 
-alias l='ls -Ah'
-alias la='ls -A'
-alias la='ls -A'
-alias l='ls -CF'
+use_color=false
 
-alias ll='ls -lh'                 # classify files in colour
-hash exa 2>/dev/null && alias ll='exa -F -l -B --git'
+safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
 
-#-a, --all						do not ignore entries starting with .
-#-A, --almost-all			do not list implied . and ..
-# List all files colorized in long format, including dot files
-alias l.='ls -Al'
-alias ldir='\ls -al | egrep ^d'
-# vi `lf`
-alias lf="ls . -rt1 | tail -1"
-alias lh='ls -A | egrep "^\."'
-alias lS='ls -lS'
-alias lSr='ls -lSr'
-alias lt='ls -ltA'
-alias ltr='ls -ltAr'
+match_lhs=""
+[[ -f $HOME/.dir_colors ]] && match_lhs="${match_lhs}$(<$HOME/.dir_colors)"
+[[ -z ${match_lhs} ]] && type -P dircolors >/dev/null && match_lhs=$(dircolors --print-database)
+[[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
 
-alias ..='cd ..'
-alias '...'='../..'
-alias '....'='../../..'
-alias cd..="cd .."
+if type -P dircolors >/dev/null; then
+# enable color support of ls, less and man, and also add handy aliases
+    test -r ~/.dir_colors && eval "$(dircolors -b ~/.dir_colors)" || eval "$(dircolors -b)"
+#Usage: dircolors [OPTION]... [FILE]
+#Output commands to set the LS_COLORS environment variable.
+#Determine format of output:
+#  -b, --sh, --bourne-shell    output Bourne shell code to set LS_COLORS
+#  -p, --print-database        output defaults
+#If FILE is specified, read it to determine which colors to use for which file types and extensions.  Otherwise, a precompiled database is used.
+#For details on the format of these files, run 'dircolors --print-database'.
+  LS_COLORS=
 
-alias chmod='chmod -v'
-which colordiff &>/dev/null && alias diff='colordiff'
-[ which colormake >/dev/null 2>&1 ] && alias make=colormake
-alias crontab='crontab -i'
-alias cv='convmv -f gbk -t utf-8 -r --notest'
+  # If it isn't set, then `ls` will only colorize by default
+  # based on file attributes and ignore extensions (even the compiled
+  # in defaults of dircolors).
 
-#alias curl="curl --user-agent 'noleak'"
-alias curl="curl --user-agent 'noleak'"
-alias curl='curl -L -C'
-alias curl='curl -L -C -'
-alias ch='curl -D- -o/dev/null'
-alias co='curl -O'
+  if [[ -n ${LS_COLORS:+set} ]] ; then
+    use_color=true
+  else
+    # Delete it if it's empty as it's useless in that case.
+    unset LS_COLORS
+  fi
 
-
-alias dd="dd bs=8M status=progress"
-alias debug_on="sed -i 's/^\/\/#define LOG_NDEBUG 0/#define LOG_NDEBUG 0/g' "
-alias debug_off="sed -i 's/^#define LOG_NDEBUG 0/\/\/#define LOG_NDEBUG 0/g' "
-# debug_on MediaExtractor.cpp
-# debug_off *.*
-
-alias df='df -T'
-alias diff='diff -x.git'
-alias dl='dpkg -L'
-alias dlg='dpkg -l | grep'
-alias dlc='dlocate -i'
-alias docker-pid="sudo docker inspect --format '{{.State.Pid}}'"
-alias docker-ip="sudo docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
-alias ds='dpkg -s'
-alias du.='du -h --max-depth=1 | sort -hr'
-
-alias emerge='emerge -avt'
-alias eng='env | grep -i'
-alias enprint='enscript -h -G -E -2 -r --rotate-even-pages -DDuplex:true'
-alias equo='equo --color --ask -v'
-alias es='emerge --search'
-#alias expemerge="ACCEPT_KEYWORDS=\"~x86\" emerge"
-
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-# program 'notify-send' is in libnotify-bin
-
-alias a='alias'
-#alias adb='adb wait-for-device'
-alias adbw='adb wait-for-device'
-
-alias acs='apt-cache search'
-alias asrm='adb shell rm'
-alias adbw='adb wait-for-device'
-alias asrmr='adb shell rm -r'
-alias auru='yaourt -Syua --noconfirm'
-
-alias bb='bitbake -v'
-
-alias c='clear'
-alias cp='\cp -i -v -a'
-# -a = -pPR
-#  -R If source_file designates a directory, cp copies the directory and the entire subtree connected at that point.  If the source_file ends in a /, the
-#     contents of the directory are copied rather than the directory itself.  This option also causes symbolic links to be copied, rather than indirected
-#     through, and for cp to create special files rather than copying them as normal files.  Created directories have the same mode as the corresponding
-#     source directory, unmodified by the process' umask.
-#
-#     In -R mode, cp will continue copying even if errors are detected.
-#
-#     Note that cp copies hard-linked files as separate files.  If you need to preserve hard links, consider using tar(1), cpio(1), or pax(1) instead.
-
-alias file="file -k"
-alias fn="find -iname"
-alias fsg='find . -name .git -prune -o -print | xargs grep -H -I -s --colour=auto'
-# search for a string in all subdirectories, matched lines will be printed together with filename and line number.
-alias finds='find . -regex ".*\.\(h\|cpp\|c\|java\|aidl\|py\|pl\|pm\)" | xargs grep -Hn'
-# case insensitive search.
-alias findsi='find . -regex ".*\.\(h\|cpp\|c\|java\|aidl\|py\|pl\|pm\)" | xargs grep -Hni'
-alias findgrep="find . -print0 | xargs -0 grep"
-
-# git
-
-# git reset --hard `gitorigin`
-#alias gitorigin="git branch -r | head -1 | cut -d' ' -f 5"
-alias gor="git branch -r | head -1 | cut -d' ' -f 5"
-alias ga="git add"
-alias gap="git add --patch"
-alias gb='git branch -vv'
-alias gca='git commit --amend'
-alias gcl='git clone -v --recursive'
-# as function: git clone --recursive $1
-alias gcv='git commit --no-verify'
-alias gd="git diff --patience --ignore-space-change"
-alias gdc='git diff --cached -w'
-alias gdw='git diff --no-ext-diff --word-diff'
-alias gdv='git diff -v'
-alias gf='git fetch -a -p'
-alias gg="git log --abbrev=10 --graph --all --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'"
-alias gg="git log --abbrev=10 --graph --format='%C(auto)%h%d %C(auto,bold black)<%C(reset)%C(auto,blue)%aE%C(auto,bold black)>%C(reset) %s %C(auto,bold black)(%C(reset)%C(auto,green)%ar%C(auto,bold black))%C(reset)'"
-alias gg="git log --abbrev=10 --color --all --graph --pretty=format:\"%h %ad %an %s%d\" --date=iso"
-alias gg='git grep -a -i'
-#source ~/.vim/branch_prompt.sh
-# ALL GO SCRIPT ALIASES.
-#alias g='source ~/.vim/scripts/gb.bash'
-#alias sv='source ~/.vim/scripts/gb.bash sv'
-alias hs='history | tail -40 | more'
-alias gup='git pull --rebase --prune && git submodule update --init --recursive'
-alias gi="git commit -v"
-alias gl="git log --abbrev=10 --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%C(yellow)%d%Creset %Cblue[%an]%Creset\" --graph --date=iso"
-alias gl='git log --abbrev=10 --pretty=format:"%C(yellow)%h%C(reset) %s%C(bold red)%d%C(reset) %C(green)%ad%C(reset) %C(blue)[%an]%C(reset)" --graph'
-alias glp='git log -p'
-alias gls='git log --abbrev=10 --stat'
-alias gmb="git merge-base"
-alias gpa='for i in `git remote | grep -v upstream`; do echo; echo To remote $i ......; echo; git push $i;done'
-alias gpp='git pull --rebase && git push'
-alias gr="git remote -v"
-alias grss="git remote show origin"
-alias gpr='git pull --rebase --recurse-submodules'
-alias gpr='git pull --rebase --stat'
-alias gsl='git stash list'
-alias gss='git show --stat'
-#alias gst='git branch -vv && git status -suno --ignore-submodules=dirty'
-alias gst='git branch -vv && git status -uno --ignore-submodules'
-alias gup='git pull --rebase --prune && git submodule update --init --recursive'
-
-alias gdb='gdb -q'
-
-alias cg='grep -in --color -I'
-alias cgr='grep -in --color -rI'
-alias grpe=grep
-alias gerp=grep
-
-alias hig='history | grep'
-alias info='info --vi-keys'
-alias jobs="jobs -l"
-alias jq="jq -C -S"
-alias ka="killall"
-
-alias lc='locate -i'
-
-alias make='make -j4'
-alias mm="make menuconfig"
-alias mplayer='mplayer -vf screenshot -msgcolor'
-alias mpv="mpv --audio-display=no"
-alias ms='gpm -m /dev/psaux -t imps2'
-#alias mutt='mutt -y'
-alias m=mutt
-alias mv='mv -i'
-#alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A &'
-alias mt='mlterm -ls -sl 5000 -bg black -fg grey80 -A -geometry 125x43+0+0 &'
-alias mo=more
-alias moer=more
-alias mroe=more
-#alias more=less
-
-alias nano='nano -i -m -w -B -F -L'
-alias nano='nano -i -m -w -B -F -L -xcSr68'
-alias netstat='netstat -an'
-alias np='nano -w PKGBUILD'
-
-#alias open='xdg-open'
-alias open='xdg-open &> /dev/null'
-
-alias pacman='sudo pacman -v'
-alias pacrepo='sudo reflector -l 20 -f 10 --save /etc/pacman.d/mirrorlist'
-alias pacr='sudo pacman -Rs'
-alias pacu='sudo pacman -Syu --noconfirm'
-alias pcmanfm='pcmanfm -d --desktop'
-#alias pix='for i in *.jpg; do convert -quality 50% "$i" "$i"; done'
-alias po="popd"
-alias pu="pushd"
-alias rp='realpath'
-alias ps='ps auxwf'
-
-alias pS='sudo pacman -S'
-alias pss='pacman -Ss'
-#alias psg='ps -Af | grep $1'
-#alias psg='\ps aux | grep -v without-match | grep'
-alias psg='\ps aux | grep -v exclude-dir=.git | grep'
-alias pqg='pacman -Q|egrep -i'
-alias pqi='pacman -Qi'
-alias pql='pacman -Ql'
-alias pqo='pacman -Qo'
-alias pacrf='sudo pacman -Rns'
-alias pS='sudo pacman -S'
-alias pss='pacman -Ss'
-alias py="python2"
-
-alias rpi='rpm -qi'
-alias rx='LANG=zh_CN.GB2312 LC_CTYPE=zh_CN.GB2312 rxvt -ls -sl 500 -fn 8x16 -bg black -fg grey80 -ls&'
-alias rpg='rpm -qa | grep'
-#alias rename='perl-rename'
-alias rmbra="rename 'y/)(/_/'"
-alias rsync='rsync -av --progress'
-# acct - The GNU Accounting utilities for process and login accounting
-# surfraw - a fast unix command line interface to WWW
-alias scp='scp -r'
-alias sdr='sudo rm -r'
-alias se='ls /usr/bin | grep'
-alias shred="shred -zf"
-alias sls='screen -ls'
-# acct - The GNU Accounting utilities for process and login accounting
-# surfraw - a fast unix command line interface to WWW
-alias sq='sqlite3'
-alias sr='screen -r'
-alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=30 -o StrictHostKeyChecking=yes'
-alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=30'
-## ignore ~/.ssh/known_hosts entries
-#alias insecssh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -o "PreferredAuthentications=keyboard-interactive"'
-
-type multitail &>/dev/null && alias tail='multitail -c'
-alias th='history | tail'
-alias tmars='telnet 210.77.17.19 1012'
-
-# alias tail='tail -f'
-alias tmux='tmux -2'
-#alias ta='tmux a -d'
-alias tad='tmux a -d'
-alias tou8='iconv -f gbk -t utf-8'
-
-alias un='uname -a'
-# Disabled because some version has no this option
-# UnZip 6.00 of 20 April 2009, by Debian. Original by Info-ZIP.
-# alias unzip='unzip -O CP936'
-
-alias vd="vimdiff"
-#alias vim="vim -p"
-#if type pgrep &>/dev/null; then xxx; fi
-which nvim &>/dev/null && alias vd="nvim -d"
-which nvim &>/dev/null && alias nv="nvim -p"
-alias vi="vim -p"
-
-# Undo a `git push`
-alias undopush="git push -f origin HEAD^:master"
-
-# IP addresses
-alias digip="dig +short myip.opendns.com @resolver1.opendns.com"
-## TODO
-alias localip="ipconfig getifaddr en1"
-alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
-alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
-
-# Flush Directory Service cache
-alias flush="dscacheutil -flushcache"
-
-# View HTTP traffic
-alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
-alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
-
-# Start an HTTP server from a directory
-alias server="python2 -m SimpleHTTPServer"
-alias server="python2 -m SimpleHTTPServer 8080"
-alias server='python2 -c "import SimpleHTTPServer;SimpleHTTPServer.test()"'
-alias server="python3 -m http.server 8080"
-alias server="python3 -m http.server"
-
-# Trim new lines and copy to clipboard
-alias pbcopy='xclip -selection clipboard'
-alias pbpaste='xclip -selection clipboard -o'
-alias copy='xclip -selection clipboard'
-alias yank='xclip -selection clipboard -o'
-
-alias pbcopy='xsel --clipboard --input'
-alias pbpaste='xsel --clipboard --output'
-
-alias C="tr -d '\n' | pbcopy"
-
-alias pacrepo='sudo reflector -l 20 -f 10 --save /etc/pacman.d/mirrorlist'
-alias pacu='sudo pacman -Syu --noconfirm'
-alias auru='yaourt -Syua --noconfirm'
-alias fe='find /sbin /bin /usr/sbin /usr/bin | grep'
-
-alias hs='history | tail -40 | more'
-alias tcs='ctags -R --fields=+lS . ; cscope -Rbq'
-
-#bsd
-export PACKAGEROOT=ftp://ftp.freebsdchina.org
-# export PACKAGESITE
-
-# Canonical hex dump; some systems have this symlinked
-[ -n "$ZSH_VERSION" ] && type hd > /dev/null || alias hd="hexdump -C"
-[ "$BASH_VERSINFO" -ge "4" ] && type -t hd > /dev/null || alias hd="hexdump -C"
-
-alias scu='systemctl --user'
-alias journ='sudo journalctl -b -f'
-alias poweroff='sudo systemctl poweroff'
-alias reboot='sudo systemctl reboot'
-alias suspend='sudo systemctl suspend'
-
-alias lsblk='lsblk -o NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,UUID'
-alias strc="awk '!/^ *#/ && NF'"
-alias dmesg='clear; dmesg -eL -w'
-
-# Go
-alias sv='source ~/.config/vim/scripts/gb.bash sv'
-#source ~/.config/vim/branch_prompt.sh
-alias gg='git grep -a -i'
-
-# Canonical hex dump; some systems have this symlinked
-type -t hd > /dev/null || alias hd="hexdump -C"
-
-# OS X has no `md5sum`, so use `md5` as a fallback
-type -t md5sum > /dev/null || alias md5sum="md5"
-
-# Recursively delete `.DS_Store` files
-alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
-
-# File size
-alias fs="stat -f \"%z bytes\""
-
-alias dos2unix='perl -pi -e "tr/\r//d"'
-alias unix2dos='perl -pi -e "s/\n$/\r\n/g"'
-alias mac2unix='perl -pi -e "tr/\r/\n/d"'
-
-# ROT13-encode text. Works for decoding, too! ;)
-alias rot13='tr a-zA-Z n-za-mN-ZA-M'
-
-# One of @janmoesen’s ProTip™s
-for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do alias "$method"="lwp-request -m '$method'"; done
-
-# Stuff I never really use but cannot delete either because of http://xkcd.com/530/
-alias stfu="osascript -e 'set volume output muted true'"
-alias pumpitup="osascript -e 'set volume 10'"
-alias hax="growlnotify -a 'Activity Monitor' 'System error' -m 'WTF R U DOIN'"
-
-# PostgreSQL
-alias start-psql="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
-alias stop-psql="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
-
-if [[ "$OSTYPE" =~ *BSD ]]
-then
-  alias w='w -i'    # sorted by idle time.
 else
-  alias w='w -s'    # short format, no login time, JCPU or PCPU times.
+  # Some systems (e.g. BSD & embedded) don't typically come with
+  # dircolors so we need to hardcode some terminals in here.
+  case ${TERM} in
+    [aEkx]term*|rxvt*|gnome*|konsole*|screen|cons25|*color) use_color=true;;
+  esac
 fi
 
-#alias wget="wget --no-check-certificate -c --content-disposition"
-alias wget="wget -U 'noleak'"
-alias wget="wget -U User-Agent -c --content-disposition"
-alias whence='type -a'                        # where, of a sort
-alias where="type -all"
-alias which='alias | which -a'
-#alias which="type -path"
-#alias which='alias | which --tty-only --read-alias --show-dot --show-tilde'
-alias whois="whois -h whois-servers.net"
-alias wt='curl http://wttr.in/'
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
 
-# Byzanz requires a 24bpp or 32bpp depth for recording.
-#alias xx='startx -- -nolisten tcp -depth 24'
-alias xx='startx -- -nolisten tcp -depth 24 -extension GLX'
-alias xfb='startx -- -nolisten tcp -fbbpp 24'
-alias x1='startx -- :1 -depth 32'
-alias x2='startx -- :2 -depth 32'
-alias yum='yum -v -y --color=auto'
-alias xorpsh='su xorp -p -c xorpsh'
+    # Never use 'grep --colour=always', control characters apply!
+    alias grep='grep --color=auto --exclude-dir=.git -s -I'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
 
-########################################
+    alias ip='ip --color=auto'
+
+    export LESS_TERMCAP_mb=$'\E[1;31m'     # begin blink
+    export LESS_TERMCAP_md=$'\E[1;36m'     # begin bold
+    export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
+    export LESS_TERMCAP_so=$'\E[01;33m'    # begin reverse video
+    export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
+    export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
+    export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
+
+# colored GCC warnings and errors
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+
 #Shell Options
 #See man bash for more options...
 
@@ -1058,10 +643,6 @@ bind '"\eOA":history-search-backward'
 bind '"\e[B":history-search-forward'
 bind '"\eOB":history-search-forward'
 
-#Normally, Up and Down are bound to the Readline functions previous-history and
-# next-history respectively. I prefer to bind PgUp/PgDn to these functions,
-# instead of displacing the normal operation of Up/Down.
-
 # To get the escape codes for the arrow keys you can do the following:
 #Start cat in a terminal (just cat, no further arguments).
 #Type keys on keyboard, you will get ^[[A for up arrow and ^[[B for down arrow.
@@ -1076,12 +657,10 @@ bind "set bind-tty-special-chars on"  #punctuations are not word delimiters
 shopt -s histappend
 shopt -s histverify
 
-#Don't put duplicate lines in the history.
-# See bash(1) for more options
 # Keep also space-starting lines, just in case
 export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
+
 # don't put duplicate lines or lines starting with space in the history.
-# See bash(1) for more options
 #HISTCONTROL=ignoreboth
 #HISTCONTROL=ignoredups:ignorespace
 
@@ -1216,7 +795,6 @@ function __git_ps1() {
 # PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 # #PROMPT_COMMAND='history -a $HOME/.bash_history; echo -ne "\033]0;$PWD\007"; $PROMPT_COMMAND;'
 
-
 #if [ "`locale charmap 2>/dev/null`" = "UTF-8" ]
 #then
   #stty iutf8
@@ -1241,10 +819,6 @@ export LESSCHARSET=utf-8
 alias less='less -R'                          # raw control characters
 #alias less='less -r'                          # raw control characters
 
-#eval "$(lessfile)"
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-
 # test -r ~/.vim/branch_prompt.sh && source ~/.vim/branch_prompt.sh
 # better yaourt colors
 export YAOURT_COLORS="nb=1:pkg=1:ver=1;32:lver=1;45:installed=1;42:grp=1;34:od=1;41;5:votes=1;44:dsc=0:other=1;35"
@@ -1252,12 +826,6 @@ export YAOURT_COLORS="nb=1:pkg=1:ver=1;32:lver=1;45:installed=1;42:grp=1;34:od=1
 ##bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
 #if [ "$PS1" ] && [ $bmajor -eq 2 ] && [ $bminor '>' 04 ]
 #unset bash bmajor bminor
-
-# guideline 0: those not in command-not-found
-# guideline 1: standard cross-platform parameters, such as ps, tar.
-
-# Specific bashrc
-[[ -f $HOME/.bashrc.local ]] && . $HOME/.bashrc.local
 
 # Try to keep environment pollution down, EPA loves us.
 unset use_color safe_term match_lhs sh
@@ -1724,14 +1292,6 @@ fi
   # off by default to not distract the user: the focus in a terminal window
   # should be on the output of commands, not on the prompt
 
-  if [[ -f ~/.dir_colors ]] ; then
-    eval "$(dircolors -b ~/.dir_colors)"
-  elif [[ -f /etc/DIR_COLORS ]] ; then
-    eval "$(dircolors -b /etc/DIR_COLORS)"
-  else
-    eval "$(dircolors -b)"
-  fi
-
 # Set GPG_TTY for curses pinentry # man gpg-agent
 if test -t && type -p tty > /dev/null 2>&1 ; then
   #export GPGKEY=""
@@ -1773,49 +1333,6 @@ bind "set completion-ignore-case on"
 # match all files and zero or more directories and subdirectories.
 #shopt -s globstar
 
-# Completion options
-#These completion tuning parameters change the default behavior of bash_completion:
-
-#Define to avoid stripping description in --option=description of './configure --help'
-COMP_CONFIGURE_HINTS=1
-
-#Define to avoid flattening internal contents of tar files
-COMP_TAR_INTERNAL_PATHS=1
-
-# source user completion file
-#[ $BASH_COMPLETION != ~/.bash_completion -a -r ~/.bash_completion ] && . ~/.bash_completion
-
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-#if ! shopt -oq posix; then
-
-#trap '. /etc/bash_completion ; trap USR2' USR2
-#{ sleep 0.01 ; builtin kill -USR2 $$ ; } & disown
-#[ -z "${BASH_COMPLETION_COMPAT_DIR}" ] && [ -f /etc/bash_completion ] && . /etc/bash_completion
-
-#   https://github.com/scop/bash-completion
-## source files
-#[ -r /usr/share/bash-completion/completions ] &&
-#  . /usr/share/bash-completion/completions/*
-
-# Check for interactive bash and that we haven't already been sourced.
-if [ -n "${BASH_VERSION-}" -a -n "${PS1-}" -a -z "${BASH_COMPLETION_COMPAT_DIR-}" ]; then
-    # Check for recent enough version of bash.
-    if [ ${BASH_VERSINFO[0]} -gt 4 ] || [ ${BASH_VERSINFO[0]} -eq 4 -a ${BASH_VERSINFO[1]} -ge 1 ]; then
-        [ -r "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion" ] && \
-            . "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion"
-        if shopt -q progcomp && [ -r /usr/share/bash-completion/bash_completion ]; then
-            . /usr/share/bash-completion/bash_completion
-        elif [ -f /etc/bash_completion ]; then
-            . /etc/bash_completion
-        fi
-    fi
-fi
-
-complete -W menuconfig make
-complete -cf sudo
-
 function proml {
     # Commented out, don't overwrite xterm -T "title" -n "icontitle" by default.
     # If this is an xterm set the title to user@host:dir
@@ -1842,11 +1359,6 @@ function PWD {
   [ ${#tmp} -gt 0 -a "$tmp" != "$PWD" ] && echo ${PWD:${#tmp}+1} || echo $PWD;
 }
 
-#PS1=$PS1"$(PWD)\/\n "
-PS1=$PS1"\n$ "
-PS1="${TITLEBAR}$BGreen# \D{W%V.%u %m%d} \t$(__git_ps1) \$(powerpercent) tty/\l "$PS1
-PS1="\[\e[\$(( (\$? == 0 ) ? 31 : 41 ))m\]"$PS1
-PS1=$PS1$NORMAL
 
 #[[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && . $HOME/.autojump/etc/profile.d/autojump.sh
 
@@ -1898,6 +1410,23 @@ fi
   ##eval `ssh-agent -s`
   ##ssh-add < /dev/null
 ##fi
+
+## PATH
+# Append our default paths
+appendpath () {
+    case ":$PATH:" in
+        *:"$1":*)
+            ;;
+        *)
+            test -d $1 && PATH="$PATH:$1"
+    esac
+}
+
+export PATH="/bin:/sbin:/usr/bin:/usr/sbin"
+appendpath '/usr/local/bin'
+appendpath '/opt/bin'
+appendpath '/usr/games'
+
 
 # only in Util-Linux; not work for BSD
 #setterm -blength 0
@@ -2001,6 +1530,11 @@ esac
 if [ -f "$HOME/google-cloud-sdk/completion.bash.inc" ]; then
   source "$HOME/google-cloud-sdk/completion.bash.inc"
 fi
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f "$HOME/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/google-cloud-sdk/path.bash.inc"; fi
+
+export GOPATH=$HOME/go
+appendpath $GOPATH/bin
 
 ## alacritty
 test -d  ~/.config/alacritty/alacritty.bash && source ~/.config/alacritty/alacritty.bash
@@ -2012,10 +1546,8 @@ which kitty &>/dev/null && source <(kitty + complete setup bash)
 # source /dev/stdin <<<"$(kitty + complete setup bash)"
 
 #export NVM_DIR="$HOME/.nvm"
-#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 source ~/.git-completion.bash
 source ~/.git-prompt.sh
@@ -2048,25 +1580,8 @@ export LESS_TERMCAP_ue=$'\E[0m'           # end underline
 #    command man "$@"
 #}
 
-## PATH
-# Append our default paths
-appendpath () {
-    case ":$PATH:" in
-        *:"$1":*)
-            ;;
-        *)
-            PATH="$PATH:$1"
-    esac
-}
-
-export PATH="/bin:/sbin:/usr/bin:/usr/sbin"
-appendpath '/usr/local/bin'
-appendpath '/opt/bin'
-appendpath '/usr/games/bin'
-appendpath '/usr/games'
-
-unset appendpath
-
+appendpath $HOME/.cargo/bin
+appendpath "$HOME/.local/bin"
 
 # Original PATH is set in /etc/profile
 # NEVER export PATH without quoting $PATH
@@ -2078,6 +1593,7 @@ unset appendpath
 [ ! -z $JAVA_HOME ] && export LD_LIBRARY_PATH=$JAVA_HOME:$LD_LIBRARY_PATH
 [ ! -z $JAVA_HOME ] && export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/td.jar:$JAVA_HOME/lib/rt.jar:.
 
+
 # linuxbrew
 export PATH="$HOME/.linuxbrew/bin:$PATH"
 export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
@@ -2086,7 +1602,10 @@ export HOMEBREW_BUILD_FROM_SOURCE=1
 
 export LABS="${HOME}/.local"
 export BBDIR="${LABS}/bitbake"
-export PATH="${BBDIR}/bin:$PATH"
+
+appendpath ${BBDIR}/bin
+
+unset appendpath
 
 function PWD {
   tmp=${PWD%/*/*};
@@ -2112,6 +1631,8 @@ fi
 [ -d $HOME/.gem/ruby/2.7.0/bin ] && PATH=$HOME/.gem/ruby/2.7.0/bin:$PATH
 
 # fzf {{{
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
 if test -d $HOME/.fzf ; then
   if [[ ! "$PATH" == *$HOME/.fzf/bin* ]]; then
     export PATH="${PATH:+${PATH}:}$HOME/.fzf/bin"
@@ -2123,8 +1644,6 @@ if test -d $HOME/.fzf ; then
   # Key bindings
   test -f $HOME/.fzf/shell/key-bindings.bash && source "$HOME/.fzf/shell/key-bindings.bash"
 fi # fzf }}}
-
-[ -d "$HOME/.cargo/bin" ] && export PATH="$HOME/.cargo/bin:$PATH"
 
 #perl5
 [ -d "$HOME/.local/perl5/bin" ] && export PATH="$HOME/.local/perl5/bin${PATH:+:${PATH}}";
@@ -2142,11 +1661,7 @@ if which rbenv 2>/dev/null ; then
   export PATH="$HOME/.rbenv/shims:$PATH"
 fi
 
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
 export ENV=$HOME/.bashrc
-
-[ -d $HOME/swift-3.1/usr/bin/ ] && PATH=$HOME/swift-3.1/usr/bin:$PATH
 
 PATH="$PATH:./node_modules/.bin"
 export NODE_MIRROR=https://mirrors.tuna.tsinghua.edu.cn/nodejs-release/
@@ -2156,27 +1671,148 @@ export NODE_MIRROR=https://mirrors.tuna.tsinghua.edu.cn/nodejs-release/
 shopt -s no_empty_cmd_completion
 
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f "$HOME/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/google-cloud-sdk/path.bash.inc"; fi
-
 TZ='Asia/Shanghai'; export TZ
 
 ## [ "$UID" = "0" ] || export PATH=".:$PATH"
-
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
 
 # Load RVM into a shell session *as a function*
 #export PATH="$PATH:$HOME/.rvm/bin"
 # Use the following; Add RVM to PATH for scripting
 #[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
-# set PATH so it includes user's private bin if it exists
-[ -d $HOME/.local/bin ] && PATH=$HOME/.local/bin:$PATH
-export PATH
 
 function box() {
   test -f ~/.ssh/known_hosts && ssh-keygen -f ~/.ssh/known_hosts -R $1 2>/dev/null 1>&2
   ssh-keyscan $1 >> ~/.ssh/known_hosts 2>/dev/null 1>&2
   for p in pica8 12345678; do sshpass -p $p ssh admin@$1 && break; done
 }
+
+#eval "$(lessfile)"
+# make less more friendly for non-text input files, see lesspipe(1)
+#[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+#LESSOPEN="|lesspipe.sh %s"; export LESSOPEN
+
+# Specific bashrc
+[[ -f $HOME/.bashrc.local ]] && . $HOME/.bashrc.local
+
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
+fi
+
+
+if [ "$color_prompt" = yes ]; then
+    # override default virtualenv indicator in prompt
+    VIRTUAL_ENV_DISABLE_PROMPT=1
+
+    prompt_color='\[\033[;32m\]'
+    info_color='\[\033[1;34m\]'
+    #prompt_symbol=㉿
+    prompt_symbol=@
+    if [ "$EUID" -eq 0 ]; then # Change prompt colors for root user
+	prompt_color='\[\033[;94m\]'
+	info_color='\[\033[1;31m\]'
+	prompt_symbol=💀
+    fi
+    #PS1=$prompt_color'┌──${debian_chroot:+($debian_chroot)──}${VIRTUAL_ENV:+(\[\033[0;1m\]$(basename $VIRTUAL_ENV)'$prompt_color')}('$info_color'\u${prompt_symbol}\h'$prompt_color')-[\[\033[0;1m\]\w'$prompt_color']\n'$prompt_color'└─'$info_color'\$\[\033[0m\] '
+    PS1=$prompt_color'${debian_chroot:+($debian_chroot)-}${VIRTUAL_ENV:+(\[\033[0;1m\]$(basename $VIRTUAL_ENV)'$prompt_color')}'$info_color'\u${prompt_symbol}\h'$prompt_color':\[\033[0;1m\]\w'$prompt_color'/ '$prompt_color' '$info_color
+    # BackTrack red prompt
+    #PS1='${VIRTUAL_ENV:+($(basename $VIRTUAL_ENV)) }${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+
+#PS1=$PS1"$(PWD)\/\n "
+PS1="${TITLEBAR}$BGreen# \D{W%V.%u %m%d} \t$(__git_ps1) \$(powerpercent) jobs:\j "$PS1
+PS1="\[\e[\$(( (\$? == 0 ) ? 31 : 41 ))m\]"$PS1
+PS1=$PS1$NORMAL"\n$ "
+
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+# Completion options
+#These completion tuning parameters change the default behavior of bash_completion:
+
+#Define to avoid stripping description in --option=description of './configure --help'
+COMP_CONFIGURE_HINTS=1
+
+#Define to avoid flattening internal contents of tar files
+COMP_TAR_INTERNAL_PATHS=1
+
+#trap '. /etc/bash_completion ; trap USR2' USR2
+#{ sleep 0.01 ; builtin kill -USR2 $$ ; } & disown
+#[ -z "${BASH_COMPLETION_COMPAT_DIR}" ] && [ -f /etc/bash_completion ] && . /etc/bash_completion
+
+#   https://github.com/scop/bash-completion
+## source files
+#[ -r /usr/share/bash-completion/completions ] &&
+#  . /usr/share/bash-completion/completions/*
+
+# Check for interactive bash and that we haven't already been sourced.
+if [ -n "${BASH_VERSION-}" -a -n "${PS1-}" -a -z "${BASH_COMPLETION_COMPAT_DIR-}" ]; then
+    # Check for recent enough version of bash.
+    if [ ${BASH_VERSINFO[0]} -gt 4 ] || [ ${BASH_VERSINFO[0]} -eq 4 -a ${BASH_VERSINFO[1]} -ge 1 ]; then
+        [ -r "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion" ] && \
+            . "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion"
+        if shopt -q progcomp && [ -r /usr/share/bash-completion/bash_completion ]; then
+            . /usr/share/bash-completion/bash_completion
+        elif [ -f /etc/bash_completion ]; then
+            . /etc/bash_completion
+        fi
+    fi
+fi
+
+complete -W menuconfig make
+complete -cf sudo
+
+# source user completion file
+#[ $BASH_COMPLETION != ~/.bash_completion -a -r ~/.bash_completion ] && . ~/.bash_completion
+
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# Alias definitions into a separate ~/.bash_aliases
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
