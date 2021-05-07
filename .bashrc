@@ -575,8 +575,6 @@ fi
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 
-    alias ip='ip --color=auto'
-
     export LESS_TERMCAP_mb=$'\E[1;31m'     # begin blink
     export LESS_TERMCAP_md=$'\E[1;36m'     # begin bold
     export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
@@ -1426,6 +1424,13 @@ export PATH="/bin:/sbin:/usr/bin:/usr/sbin"
 appendpath '/usr/local/bin'
 appendpath '/opt/bin'
 appendpath '/usr/games'
+appendpath $HOME/.local/heroku/bin
+appendpath /snap/bin
+appendpath $HOME/.gem/ruby/bin
+appendpath $HOME/.gem/ruby/2.7.0/bin
+
+# fzf {{{
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 
 # only in Util-Linux; not work for BSD
@@ -1621,17 +1626,6 @@ if [ -f "$(command -v "ccache")" ]; then
     #export CCACHE_PREFIX="distcc"
 fi
 #}3
-
-###Heroku Toolbelt
-[ -d "$HOME/.local/heroku/bin" ] && export PATH="$HOME/.local/heroku/bin:$PATH"
-
-[ -d "/snap/bin" ] && export PATH="/snap/bin:$PATH"
-
-[ -d "$HOME/.gem/ruby/bin" ] && export PATH="$HOME/.gem/ruby/bin:$PATH"
-[ -d $HOME/.gem/ruby/2.7.0/bin ] && PATH=$HOME/.gem/ruby/2.7.0/bin:$PATH
-
-# fzf {{{
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 if test -d $HOME/.fzf ; then
   if [[ ! "$PATH" == *$HOME/.fzf/bin* ]]; then

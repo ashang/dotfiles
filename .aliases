@@ -37,7 +37,7 @@ alias l='ls -CF'
 #        a percent sign (`%') after each whiteout, and
 #        a vertical bar (`|') after each that is a FIFO.
 
-alias ll='ls -lh'                 # classify files in colour
+alias ll='ls -l'                 # classify files in colour
 hash exa 2>/dev/null && alias ll='exa -F -l -B --git'
 
 #-a, --all						do not ignore entries starting with .
@@ -103,7 +103,7 @@ alias curl='curl -L -C -'
 alias ch='curl -D- -o/dev/null'
 alias co='curl -O'
 
-alias dd="dd bs=8M status=progress"
+alias dd="dd status=progress"
 alias debug_on="sed -i 's/^\/\/#define LOG_NDEBUG 0/#define LOG_NDEBUG 0/g' "
 alias debug_off="sed -i 's/^#define LOG_NDEBUG 0/\/\/#define LOG_NDEBUG 0/g' "
 # debug_on MediaExtractor.cpp
@@ -220,6 +220,7 @@ alias h='history'
 alias hig='history | grep'
 alias hs='history | tail -40 | more'
 
+alias ip='ip -c'
 alias info='info --vi-keys'
 alias j="jobs -l"
 alias jq="jq -C -S"
@@ -315,8 +316,8 @@ alias un='uname -a'
 alias vd="vimdiff"
 #alias vim="vim -p"
 #if type pgrep &>/dev/null; then xxx; fi
-which nvim &>/dev/null && alias vd="nvim -d"
 which nvim &>/dev/null && alias nv="nvim -p"
+which nvim &>/dev/null && alias vd="nvim -d" || alias vd="vimdiff"
 alias vi="vim -p"
 
 # Undo a `git push`
