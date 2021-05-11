@@ -1,0 +1,14 @@
+[Desktop Entry]
+Categories=System;Monitor;GTK;
+Comment=System tray icon for managing print jobs
+Exec=system-config-printer-applet
+Hidden=true
+Icon=printer
+Name=Print Queue Applet
+NotShowIn=KDE;GNOME;Cinnamon;LXDE;Unity;
+StartupNotify=false
+Terminal=false
+Type=Application
+X-Desktop-File-Install-Version=0.23
+X-GNOME-Autostart-Delay=30
+X-Ubuntu-Gettext-Domain=system-config-printer

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Categories=
+Comment=Blueman Bluetooth Manager
+Exec=blueman-applet
+Hidden=true
+Icon=blueman
+Name=Blueman Applet
+NotShowIn=LXDE
+Terminal=false
+Type=Application
+X-Ubuntu-Gettext-Domain=blueman

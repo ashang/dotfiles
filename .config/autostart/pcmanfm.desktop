@@ -1,0 +1,5 @@
+[Desktop Entry]
+Exec=pcmanfm -d --desktop
+Hidden=false
+Name=pcmanfm-desktop
+Type=Application

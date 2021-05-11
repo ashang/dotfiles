@@ -1,0 +1,11 @@
+[Desktop Entry]
+Categories=
+Comment=Kerneloops.org privacy question applet
+Exec=kerneloops-applet
+Hidden=true
+Icon=stock_alarm
+Name=kerneloops applet
+Terminal=false
+Type=Application
+X-Desktop-File-Install-Version=0.23
+X-GNOME-Autostart-enabled=true
