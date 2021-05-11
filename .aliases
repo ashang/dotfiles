@@ -164,14 +164,8 @@ alias finds='find . -regex ".*\.\(h\|cpp\|c\|java\|aidl\|py\|pl\|pm\)" | xargs g
 alias findsi='find . -regex ".*\.\(h\|cpp\|c\|java\|aidl\|py\|pl\|pm\)" | xargs grep -Hni'
 alias findgrep="find . -print0 | xargs -0 grep"
 
-# git
-
-# git reset --hard `gitorigin`
-#alias gitorigin="git branch -r | head -1 | cut -d' ' -f 5"
-alias gor="git branch -r | head -1 | cut -d' ' -f 5"
 alias ga="git add"
 alias gap="git add --patch"
-alias gb='git branch -vv'
 alias gca='git commit --amend'
 alias gcl='git clone -v --recursive'
 # as function: git clone --recursive $1
@@ -205,8 +199,8 @@ alias gpr='git pull --rebase --recurse-submodules'
 alias gpr='git pull --rebase --stat'
 alias gsl='git stash list'
 alias gss='git show --stat'
-#alias gst='git branch -vv && git status -suno --ignore-submodules=dirty'
 alias gst='git branch -vv && git status -uno --ignore-submodules'
+alias gst='git branch -vv && git status -suno --ignore-submodules=dirty'
 alias gup='git pull --rebase --prune && git submodule update --init --recursive'
 
 alias gdb='gdb -q'
