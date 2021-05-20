@@ -9,7 +9,7 @@
     ignorecase = false
     editor = vim
     #pager       = less -R
-    #autocrlf = input
+    autocrlf = input
     #safecrlf = false
     #safecrlf = true
 

@@ -1,23 +1,187 @@
+# Per-repository settings, manage how Git reads line endings
+# http://git-scm.com/docs/gitattributes
+# https://rehansaeed.com/gitattributes-best-practices/
+
 # Set the default behavior, in case people don't have core.autocrlf set.
-* text=auto
+# Auto detect text files and perform LF normalization
+*       text=auto
+
+#
+# The above will handle all files NOT found below
+#
 
 # Explicitly declare text files you want to always be normalized and converted
 # to native line endings on checkout.
-*.c text
-*.h text
+*.c     text diff=c
+*.cc    text diff=cpp
+*.cxx   text diff=cpp
+*.cpp   text diff=cpp
+*.c++   text diff=cpp
+*.hpp   text diff=cpp
+*.h     text diff=c
+*.h++   text diff=cpp
+*.hh    text diff=cpp
+*.ts    text
+*.js    text
+*.css   text
+*.htm   text diff=html
+*.html  text diff=html
+*.inc   text
+*.ini   text
+*.sh    text eol=lf
+*.bash  text
+
+*.bat      text
+*.cmd      text
+*.ps1      text
 
 # Declare files that will always have CRLF line endings on checkout.
 *.sln text eol=crlf
 
-# Denote all files that are truly binary and should not be modified.
+
+* eol=lf
+
+# binary is a macro for -text -diff
+
+
+# Compiled Object files
+*.slo   binary
+*.lo    binary
+*.o     binary
+*.obj   binary
+
+# Precompiled Headers
+*.gch   binary
+*.pch   binary
+
+# Compiled Dynamic libraries
+*.so    binary
+*.dylib binary
+*.dll   binary
+
+# Compiled Static libraries
+*.lai   binary
+*.la    binary
+*.a     binary
+*.lib   binary
+
+# Executables
+*.exe   binary
+*.out   binary
+*.app   binary
+
+# Documents
+*.doc           diff=astextplain
+*.DOC           diff=astextplain
+*.docx          diff=astextplain
+*.DOCX          diff=astextplain
+*.dot           diff=astextplain
+*.DOT           diff=astextplain
+*.pdf           diff=astextplain
+*.PDF           diff=astextplain
+*.rtf           diff=astextplain
+*.RTF           diff=astextplain
+*.md       text
+*.tex      text diff=tex
+*.adoc     text
+*.textile  text
+*.mustache text
+*.csv      text
+*.tab      text
+*.tsv      text
+*.txt      text
+*.sql      text
+*.rst      text
+
+# Serialisation
+*.json     text
+*.toml     text
+*.xml      text
+*.yaml     text
+*.yml      text
+
+# Text files where line endings should be preserved
+*.patch    -text
+
+# Python
+*.pxd    text diff=python
+*.py     text diff=python
+*.py3    text diff=python
+*.pyw    text diff=python
+*.pyx    text diff=python
+*.pyz    text diff=python
+*.p      binary
+*.pkl    binary
+*.pickle binary
+*.pyc    binary
+*.pyd    binary
+*.pyo    binary
+*.ipynb  text
+*.db     binary
+
+
+# Define binary file attributes.
+# - Do not treat them as text.
+# - Include binary diff in patches instead of "binary files differ."
+# SVG treated as an asset (binary) by default.
+*.svg      text diff=astextplain
+# If you want to treat it as binary, use the following line instead.
+# *.svg    binary
+*.eps      -text
+
+*.eot     -text diff
+*.tif     -text diff
+*.tiff    -text diff
+*.otf     -text diff
+*.phar    -text diff
+*.svgz    -text diff
+
 *.png binary
 *.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.flv binary
+*.fla binary
+*.swf binary
 
-*.sh text eol=lf
-*.txt eol=lf
-*.md eol=lf
-*.xml text
-*.yml text
-*.json text
-*.rst text
-* eol=lf
+# Archives
+*.7z       binary
+*.gz       binary
+*.tar      binary
+*.tar.xz filter=lfs diff=lfs merge=lfs -text
+*.tar.gz filter=lfs diff=lfs merge=lfs -text
+*.zip      binary
+
+*.ttf binary
+*.eot binary
+*.woff binary
+*.woff2 binary
+*.pyc binary
+*.pdf binary
+*.ez binary
+*.bz2 binary
+*.swp binary
+
+#
+# Exclude files from exporting
+#
+.gitattributes export-ignore
+.gitignore     export-ignore
+
+# http://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes
+# *.py  filter=tabspace
+# *.js  filter=tabspace
+# *.html  filter=tabspace
+# *.css  filter=tabspace
+# *.json  filter=tabspace
+# https://stackoverflow.com/a/2318063/4387991
+# git config --global filter.tabspace.smudge 'unexpand --tabs=4 --first-only'
+# git config --global filter.tabspace.clean 'expand --tabs=4 --initial'
+# i.e. # ~/.gitconfig
+#[filter "tabspace"]
+#    smudge = unexpand --tabs=4 --first-only
+#    clean = expand --tabs=4 --initial
