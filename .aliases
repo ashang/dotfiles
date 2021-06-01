@@ -1,5 +1,6 @@
 # For dircolors-solarized
 # - https://github.com/seebi/dircolors-solarized
+# /usr/share/doc/bash/examples/startup-files/Bash_aliases
 
 
 # guideline 0: those not in command-not-found
@@ -109,7 +110,7 @@ alias debug_off="sed -i 's/^#define LOG_NDEBUG 0/\/\/#define LOG_NDEBUG 0/g' "
 # debug_on MediaExtractor.cpp
 # debug_off *.*
 
-alias df='df -T'
+alias df='df -T -x tmpfs -x aufs -x devtmpfs -x overlay'
 alias diff='diff -x.git'
 alias dl='dpkg -L'
 alias dlg='dpkg -l | grep'
@@ -155,7 +156,6 @@ alias cp='\cp -i -v -a'
 #
 #     Note that cp copies hard-linked files as separate files.  If you need to preserve hard links, consider using tar(1), cpio(1), or pax(1) instead.
 
-alias file="file -k"
 alias fn="find -iname"
 alias fsg='find . -name .git -prune -o -print | xargs grep -H -I -s --colour=auto'
 # search for a string in all subdirectories, matched lines will be printed together with filename and line number.
@@ -166,10 +166,11 @@ alias findgrep="find . -print0 | xargs -0 grep"
 
 alias ga="git add"
 alias gap="git add --patch"
+alias gb="git branch -vv"
 alias gca='git commit --amend'
 alias gcl='git clone -v --recursive'
 # as function: git clone --recursive $1
-alias gcv='git commit --no-verify'
+alias gco='git checkout'
 alias gd="git diff --patience --ignore-space-change"
 alias gdc='git diff --cached -w'
 alias gdw='git diff --no-ext-diff --word-diff'
@@ -419,8 +420,14 @@ else
 fi
 
 #alias wget="wget --no-check-certificate -c --content-disposition"
-alias wget="wget -U 'noleak'"
-alias wget="wget -U User-Agent -c --content-disposition"
+#alias wget="wget -U User-Agent -c --content-disposition"
+# HTTP request sent, awaiting response... 405 Method Not Allowed
+#2021-05-26 18:27:59 ERROR 405: Method Not Allowed.
+alias wget="wget -U 'User-Agent' -c --content-disposition"
+#alias wget="wget -U '' -c --content-disposition"
+#alias wget="wget -U ' ' -c --content-disposition"
+#alias wget="wget -U '\ ' -c --content-disposition"
+
 alias whence='type -a'                        # where, of a sort
 alias where="type -all"
 alias which='alias | which -a'

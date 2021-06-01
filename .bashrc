@@ -1516,6 +1516,9 @@ export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 
 # Start X if login from the first console.
+# if [ -z $DISPLAY ] && [ "$(tty)" = "/dev/tty1" ]; then
+#   exec sway
+#
 #[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
     # now use nodm, comment out
 # if [ "$(tty)" == "/dev/tty3" -o "$(tty)" = "/dev/vc/1" ] ; then
@@ -1562,8 +1565,9 @@ which kitty &>/dev/null && source <(kitty + complete setup bash)
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 #[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-source ~/.git-completion.bash
-source ~/.git-prompt.sh
+test 0 -eq $(id -u) || source ~/.git-completion.bash
+test 0 -eq $(id -u) || source ~/.git-prompt.sh
+
 export GIT_PS1_SHOWDIRTYSTATE=1
 
 #source ~/.vim/scripts/branch_prompt.sh
