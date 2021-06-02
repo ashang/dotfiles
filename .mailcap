@@ -1,0 +1,69 @@
+## mailcap
+
+# First match will take effect
+# Take effect at once after saved changes, at least in mutt.
+# Take an key to open 3rd party app
+
+# copiousoutput
+# nametemplate
+# test=
+# -n "$DISPLAY";
+# Such as: image/*; feh %s; test=test -n "$DISPLAY";
+#feh ERROR: Can't open X display. It *is* running, yeah?
+#Press any key to continue...
+
+
+application/x-gunzip;   gzcat; copiousoutput
+application/x-tar-gz; gunzip -c %s | tar -tf - ; copiousoutput
+application/postscript; ps2ascii %s; copiousoutput
+
+application/zip; unzip -l %s; copiousoutput;
+application/x-rar; unrar l %s; copiousoutput;
+
+#application/pgp-keys; pgp -f < %s ; copiousoutput
+
+# call wvHtml to view on-field
+#application/msword; wvHtml %s - | w3m -dump -T text/html;copiousoutput
+application/msword;  libreoffice %s; test=test -n "$DISPLAY";
+application/msword;  catdoc %s; copiousoutput;
+application/msword; wvHtml --charset=utf-8 %s - | w3m -dump -T text/html ; copiousoutput
+
+
+# Send excel spreadsheets to my NT box
+application/ms-excel; open.pl %s
+
+application/octet-stre; firefox %s;nametemplate=%s; copiousoutput
+image/gif; xv %s
+image/jpg; xv %s
+
+text/enriched;  enriched.sh  ; copiousoutput
+
+##image/*;  	anytopnm %s | pnmscale -xsize 80 -ysize 50 | ppmtopgm | pgmtopbm | pbmtoascii ; copiousoutput
+
+application/octet-stream ; echo %s "can be anything..."                    ; copiousoutput
+text/html                ; /usr/bin/elinks -dump %s ; nametemplate=%s.html ; copiousoutput
+audio/*                  ; /usr/bin/mplayer %s                             ; copiousoutput
+video/*                  ; /usr/bin/mplayer %s                             ; copiousoutput
+
+
+#text html
+text/html; w3m -dump -ppc 9 -I %{charset} -T text/html %s|uniq; copiousoutput
+text/html; w3m -dump %s; nametemplate=%s.html; copiousoutput
+text/html; w3m -I %{charset} -T text/html; copiousoutput;
+text/html; google-chrome %s; test=test -n "$DISPLAY";
+text/html; lynx -dump %s; copiousoutput; nametemplate=%s.html
+
+application/pdf; pdftotext %s -; copiousoutput;
+application/pdf; zathura %s; test=test -n "$DISPLAY";
+
+application/postscript;  zathura %s; test=test -n "$DISPLAY";
+
+application/vnd.openxmlformats-officedocument.wordprocessingml.document; docx2txt %s -; copiousoutput;
+application/msexcel;  libreoffice %s; test=test -n "$DISPLAY";
+application/powerpoint;  libreoffice %s; test=test -n "$DISPLAY";
+application/mspowerpoint;  libreoffice %s; test=test -n "$DISPLAY";
+
+image/*; feh %s; test=test -n "$DISPLAY";
+image/*; mirage %s                              ; copiousoutput
+audio/*; mpv %s; test=test -n "$DISPLAY";
+video/*; mpv %s; test=test -n "$DISPLAY";
