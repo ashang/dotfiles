@@ -2,7 +2,6 @@
 Categories=
 Comment=Agent for Spice guests
 Exec=/usr/bin/spice-vdagent
-Hidden=true
 Name=Spice vdagent
 NoDisplay=true
 Terminal=false

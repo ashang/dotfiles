@@ -94,7 +94,9 @@ alias cd..="cd .."
 alias chmod='chmod -v'
 which colordiff &>/dev/null && alias diff='colordiff'
 [ which colormake >/dev/null 2>&1 ] && alias make=colormake
-alias crontab='crontab -i'
+
+# certain crontab has no -i option
+#alias crontab='crontab -i'
 alias cv='convmv -f gbk -t utf-8 -r --notest'
 
 #alias curl="curl --user-agent 'noleak'"
