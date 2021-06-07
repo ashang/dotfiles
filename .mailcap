@@ -1,6 +1,6 @@
 ## mailcap
 
-# First match will take effect
+# First match will take effect, but `test=` will make it next?
 # Take effect at once after saved changes, at least in mutt.
 # Take an key to open 3rd party app
 
@@ -39,6 +39,11 @@ image/jpg; xv %s
 text/enriched;  enriched.sh  ; copiousoutput
 
 ##image/*;  	anytopnm %s | pnmscale -xsize 80 -ysize 50 | ppmtopgm | pgmtopbm | pbmtoascii ; copiousoutput
+image/*			; feh %s; test=test -n "$DISPLAY";
+#feh is better, ESC can escape conveniently.
+#image/*			; mirage %s                                       ; test=test -n "$DISPLAY";
+audio/*                  ; mpv %s; test=test -n "$DISPLAY";
+video/*; mpv %s; test=test -n "$DISPLAY";
 
 application/octet-stream ; echo %s "can be anything..."                    ; copiousoutput
 text/html                ; /usr/bin/elinks -dump %s ; nametemplate=%s.html ; copiousoutput
@@ -63,7 +68,3 @@ application/msexcel;  libreoffice %s; test=test -n "$DISPLAY";
 application/powerpoint;  libreoffice %s; test=test -n "$DISPLAY";
 application/mspowerpoint;  libreoffice %s; test=test -n "$DISPLAY";
 
-image/*; feh %s; test=test -n "$DISPLAY";
-image/*; mirage %s                              ; copiousoutput
-audio/*; mpv %s; test=test -n "$DISPLAY";
-video/*; mpv %s; test=test -n "$DISPLAY";

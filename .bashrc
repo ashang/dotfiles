@@ -1118,7 +1118,14 @@ function extr() {
 function pcd() { cd $(find $1 -type d | percol); }
 function xrpm() { rpm2cpio "$1" | cpio -idmv; }
 function vack() { vim `ack-grep -g $@`; }
-function mdcd() { mkdir "$1"; cd "$1"; }
+function mdcd() {
+  if test -d "$1" -o -z "$1"; then
+    tmpdir=$(mktemp -d -p.) && cd "$tmpdir";
+  else
+    tmpdir=$1 && mkdir "$tmpdir" && cd "$tmpdir";
+  fi
+}
+
 function settitle() { echo -ne "\e]2;$@\a\e]1;$@\a"; }
 
 # dir for `rm` backup:
@@ -1713,6 +1720,13 @@ case "$TERM" in
     xterm-color|*-256color) color_prompt=yes;;
 esac
 
+function ahead_behind() {
+  curr_branch=$(git rev-parse --abbrev-ref HEAD);
+  curr_remote=$(git config branch.$curr_branch.remote);
+  curr_merge_branch=$(git config branch.$curr_branch.merge | cut -d / -f 3);
+  git rev-list --quiet HEAD && git rev-list --left-right --count $curr_branch...$curr_remote/$curr_merge_branch | tr -s '\t' '|';
+}
+
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
@@ -1822,3 +1836,5 @@ complete -cf sudo
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
+
+
