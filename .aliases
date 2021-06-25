@@ -83,13 +83,10 @@ fi
 #alias expemerge="ACCEPT_KEYWORDS=\"~x86\" emerge"
 # with params?: scp -P 1222 $* 120.77.17.19
 
-
 alias ..='cd ..'
 alias '...'='../..'
 alias '....'='../../..'
 alias cd..="cd .."
-
-
 
 alias chmod='chmod -v'
 which colordiff &>/dev/null && alias diff='colordiff'
@@ -214,8 +211,8 @@ alias grpe=grep
 alias gerp=grep
 
 alias h='history'
-alias hig='history | grep'
-alias hs='history | tail -40 | more'
+alias hg='history | grep'
+alias ht='history | tail'
 
 alias ip='ip -c'
 alias info='info --vi-keys'
@@ -296,7 +293,6 @@ alias ssh='ssh -v -o VisualHostKey=yes -o ServerAliveInterval=30'
 #alias insecssh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -o "PreferredAuthentications=keyboard-interactive"'
 
 type multitail &>/dev/null && alias tail='multitail -c'
-alias th='history | tail'
 alias tmars='telnet 210.77.17.19 1012'
 
 # alias tail='tail -f'
@@ -357,7 +353,6 @@ alias pacu='sudo pacman -Syu --noconfirm'
 alias auru='yaourt -Syua --noconfirm'
 alias fe='find /sbin /bin /usr/sbin /usr/bin | grep'
 
-alias hs='history | tail -40 | more'
 alias tcs='ctags -R --fields=+lS . ; cscope -Rbq'
 
 #bsd
@@ -384,10 +379,10 @@ alias sv='source ~/.config/vim/scripts/gb.bash sv'
 alias gg='git grep -a -i'
 
 # Canonical hex dump; some systems have this symlinked
-type -t hd > /dev/null || alias hd="hexdump -C"
+type hd &> /dev/null || alias hd="hexdump -C"
 
 # OS X has no `md5sum`, so use `md5` as a fallback
-type -t md5sum > /dev/null || alias md5sum="md5"
+type md5sum &> /dev/null || alias md5sum="md5"
 
 # Recursively delete `.DS_Store` files
 alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
@@ -414,7 +409,7 @@ alias hax="growlnotify -a 'Activity Monitor' 'System error' -m 'WTF R U DOIN'"
 alias start-psql="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
 alias stop-psql="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
 
-if [[ "$OSTYPE" =~ *BSD ]]
+if [[ "*BSD" =~ "$OSTYPE" ]]
 then
   alias w='w -i'    # sorted by idle time.
 else
@@ -463,12 +458,10 @@ function setenv () {
   export $1="$2"
 }
 
-# Function which adds an alias to the current shell and to
-# the ~/.bash_aliases file.
-add-alias ()
+function add-alias ()
 {
    local name=$1 value="$2"
-   echo alias $name=\'$value\' >>~/.bash_aliases
+   echo alias $name=\'$value\' >>~/.aliases
    eval alias $name=\'$value\'
    alias $name
 }
@@ -476,7 +469,7 @@ add-alias ()
 # "repeat" command.  Like:
 #
 #	repeat 10 echo foo
-repeat ()
+function repeat ()
 { 
     local count="$1" i;
     shift;
@@ -487,7 +480,7 @@ repeat ()
 }
 
 # Subfunction needed by `repeat'.
-_seq ()
+function _seq ()
 { 
     local lower upper output;
     lower=$1 upper=$2;
@@ -501,27 +494,6 @@ _seq ()
     echo "$lower"
 }
 
-
-alias N='&>/dev/null'
-alias '...'='../..'
-alias '....'='../../..'
-alias BG='& exit'
-alias C='|wc -l'
-alias G='|grep'
-alias H='|head'
-alias Hl=' --help |& less -r'
-alias K='|keep'
-alias L='|less'
-alias LL='|& less -r'
-alias M='|most'
-alias N='&>/dev/null'
-alias R='| tr A-z N-za-m'
-alias SL='| sort | less'
-alias S='| sort'
-alias T='|tail'
-alias V='| vim -'
-
 if test -f $HOME/.aliases.local ; then
   . $HOME/.aliases.local
 fi
-
