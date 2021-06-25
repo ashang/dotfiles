@@ -4,8 +4,8 @@
 
 # https://github.com/swaywm/sway/wiki
 
-# vim: iskeyword+=\$,\-,\#,(,) nospell ft=tcl
 
+#
 # exec --no-startup-id compton -b
 #exec --no-startup-id nm-applet
 #exec --no-startup-id xss-lock -- i3lock-fancy
@@ -20,8 +20,9 @@ font pango:FiraCode, FontAwesome 12
 ### Variables
 
 ## Keyboard mappings
-set $mod Mod1
+## Mod4: Logo key
 #set $mod Mod4
+set $mod Mod1
 #set $sup Mod4
 #set $alt Mod1
 #bindsym $mod+j                "mark --toggle a"
@@ -33,7 +34,7 @@ set $mod Mod1
 #    Mod1 (usually aka "Alt" or "Meta")
 #    Mod2 ("NumLock")
 #    Mod3 (unused on default QWERTY layout)
-#    Mod4 (aka "Super" or "Logo key")
+#    Mod4 (aka "Super" or "Windows-Key")
 #    Mod5 (e.g. "Alt_Gr" on german QWERTZ layout)
 #    Shift
 #    Control
@@ -48,7 +49,7 @@ set $mod Mod1
 #control     Control_L (0x25),  Control_R (0x69)
 #mod1        Alt_L (0x40),  Alt_R (0x6c),  Meta_L (0xcd)
 #mod2        Num_Lock (0x4d)
-#mod3
+#mod3      
 #mod4        Super_L (0x85),  Super_R (0x86),  Super_L (0xce),  Hyper_L (0xcf)
 #mod5        ISO_Level3_Shift (0x5c),  Mode_switch (0xcb)
 
@@ -67,6 +68,9 @@ mode "launcher" {
 }
   bindsym $mod+i mode "launcher"
 
+
+
+
 # Home row direction keys, like vim
 set $left h
 set $down j
@@ -76,51 +80,52 @@ set $right l
 # Your preferred terminal emulator
 #set $term terminator
 set $term i3-sensible-terminal
-set $term alacritty
-# Your preferred terminal emulator
-set $term xfce4-terminal
 
 # Your preferred application launcher
 set $menu dmenu_run
 
 ### Output configuration
 # man 5 sway-output
-# TODO: swaymsg -t get_outputs to set them
-# get the names of outputs: swaymsg -t get_outputs
-# $ swaymsg -t get_outputs
-# Output eDP-1
-#   Geometry: 1366x768 @ 0,0
-#   Scale factor: 1x
-#   Workspace: 1
-# Output HDMI-A-1
-#  Geometry: 2560x1440 @ 1366,0
-#  Scale factor: 1x
-#  Workspace: 9
-
 # force_xinerama yes
 # fake-outputs 3840x1080+0+0
-#include base16/base16-sway/themes/base16-tomorrow-night.config
+#include /home/max/.local/share/base16/base16-sway/themes/base16-tomorrow-night.config
 #include config_exec
 
 #output LVDS-1 {
     ## pos  0 420
     #pos  0 0
     ## res  1920x1080
-    # bg ~/Pictures/backgrounds/yosemite.jpg fill center $base01
-    ##bg ~/Pictures/backgrounds/yosemite.jpg stretch $base01
+    ## background ~/.local/share/backgrounds/02-procrastination-hd1080.png center $base01
+    #background ~/.local/share/backgrounds/osb3unzg9j941-1280.png stretch $base01
     #dpms on
 #}
 
 # Default wallpaper
 # output HDMI-A-1 bg ~/wallpaper.png stretch
 # output HDMI-A-1 resolution 1920x1080 position 1920,0
-#test -r ~/Pictures/backgrounds/Water.of.Leith.by.Keanu.Kerr.jpg && output DP-1 bg ~/Pictures/backgrounds/Water.of.Leith.by.Keanu.Kerr.jpg stretch
+#output * background ~/Pictures/backgrounds/yosemite.jpg fill
+#output eDP-1 bg ~/Pictures/backgrounds/Water.of.Leith.by.Keanu.Kerr.jpg stretch
+output HDMI-A-1 bg ~/Pictures/backgrounds/yosemite.jpg fill
 # How to get outputs configurable - $ swaymsg -t get_outputs
 output eDP-1 {
-   #bg ~/Pictures/backgrounds/Water.of.Leith.by.Keanu.Kerr.jpg stretch
-   resolution 1920x1080
-   #scale 1.4
- }
+               bg ~/Pictures/backgrounds/Water.of.Leith.by.Keanu.Kerr.jpg stretch
+               resolution 1920x1080
+               #scale 1.4
+             }
+
+# You can get the names of your outputs by running: swaymsg -t get_outputs
+
+# $ swaymsg -t get_outputs
+# Output eDP-1
+#   Geometry: 1366x768 @ 0,0
+#   Scale factor: 1x
+#   Workspace: 1
+
+# Output HDMI-A-1
+#  Geometry: 2560x1440 @ 1366,0
+#  Scale factor: 1x
+#  Workspace: 9
+
 
 ### Input configuration
 
@@ -152,7 +157,6 @@ input * xkb_layout "us"
 #    xkb_numlock enabled
 #}
 #    exec_always fcitx -r
-exec_always fcitx5 -r -d
 
 input "1739:52390:DELL089C:00_06CB:CCA6_Touchpad" {
     dwt enabled
@@ -198,6 +202,9 @@ input "1739:52390:DELL089C:00_06CB:CCA6_Touchpad" {
 
 
 ### Key bindings
+#
+# Basics:
+#
     # start a terminal
     bindsym $mod+shift+Return exec $term
 
@@ -213,6 +220,7 @@ input "1739:52390:DELL089C:00_06CB:CCA6_Touchpad" {
 
     # capture the focused monitor to clipboard
     bindsym shift+Control+Print exec grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name') - | wl-copy
+
 
     # kill focused window
     bindsym $mod+shift+q kill
@@ -230,23 +238,21 @@ input "1739:52390:DELL089C:00_06CB:CCA6_Touchpad" {
 
 
     # reload config
-    ## mode resize had been using $mod+Shift+r
     bindsym $mod+Shift+c                                       reload
+    ## mode resize had been using $mod+Shift+r
     # To avoid accidental restart, no binding for `restart`
 
     # exit sway (logs you out of your wayland session)
-# TODO should confirm when exit
     bindsym $mod+shift+e exit
-# I'm not using logind but still want DBus/PolKit/power management to work.
-# What can I do?
-# If you're using ConsoleKit2, launch sway using
-exec ck-launch-session dbus-launch --sh-syntax --exit-with-session sway
-#exec dbus-launch --sh-syntax --exit-with-session sway
-# Alternatively, you could omit the ck-launch-session part.
-
 #
 # Moving around:
 #
+    # Move your focus around
+    bindsym $mod+$left focus left
+    bindsym $mod+$down focus down
+    bindsym $mod+$up focus up
+    bindsym $mod+$right focus right
+
     # _move_ the focused window with the same, but add shift
     bindsym $mod+shift+$left move left
     bindsym $mod+shift+$down move down
@@ -297,22 +303,14 @@ exec ck-launch-session dbus-launch --sh-syntax --exit-with-session sway
     bindsym $mod+shift+t layout toggle split
 
     # IME may use super+space
-    # vim fold may use meta+space
-    ##bindsym $mod+space focus mode_toggle
-    # Swap focus between tiling and floating area
-    bindsym $mod+shift+o focus next 
-    #bindsym $mod+shift+o focus sibling
-
-    ## Give up focus around, to release more keys
-    ## Move your focus around
-    bindsym $mod+$left focus left
-    bindsym $mod+$down focus down
-    bindsym $mod+$up focus up
-    bindsym $mod+$right focus right
-
+    #bindsym $mod+shift+space floating toggle
+    #bindsym $mod+space focus mode_toggle
 
     # Toggle between tiling and floating mode
     bindsym $mod+shift+g floating toggle
+
+    # Swap focus between tiling and floating area
+    bindsym $mod+shift+o focus mode_toggle
 
     # move focus to the parent container
     bindsym $mod+shift+p focus parent
@@ -330,7 +328,6 @@ exec ck-launch-session dbus-launch --sh-syntax --exit-with-session sway
     bindsym $mod+minus scratchpad show
 
 bindsym $mod+shift+r mode "resize"
-
 #
 # Resizing containers:
 #
@@ -414,6 +411,7 @@ bindsym $mod+shift+z output HDMI-A-1 pos 1920 0 res 2560x1440 ; output eDP-1 pos
 
 include security.d/*
 
+
 # Floating windows
 
 for_window [window_role="pop-up"] floating enable
@@ -443,11 +441,11 @@ for_window [class="TeamViewer"] floating enable
 
 # Focus window settings
 no_focus [window_role="pop-up"]
-focus_on_window_activation focus
-#for_window [class="(?i)"] focus
+focus_on_window_activation focus 
+#for_window [class="(?i)"] focus 
 
 ## Rename workspace with i3-input using numbers and text
-bindsym $mod+n exec i3-input -F 'rename workspace to "%s"' -P 'New name for this workspace: '
+#bindsym $mod+n exec i3-input -F 'rename workspace to "%s"' -P 'New name for this workspace: '
 
 ## border
 default_border none
@@ -485,31 +483,13 @@ bindsym --release Shift+Print exec --no-startup-id "maim -s -p 0 -c 0.96,0.5,0.0
 #exec xrdb ~/.Xresources ; swaymsg reload
 #exec ibus-daemon --xim -d
 
+
 # exec xrandr --output HDMI-1 --right-of DP-1
 # exec xrandr --output HDMI-1 --right-of VGA-1
 # exec /usr/bin/xrandr-reset.sh
 # exec setsid xautolock -locker swaylock
 
-####
-set $lock swaylock -c 000000 --indicator-caps-lock
-bindsym mod4+k exec swayidle -w timeout 600 $lock timeout 570 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' before-sleep $lock
-
-#bindsym mod4+k exec swayidle -w timeout 30 'swaylock -f' timeout 60 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' before-sleep 'swaylock -f -c 000000'
-#   -f, --daemonize
-#       Detach from the controlling terminal after locking.
-#       Note: this is the default behavior of i3lock.
-#   -c, --color <rrggbb[aa]>
-#       Turn the screen into the given color instead of white. If -i is used, this sets the background of the image to the given color. Defaults to white (FFFFFF).
-
-bindsym mod4+l exec ~/.config/sway/lockman.sh
-    ## ~/.config/sway/lockman.sh
-    ##!/bin/sh
-    ## Times screen off and puts it to bg
-    #swayidle timeout 10 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' &
-    #swaylock -c 000000
-    ## Kills last bg task so idle timer doesn't keep running
-    #kill %%
-
+#exec swayidle -w timeout 300 'swaylock -f' timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' before-sleep 'swaylock -f -c 000000'
 
 # exec gnome-keyring-daemon --start --components=secrets
 # start compositor...
@@ -531,21 +511,21 @@ bindsym mod4+l exec ~/.config/sway/lockman.sh
 # exec xinput --set-prop 'Xornet gaming mouse' 'libinput Accel Speed' 0.1
 # exec setxkbmap -option caps:escape
 # exec setsid hexchat -e --minimize=2
-# exec termite  -e /bin/weechat
+# exec termite  -e /home/max/.local/bin/weechat
 #exec khal list today 500d > $HOME/.motd
+
+#
 
 # exec xrandr --output DP-1 --rotate left --pos 1920x-420
 # exec xrandr --output DP1 --rotate left --right-of HDMI1
 # exec xrandr --output DP1 --rotate left --pos 1920x-420
 
+
 # bindsym $mod+d exec --no-startup-id j4-dmenu-desktop
 # exec xrandr --dpi 95.48 --output LVDS-1 --mode 1024x768 && xrandr --output LVDS-1 --mode 1280x800
 # bindcode 156
 
-#if [ -n "$DESKTOP_SESSION" ];then
-#    eval $(gnome-keyring-daemon --start)
-#    export SSH_AUTH_SOCK
-#fi
-# exec eval $(gnome-keyring-daemon --start)
-# exec export SSH_AUTH_SOCK
 
+
+
+# vim: iskeyword+=\$,\-,\#,(,) nospell ft=tcl
