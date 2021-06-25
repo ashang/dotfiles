@@ -410,9 +410,9 @@ export ARCHFLAGS="-arch x86_64"
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 
 ## aliases
+_
+test -f ~/.aliases && . ~/.aliases
 
-alias -g '...'='../..'
-alias -g '....'='../../..'
 alias -g BG='& exit'
 alias -g C='|wc -l'
 alias -g G='|grep'
@@ -435,6 +435,3 @@ alias insecssh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/nu
 alias top10='print -l ${(o)history%% *} | uniq -c | sort -nr | head -n 10'
 alias CO="./configure"
 alias CH="./configure --help"
-alias c="clear"
-alias cp="cp -i"
-

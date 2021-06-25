@@ -594,7 +594,6 @@ fi
 # colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-
 #Shell Options
 #See man bash for more options...
 
@@ -605,11 +604,11 @@ set -o notify
 [ "${BASH_VERSINFO}" -ge "4" ] && shopt -s autocd cdspell dirspell
 
 # Use case-insensitive filename globbing
-# shopt -s nocaseglob
+shopt -s nocaseglob
 
-# When changing directory small typos can be ignored by bash
-# for example, cd /vr/lgo/apaache would find /var/log/apache
-# shopt -s cdspell
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+shopt -s globstar
 
 #$ tty
 #/dev/ttys003
@@ -1120,10 +1119,11 @@ function xrpm() { rpm2cpio "$1" | cpio -idmv; }
 function vack() { vim `ack-grep -g $@`; }
 function mdcd() {
   if test -d "$1" -o -z "$1"; then
-    tmpdir=$(mktemp -d -p.) && cd "$tmpdir";
+    tmpdir=$(mktemp -d -p.)
   else
-    tmpdir=$1 && mkdir "$tmpdir" && cd "$tmpdir";
+    tmpdir=$1 && mkdir "$tmpdir"
   fi
+  cd "$tmpdir";
 }
 
 function settitle() { echo -ne "\e]2;$@\a\e]1;$@\a"; }
@@ -1341,10 +1341,6 @@ shopt -s hostcomplete
 #Completion options
 bind "set show-all-if-ambiguous on"   #enable single tab completion
 bind "set completion-ignore-case on"
-
-# If set, the pattern "**" used in a pathname expansion context will
-# match all files and zero or more directories and subdirectories.
-#shopt -s globstar
 
 function proml {
     # Commented out, don't overwrite xterm -T "title" -n "icontitle" by default.
@@ -1833,8 +1829,6 @@ complete -cf sudo
 # Alias definitions into a separate ~/.bash_aliases
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+test -f ~/.aliases && . ~/.aliases
 
-
+. "$HOME/.cargo/env"
