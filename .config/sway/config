@@ -1,10 +1,9 @@
 # sway configuration file
 # Copy this to ~/.config/sway/config and edit it to your liking.
 # Read `man 5 sway` for a complete reference.
+# Read `man 1 sway` for a reference.
 
-# https://github.com/swaywm/sway/wiki
-
-# vim: iskeyword+=\$,\-,\#,(,) nospell ft=tcl
+# https://github.com/swaywm/sway/wiki/i3-Migration-Guide
 
 # exec --no-startup-id compton -b
 #exec --no-startup-id nm-applet
@@ -15,17 +14,57 @@
 #exec --no-startup-id nightshift -l 39.0315533:-94.4954291 -d
 ##exec --no-startup-id setxkbmap -model apple_laptop -layout us -variant dvp
 
-font pango:FiraCode, FontAwesome 12
 
-### Variables
+# Variables
 
-## Keyboard mappings
-set $mod Mod1
-#set $mod Mod4
+#set $mod Mod1
 #set $sup Mod4
 #set $alt Mod1
+set $mod Mod4
+set $mod1 Mod1
+
+set $gnome-schema org.gnome.desktop.interface
+# exec_always gsettings set $gnome-schema gtk-theme 'Arc-Dark'
+
+set $bg-color            #333333
+set $inactive-bg-color   #333333
+set $text-color          #f3f4f5
+set $inactive-text-color #676E7D
+set $urgent-bg-color     #E53935
+set $focus-text-color    #87CEEB
+
+set $black       #282828
+set $darkblack   #1d2021
+set $transparent #000000AA
+
+## Home row direction keys, like vim
+set $left h
+set $down j
+set $up k
+set $right l
+
+set $term terminator
+set $term i3-sensible-terminal
+set $term alacritty
+set $term xfce4-terminal
+# alacritty and kitty will use Wayland without additional configuration.
+# Wayland-native
+# https://github.com/thestinger/termite
+
+## application launcher
+set $menu "killall rofi ; rofi -show drun -show-icons"
+set $menu "killall rofi ; rofi -show drun -bg #222222 -fg #888888 -hlbg #285577 -hlfg #ffffff -show-icons -5"
+set $menu rofi -show run  -m -1 
+
+# Appearance
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+# This font is widely installed, provides lots of unicode glyphs, right-to-left
+# text rendering and scalability on retina/hidpi displays (thanks to pango).
+font pango: Inconsolata 12
+
+
 #bindsym $mod+j                "mark --toggle a"
-#bindsym Pause                 exec grim -t png "/tmp/$(date '+%Y-%m-%d %H:%M:%S').png"
 
 #bindsym [--release] [Modifiers+]keysym command
 #bindcode [--release] [Modifiers+]keycode command
@@ -67,27 +106,13 @@ mode "launcher" {
 }
   bindsym $mod+i mode "launcher"
 
-# Home row direction keys, like vim
-set $left h
-set $down j
-set $up k
-set $right l
-
-# Your preferred terminal emulator
-#set $term terminator
-set $term i3-sensible-terminal
-set $term alacritty
-# Your preferred terminal emulator
-set $term xfce4-terminal
-
-# Your preferred application launcher
-set $menu dmenu_run
+bindsym $mod+e                                             exec thunar
+bindsym $mod+d                                             exec i3-dmenu-desktop
 
 ### Output configuration
 # man 5 sway-output
-# TODO: swaymsg -t get_outputs to set them
-# get the names of outputs: swaymsg -t get_outputs
-# $ swaymsg -t get_outputs
+# get the names of outputs:
+# swaymsg -t get_outputs
 # Output eDP-1
 #   Geometry: 1366x768 @ 0,0
 #   Scale factor: 1x
@@ -96,6 +121,14 @@ set $menu dmenu_run
 #  Geometry: 2560x1440 @ 1366,0
 #  Scale factor: 1x
 #  Workspace: 9
+
+# scale
+#    usually 2 for HiDPI screens
+#    Fractional scaling is supported but is not recommended.
+
+# transform
+#    Display rotation
+#    output <name> transform 90
 
 # force_xinerama yes
 # fake-outputs 3840x1080+0+0
@@ -111,16 +144,8 @@ set $menu dmenu_run
     #dpms on
 #}
 
-# Default wallpaper
-# output HDMI-A-1 bg ~/wallpaper.png stretch
-# output HDMI-A-1 resolution 1920x1080 position 1920,0
+# output $external resolution 1920x1080 position 1920,0
 #test -r ~/Pictures/backgrounds/Water.of.Leith.by.Keanu.Kerr.jpg && output DP-1 bg ~/Pictures/backgrounds/Water.of.Leith.by.Keanu.Kerr.jpg stretch
-# How to get outputs configurable - $ swaymsg -t get_outputs
-output eDP-1 {
-   #bg ~/Pictures/backgrounds/Water.of.Leith.by.Keanu.Kerr.jpg stretch
-   resolution 1920x1080
-   #scale 1.4
- }
 
 ### Input configuration
 
@@ -160,8 +185,11 @@ input "1739:52390:DELL089C:00_06CB:CCA6_Touchpad" {
     natural_scroll enabled
     middle_emulation enabled
 }
-# Inputs - Get your inputs with the command:
+
+# Inputs
+# get the names of inputs:
 # swaymsg -t get_inputs
+# Read `man 5 sway-input` for more information about this section.
 
 # "identifier": "1739:52390:DELL089C:00_06CB:CCA6_Touchpad",
 #     "name": "DELL089C:00 06CB:CCA6 Touchpad",
@@ -193,14 +221,11 @@ input "1739:52390:DELL089C:00_06CB:CCA6_Touchpad" {
 #       middle_emulation enabled
 #   }
 
-# You can get the names of your inputs by running: swaymsg -t get_inputs
-# Read `man 5 sway-input` for more information about this section.
+# Keyboard mappings / bindings
 
-
-### Key bindings
-    # start a terminal
     bindsym $mod+shift+Return exec $term
 
+    bindsym Pause                 exec grim -t png "/tmp/$(date '+%Y-%m-%d %H:%M:%S').png"
     #bindsym $mod+p exec grim -g "$(slurp -d)" - | wl-copy
     bindsym Print exec grim -g "$(slurp)" -t png - | wl-copy -t image/png
     # https://github.com/emersion/slurp https://github.com/emersion/grim https://github.com/bugaevc/wl-clipboard
@@ -227,7 +252,6 @@ input "1739:52390:DELL089C:00_06CB:CCA6_Touchpad" {
     # Change normal to inverse to use left mouse button for resizing and right
     # mouse button for dragging.
     floating_modifier $mod normal
-
 
     # reload config
     ## mode resize had been using $mod+Shift+r
@@ -350,9 +374,6 @@ mode "resize" {
     bindsym Up resize shrink height 10 px or 10 ppt
     bindsym Right resize grow width 10 px or 10 ppt
 
-    # return to default mode
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
 }
 
 # Status Bar:
@@ -360,17 +381,22 @@ mode "resize" {
 bar {
     ##position top
     position bottom
-    swaybar_command waybar
+    #swaybar_command waybar
+    status_command while ~/.config/sway/status.sh; do sleep 1; done
+    #status_command while ~/.config/sway/status.py; do sleep 1; done
     #colors {
         #statusline #ffffff
         #background #323232
         #inactive_workspace #32323200 #32323200 #5c5c5c
     #}
+    # font pango:Cantarell 14px
+    #font pango:FiraCode, FontAwesome 12
 }
+
 bindsym $mod+t exec swaybar
 
-# negative offsets are also working!
 # Screen modes. Note mirroring is not yet properly supported by sway :(
+# negative offsets are also working!
 #- Putting the external monitor to the left with 'l'
 #- Putting it to the right with 'r'
 #- Disabling it with 'o'
@@ -388,29 +414,33 @@ mode "$mode_display" {
 }
 bindsym $mod+shift+x mode "$mode_display"
 
-#$laptop = 1920x1080, scale=1.3 (1920/1.3 = 1476.92 -> 1477)
-set $laptop = res 1920x1080, scale=1.0
-set $external = res 2560x1440 scale=1.0
-bindsym $mod+shift+n output eDP-1 $laptop pos 0 0; output HDMI-A-1 $external pos 2000 0
-bindsym $mod+shift+m output $external pos 0 0; output $laptop pos 2560 0
+set $laptop eDP-1
+bindswitch --reload --locked lid:on output $laptop disable
+bindswitch --reload --locked lid:off output $laptop enable
 
-# HDMI-A-1 on top of eDP-1
-bindsym $mod+y output HDMI-A-1 pos 0 0 res 2560x1440; output eDP-1 pos 0 1440 res 1920x1080
-# HDMI-A-1 on right of eDP-1
-#bindsym $mod+shift+z output HDMI-A-1 pos 1920 0 ; output eDP-1 pos 0 0
-bindsym $mod+shift+z output HDMI-A-1 pos 1920 0 res 2560x1440 ; output eDP-1 pos 0 0 res 1920x1080
-#bindsym $mod+shift+z output eDP-1 pos 0 0 res 1920x1080; output HDMI-A-1 pos 1920 0 res 2560x1440
+set $external = res 2560x1440 scale=1.0
+set $builtin = res 1920x1080, scale=1.0
+#$builtin = 1920x1080, scale=1.3 (1920/1.3 = 1476.92 -> 1477)
+bindsym $mod+shift+n output $laptop $builtin pos 0 0; output $external $external pos 2000 0
+bindsym $mod+shift+m output $external pos 0 0; output $builtin pos 2560 0
+
+# $external on top of $laptop
+bindsym $mod+y output $external pos 0 0 res 2560x1440; output $laptop pos 0 1440 res 1920x1080
+# $external on right of $laptop
+#bindsym $mod+shift+z output $external pos 1920 0 ; output $laptop pos 0 0
+bindsym $mod+shift+z output $external pos 1920 0 res 2560x1440 ; output $laptop pos 0 0 res 1920x1080
+#bindsym $mod+shift+z output $laptop pos 0 0 res 1920x1080; output $external pos 1920 0 res 2560x1440
 
 ## focus to monitor at startup
 #focus output <name-or-id>
 #exec swaymsg focus output <name-or-id>
 
-#output eDP-1 {
+#output $laptop {
 #    resolution 1920x1080 position 0,0
-#    scale 1.2
+#bg ~/Pictures/backgrounds/Water.of.Leith.by.Keanu.Kerr.jpg stretch
 #}
+# output $external bg ~/wallpaper.png stretch
 
-# font pango:Cantarell 14px
 
 include security.d/*
 
@@ -447,9 +477,14 @@ focus_on_window_activation focus
 #for_window [class="(?i)"] focus
 
 ## Rename workspace with i3-input using numbers and text
+bindsym $mod+F2 exec i3-input -F 'rename workspace to "%s"' -P 'New name: '
 bindsym $mod+n exec i3-input -F 'rename workspace to "%s"' -P 'New name for this workspace: '
 
-## border
+# border
+## title bars on applications
+### default_border normal shows title bars, whereas none and pixel do not.
+### border command operates on the currently focused window only. default_border is a setting, border is an action. 
+
 default_border none
 #default_border normal 0
 #for_window [<criteria>] border none|pixel
@@ -501,8 +536,8 @@ bindsym mod4+k exec swayidle -w timeout 600 $lock timeout 570 'swaymsg "output *
 #   -c, --color <rrggbb[aa]>
 #       Turn the screen into the given color instead of white. If -i is used, this sets the background of the image to the given color. Defaults to white (FFFFFF).
 
-bindsym mod4+l exec ~/.config/sway/lockman.sh
-    ## ~/.config/sway/lockman.sh
+bindsym mod4+l exec swaylock -K -f -F -c "#000000" --text-color '#ffffff' --indicator-radius 30 --indicator-thickness 5
+
     ##!/bin/sh
     ## Times screen off and puts it to bg
     #swayidle timeout 10 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' &
@@ -538,7 +573,6 @@ bindsym mod4+l exec ~/.config/sway/lockman.sh
 # exec xrandr --output DP1 --rotate left --right-of HDMI1
 # exec xrandr --output DP1 --rotate left --pos 1920x-420
 
-# bindsym $mod+d exec --no-startup-id j4-dmenu-desktop
 # exec xrandr --dpi 95.48 --output LVDS-1 --mode 1024x768 && xrandr --output LVDS-1 --mode 1280x800
 # bindcode 156
 
@@ -549,3 +583,51 @@ bindsym mod4+l exec ~/.config/sway/lockman.sh
 # exec eval $(gnome-keyring-daemon --start)
 # exec export SSH_AUTH_SOCK
 
+# exec xrandr --dpi 95.48 --output LVDS-1 --mode 1024x768 && xrandr --output LVDS-1 --mode 1280x800
+# bindcode 156
+
+# manipulate /sys/class/backlight
+# Or
+# Sreen brightness controls -- # https://github.com/haikarainen/light
+bindsym XF86MonBrightnessUp exec light -A 5    # increase screen brightness
+bindsym XF86MonBrightnessDown exec light -U 5  # decrease screen brightness
+
+# Pulse Audio controls
+# run pactl list sinks
+
+bindsym $mod+F10                                           exec pactl set-sink-mute    @DEFAULT_SINK@ toggle
+bindsym $mod+F11                                           exec pactl set-sink-volume  @DEFAULT_SINK@ -5%
+bindsym $mod+F12                                           exec pactl set-sink-volume  @DEFAULT_SINK@ +5%
+#bindsym XF86AudioRaiseVolume                               exec pactl set-sink-volume  @DEFAULT_SINK@ +5%
+#bindsym XF86AudioLowerVolume                               exec pactl set-sink-volume  @DEFAULT_SINK@ -5%
+#bindsym XF86AudioMute                                      exec pactl set-sink-mute    @DEFAULT_SINK@ toggle
+#bindsym XF86AudioMute exec amixer -q set Master toggle
+
+bindsym XF86PowerOff exec systemctl suspend
+
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume $(pacmd list-sinks |awk '/* index:/{print $3}') +5% # Raise
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume $(pacmd list-sinks |awk '/* index:/{print $3}') -5% # Lower
+bindsym XF86AudioMute exec pactl set-sink-mute  $(pacmd list-sinks |awk '/* index:/{print $3}') toggle # Mute
+
+
+# multimedia keys
+bindsym XF86AudioPlay  exec "mpc toggle"
+bindsym XF86AudioStop  exec "mpc stop"
+bindsym XF86AudioNext  exec "mpc next"
+bindsym XF86AudioPrev  exec "mpc prev"
+bindsym XF86AudioPause exec "mpc pause"
+
+# Creating screencasts
+# Try wf-recorder for screen recording of wlroots-based compositors
+
+# i3-gaps
+## for_window [class="^.*"] border pixel 0
+#gaps inner 4
+#gaps outer 4
+#smart_gaps on
+#default_border pixel 1
+##smart_borders on
+##set $borderwidth 1
+#hide_edge_borders both
+
+# vim: iskeyword+=\$,\-,\#,(,) nospell ft=tcl
