@@ -23,49 +23,6 @@
 set $mod Mod4
 set $mod1 Mod1
 
-set $gnome-schema org.gnome.desktop.interface
-# exec_always gsettings set $gnome-schema gtk-theme 'Arc-Dark'
-
-set $bg-color            #333333
-set $inactive-bg-color   #333333
-set $text-color          #f3f4f5
-set $inactive-text-color #676E7D
-set $urgent-bg-color     #E53935
-set $focus-text-color    #87CEEB
-
-set $black       #282828
-set $darkblack   #1d2021
-set $transparent #000000AA
-
-## Home row direction keys, like vim
-set $left h
-set $down j
-set $up k
-set $right l
-
-set $term terminator
-set $term i3-sensible-terminal
-set $term alacritty
-set $term xfce4-terminal
-# alacritty and kitty will use Wayland without additional configuration.
-# Wayland-native
-# https://github.com/thestinger/termite
-
-## application launcher
-set $menu "killall rofi ; rofi -show drun -show-icons"
-set $menu "killall rofi ; rofi -show drun -bg #222222 -fg #888888 -hlbg #285577 -hlfg #ffffff -show-icons -5"
-set $menu rofi -show run  -m -1 
-
-# Appearance
-# Font for window titles. Will also be used by the bar unless a different font
-# is used in the bar {} block below.
-# This font is widely installed, provides lots of unicode glyphs, right-to-left
-# text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango: Inconsolata 12
-
-
-#bindsym $mod+j                "mark --toggle a"
-
 #bindsym [--release] [Modifiers+]keysym command
 #bindcode [--release] [Modifiers+]keycode command
 # [Modifiers+] is a list of modifiers separated and ended with +. Recognized modifiers are
@@ -82,14 +39,67 @@ font pango: Inconsolata 12
 #For the US layout ("QWERTY") it looks something like that:
 #xmodmap:  up to 4 keys per modifier, (keycodes in parentheses):
 #
-#shift       Shift_L (0x32),  Shift_R (0x3e)
+#shift       Shift_L (0x32);;  Shift_R (0x3e)
+#control     Control_L (0x25);;  Control_R (0x69)
 #lock        Caps_Lock (0x42)
-#control     Control_L (0x25),  Control_R (0x69)
-#mod1        Alt_L (0x40),  Alt_R (0x6c),  Meta_L (0xcd)
+#mod1        Alt_L (0x40);;  Alt_R (0x6c);;  Meta_L (0xcd)
 #mod2        Num_Lock (0x4d)
 #mod3
-#mod4        Super_L (0x85),  Super_R (0x86),  Super_L (0xce),  Hyper_L (0xcf)
-#mod5        ISO_Level3_Shift (0x5c),  Mode_switch (0xcb)
+#mod4        Super_L (0x85);;  Super_R (0x86);;  Super_L (0xce);;  Hyper_L (0xcf)
+#mod5        ISO_Level3_Shift (0x5c);;  Mode_switch (0xcb)
+
+set $gnome-schema org.gnome.desktop.interface
+# exec_always gsettings set $gnome-schema gtk-theme 'Arc-Dark'
+
+set $bg-color            #333333
+set $inactive-bg-color   #333333
+set $text-color          #f3f4f5
+set $inactive-text-color #676E7D
+set $urgent-bg-color     #E53935
+set $focus-text-color    #87CEEB
+
+set $black       #282828
+set $darkblack   #1d2021
+set $transparent #000000AA
+
+## Home row direction keys;; like vim
+set $left h
+set $down j
+set $up k
+set $right l
+
+set $term terminator
+set $term i3-sensible-terminal
+set $term kitty
+set $term xfce4-terminal
+set $term alacritty
+#set $term ~/.local/bin/alacritty
+# PATH cannot be used here;; set absolute path
+set $term st
+set $term $HOME/.local/bin/alacritty
+
+# alacritty and kitty will use Wayland without additional configuration.
+# kitty has issue with fcitx ime
+# alacritty has issue with fcitx ime - UPDATE: OK in Jun 2021
+
+# Wayland-native
+# https://github.com/thestinger/termite
+
+## application launcher
+set $menu "killall rofi ; rofi -show drun -show-icons"
+set $menu "killall rofi ; rofi -show drun -bg #222222 -fg #888888 -hlbg #285577 -hlfg #ffffff -show-icons -5"
+set $menu rofi -show run  -m -1 
+
+# Appearance
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+# This font is widely installed;; provides lots of unicode glyphs;; right-to-left
+# text rendering and scalability on retina/hidpi displays (thanks to pango).
+font pango: Inconsolata 12
+
+
+#bindsym $mod+j                "mark --toggle a"
+
 
 #mode "chooser" {
 #bindsym 1 exec chromium, mode "default"
@@ -138,13 +148,14 @@ bindsym $mod+d                                             exec i3-dmenu-desktop
 #output LVDS-1 {
     ## pos  0 420
     #pos  0 0
-    ## res  1920x1080
+    ## mode  1920x1080
     # bg ~/Pictures/backgrounds/yosemite.jpg fill center $base01
     ##bg ~/Pictures/backgrounds/yosemite.jpg stretch $base01
+# output $scr_ext bg ~/wallpaper.png stretch
     #dpms on
 #}
 
-# output $external resolution 1920x1080 position 1920,0
+# output $scr_ext resolution 1920x1080 position 1920 0
 #test -r ~/Pictures/backgrounds/Water.of.Leith.by.Keanu.Kerr.jpg && output DP-1 bg ~/Pictures/backgrounds/Water.of.Leith.by.Keanu.Kerr.jpg stretch
 
 ### Input configuration
@@ -248,7 +259,7 @@ input "1739:52390:DELL089C:00_06CB:CCA6_Touchpad" {
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
 
-    # Despite the name, also works for non-floating windows.
+    # Despite the name;; also works for non-floating windows.
     # Change normal to inverse to use left mouse button for resizing and right
     # mouse button for dragging.
     floating_modifier $mod normal
@@ -256,22 +267,22 @@ input "1739:52390:DELL089C:00_06CB:CCA6_Touchpad" {
     # reload config
     ## mode resize had been using $mod+Shift+r
     bindsym $mod+Shift+c                                       reload
-    # To avoid accidental restart, no binding for `restart`
+    # To avoid accidental restart;; no binding for `restart`
 
     # exit sway (logs you out of your wayland session)
 # TODO should confirm when exit
     bindsym $mod+shift+e exit
 # I'm not using logind but still want DBus/PolKit/power management to work.
 # What can I do?
-# If you're using ConsoleKit2, launch sway using
+# If you're using ConsoleKit2;; launch sway using
 exec ck-launch-session dbus-launch --sh-syntax --exit-with-session sway
 #exec dbus-launch --sh-syntax --exit-with-session sway
-# Alternatively, you could omit the ck-launch-session part.
+# Alternatively;; you could omit the ck-launch-session part.
 
 #
 # Moving around:
 #
-    # _move_ the focused window with the same, but add shift
+    # _move_ the focused window with the same;; but add shift
     bindsym $mod+shift+$left move left
     bindsym $mod+shift+$down move down
     bindsym $mod+shift+$up move up
@@ -289,25 +300,26 @@ exec ck-launch-session dbus-launch --sh-syntax --exit-with-session sway
     bindsym $mod+7 workspace 7
     bindsym $mod+8 workspace 8
     bindsym $mod+9 workspace 9
-    bindsym $mod+0 workspace 10
-    # move focused container to workspace
-    bindsym $mod+shift+1 move container to workspace 1
-    bindsym $mod+shift+2 move container to workspace 2
-    bindsym $mod+shift+3 move container to workspace 3
-    bindsym $mod+shift+4 move container to workspace 4
-    bindsym $mod+shift+5 move container to workspace 5
-    bindsym $mod+shift+6 move container to workspace 6
-    bindsym $mod+shift+7 move container to workspace 7
-    bindsym $mod+shift+8 move container to workspace 8
-    bindsym $mod+shift+9 move container to workspace 9
-    bindsym $mod+shift+0 move container to workspace 10
-    # Note: workspaces can have any name you want, not just numbers.
-    # We just use 1-10 as the default.
+    bindsym $mod+0 workspace 0
+
+    # move focused container to workspace, and switch to workspace
+    bindsym $mod+shift+1 move container to workspace 1; workspace 1
+    bindsym $mod+shift+2 move container to workspace 2; workspace 2
+    bindsym $mod+shift+3 move container to workspace 3; workspace 3
+    bindsym $mod+shift+4 move container to workspace 4; workspace 4
+    bindsym $mod+shift+5 move container to workspace 5; workspace 5
+    bindsym $mod+shift+6 move container to workspace 6; workspace 6
+    bindsym $mod+shift+7 move container to workspace 7; workspace 7
+    bindsym $mod+shift+8 move container to workspace 8; workspace 8
+    bindsym $mod+shift+9 move container to workspace 9; workspace 9
+    bindsym $mod+shift+0 move container to workspace 0; workspace 0
+    # Note: workspaces can have any name you want;; not just numbers.
+
 #
 # Layout stuff:
 #
     # You can "split" the current object of your focus with
-    # $mod+b or $mod+v, for horizontal and vertical splits
+    # $mod+b or $mod+v;; for horizontal and vertical splits
     # respectively.
     bindsym $mod+b splith
     bindsym $mod+v splitv
@@ -318,16 +330,18 @@ exec ck-launch-session dbus-launch --sh-syntax --exit-with-session sway
     # Switch the current container between different layout styles
     bindsym $mod+shift+s layout stacking
     bindsym $mod+shift+w layout tabbed
-    bindsym $mod+shift+t layout toggle split
+    #bindsym $mod+shift+t layout toggle split
+    bindsym $mod+shift+t layout toggle
 
     # IME may use super+space
     # vim fold may use meta+space
-    ##bindsym $mod+space focus mode_toggle
+    bindsym $mod+space focus mode_toggle
+
     # Swap focus between tiling and floating area
     bindsym $mod+shift+o focus next 
     #bindsym $mod+shift+o focus sibling
 
-    ## Give up focus around, to release more keys
+    ## Give up focus around;; to release more keys
     ## Move your focus around
     bindsym $mod+$left focus left
     bindsym $mod+$down focus down
@@ -343,14 +357,14 @@ exec ck-launch-session dbus-launch --sh-syntax --exit-with-session sway
 #
 # Scratchpad:
 #
-    # Sway has a "scratchpad", which is a bag of holding for windows.
+    # Sway has a "scratchpad";; which is a bag of holding for windows.
     # You can send windows there and get them back later.
 
     # Move the currently focused window to the scratchpad
     bindsym $mod+shift+minus move scratchpad
 
     # Show the next scratchpad window or hide the focused scratchpad window.
-    # If there are multiple scratchpad windows, this command cycles through them.
+    # If there are multiple scratchpad windows;; this command cycles through them.
     bindsym $mod+minus scratchpad show
 
 bindsym $mod+shift+r mode "resize"
@@ -368,7 +382,7 @@ mode "resize" {
     bindsym $up resize shrink height 10 px or 10 ppt
     bindsym $right resize grow width 10 px or 10 ppt
 
-    # ditto, with arrow keys
+    # ditto;; with arrow keys
     bindsym Left resize shrink width 10 px or 10 ppt
     bindsym Down resize grow height 10 px or 10 ppt
     bindsym Up resize shrink height 10 px or 10 ppt
@@ -382,8 +396,8 @@ bar {
     ##position top
     position bottom
     #swaybar_command waybar
-    status_command while ~/.config/sway/status.sh; do sleep 1; done
-    #status_command while ~/.config/sway/status.py; do sleep 1; done
+    #status_command while ~/.config/sway/status.sh; do sleep 5; done
+    status_command while ~/.config/sway/status.py; do sleep 5; done
     #colors {
         #statusline #ffffff
         #background #323232
@@ -397,16 +411,24 @@ bindsym $mod+t exec swaybar
 
 # Screen modes. Note mirroring is not yet properly supported by sway :(
 # negative offsets are also working!
-#- Putting the external monitor to the left with 'l'
+#- Putting the scr_ext monitor to the left with 'l'
 #- Putting it to the right with 'r'
 #- Disabling it with 'o'
 #- Mirroring it with 'm'
-set $mode_display AUX SCREEN: (l) LEFT (r) RIGHT (o) OFF (m) MIRROR
+set $mode_display ext SCREEN: (l) LEFT (r) RIGHT (o) OFF (m) MIRROR
+
+set $main_width 1920
+set $main_height 1080
+set $ext 1920
+set $ext 1080
+
 mode "$mode_display" {
-    bindsym l output $scr_aux enable, output $scr_main pos 0 0, output $scr_aux pos -$native_width 0, mode "default"
-    bindsym r output $scr_aux enable, output $scr_main pos 0 0, output $scr_aux pos $native_width 0, mode "default"
-    bindsym m output $scr_aux enable, output $scr_main pos 0 0, output $scr_aux pos 0 0, mode "default"
-    bindsym o output $scr_aux disable, mode "default"
+    bindsym l output $scr_ext enable, output $scr_main pos 0 0, output $scr_ext pos -$ext_width 0, mode "default"
+    bindsym r output $scr_ext enable, output $scr_main pos 0 0, output $scr_ext pos $main_width 0, mode "default"
+
+    # Mirror doesn't work now
+    bindsym m output $scr_ext enable, output $scr_main pos 0 0, output $scr_ext pos 0 0, mode "default"
+    bindsym o output $scr_ext disable, mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -414,33 +436,46 @@ mode "$mode_display" {
 }
 bindsym $mod+shift+x mode "$mode_display"
 
-set $laptop eDP-1
-bindswitch --reload --locked lid:on output $laptop disable
-bindswitch --reload --locked lid:off output $laptop enable
+set $scr_main eDP-1
+set $main_set mode 1920x1080 scale 1.0
+#$main_set mode 1920x1080, scale 1.3 #(1920/1.3 = 1476.92 -> 1477)
+bindswitch --reload --locked lid:on output $scr_main disable
+bindswitch --reload --locked lid:off output $scr_main enable
 
-set $external = res 2560x1440 scale=1.0
-set $builtin = res 1920x1080, scale=1.0
-#$builtin = 1920x1080, scale=1.3 (1920/1.3 = 1476.92 -> 1477)
-bindsym $mod+shift+n output $laptop $builtin pos 0 0; output $external $external pos 2000 0
-bindsym $mod+shift+m output $external pos 0 0; output $builtin pos 2560 0
+set $scr_ext HDMI-A-1
+#set $ext_set mode 2560x1440 scale 1.0
+set $ext_set mode 1920x1080
 
-# $external on top of $laptop
-bindsym $mod+y output $external pos 0 0 res 2560x1440; output $laptop pos 0 1440 res 1920x1080
-# $external on right of $laptop
-#bindsym $mod+shift+z output $external pos 1920 0 ; output $laptop pos 0 0
-bindsym $mod+shift+z output $external pos 1920 0 res 2560x1440 ; output $laptop pos 0 0 res 1920x1080
-#bindsym $mod+shift+z output $laptop pos 0 0 res 1920x1080; output $external pos 1920 0 res 2560x1440
+# My default is the external HDMI on the left.
+# $scr_ext on top of $scr_main
+bindsym $mod+shift+y output $scr_main $main_set pos 0 $ext_height, output $scr_ext $ext_set pos 0 0
+# $scr_ext on right of $scr_main
+bindsym $mod+shift+z output $scr_main $main_set pos 0 0, output $scr_ext $ext_set pos $main_width 0
+#bindsym $mod+shift+z output $scr_main $main_set pos 0 0, output $scr_ext $ext_set pos $main_width 0
+
+# default
+output $scr_main scale 1
+output $scr_main $main_set pos 0 0
+output $scr_ext scale 1
+output $scr_ext pos $main_width 0
+
+# Assign workspaces to outputs
+workspace $workspace_www       output $external_left_A $external_left_B
+workspace $workspace_editor    output $external_right
+workspace $workspace_terminals output $external_right
+workspace $workspace_portal    output $external_right
+workspace $workspace_mail      output $laptop_internal
+workspace $workspace_video     output $external_tv
+
 
 ## focus to monitor at startup
 #focus output <name-or-id>
 #exec swaymsg focus output <name-or-id>
 
-#output $laptop {
-#    resolution 1920x1080 position 0,0
+#output $scr_main {
+#    resolution 1920x1080 position 0 0
 #bg ~/Pictures/backgrounds/Water.of.Leith.by.Keanu.Kerr.jpg stretch
 #}
-# output $external bg ~/wallpaper.png stretch
-
 
 include security.d/*
 
@@ -482,8 +517,8 @@ bindsym $mod+n exec i3-input -F 'rename workspace to "%s"' -P 'New name for this
 
 # border
 ## title bars on applications
-### default_border normal shows title bars, whereas none and pixel do not.
-### border command operates on the currently focused window only. default_border is a setting, border is an action. 
+### default_border normal shows title bars;; whereas none and pixel do not.
+### border command operates on the currently focused window only. default_border is a setting;; border is an action. 
 
 default_border none
 #default_border normal 0
@@ -492,8 +527,8 @@ for_window [class="chromium" instance="chromium"] border none
 for_window [class="terminator" instance="terminator"] border normal 0
 for_window [class="i3-sensible-terminal" instance="i3-sensible-terminal"] border 0
 
-#for tabbed and stacked containers and the following border modes: none and pixel. The following has no effect for border normal, which is the default. The two border modes hide title bars (and borders for the former) for split layouts. However, the titlebars are retained for tabbed and stacked layouts.
-#If hide_edge_borders --i3 both|smart is given, the title bars will be hidden when there is only one child of the tabbed/stacked container (which matches i3's behavior). If hide_edge_borders both|smart is given, the title bar is retained even when there is only one child.
+#for tabbed and stacked containers and the following border modes: none and pixel. The following has no effect for border normal;; which is the default. The two border modes hide title bars (and borders for the former) for split layouts. However;; the titlebars are retained for tabbed and stacked layouts.
+#If hide_edge_borders --i3 both|smart is given;; the title bars will be hidden when there is only one child of the tabbed/stacked container (which matches i3's behavior). If hide_edge_borders both|smart is given;; the title bar is retained even when there is only one child.
 
 # screenshot
 bindsym --release Print exec --no-startup-id "maim -p 0 -c 0.96,0.5,0.09 $HOME/Pictures/screenshot-$(date +%Y-%m-%d_%H-%M-%S).png"
@@ -515,7 +550,6 @@ bindsym --release Shift+Print exec --no-startup-id "maim -s -p 0 -c 0.96,0.5,0.0
 
 #! exec: execute when starting
 #! exec_always: execute when starting or restarting
-# ================================================================================
 ## load xrdb
 #exec xrdb ~/.Xresources ; swaymsg reload
 #exec ibus-daemon --xim -d
@@ -527,16 +561,16 @@ bindsym --release Shift+Print exec --no-startup-id "maim -s -p 0 -c 0.96,0.5,0.0
 
 ####
 set $lock swaylock -c 000000 --indicator-caps-lock
-bindsym mod4+k exec swayidle -w timeout 600 $lock timeout 570 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' before-sleep $lock
 
-#bindsym mod4+k exec swayidle -w timeout 30 'swaylock -f' timeout 60 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' before-sleep 'swaylock -f -c 000000'
+#bindsym $mod+k exec swayidle -w timeout 30 'swaylock -f' timeout 60 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' before-sleep 'swaylock -f -c 000000'
 #   -f, --daemonize
 #       Detach from the controlling terminal after locking.
 #       Note: this is the default behavior of i3lock.
 #   -c, --color <rrggbb[aa]>
 #       Turn the screen into the given color instead of white. If -i is used, this sets the background of the image to the given color. Defaults to white (FFFFFF).
 
-bindsym mod4+l exec swaylock -K -f -F -c "#000000" --text-color '#ffffff' --indicator-radius 30 --indicator-thickness 5
+#bindsym lock+l exec swayidle -w timeout 600 $lock timeout 570 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' before-sleep $lock
+bindsym lock+l exec swaylock -K -f -F -c "#000000" --text-color '#ffffff' --indicator-radius 30 --indicator-thickness 5
 
     ##!/bin/sh
     ## Times screen off and puts it to bg
@@ -551,10 +585,8 @@ bindsym mod4+l exec swaylock -K -f -F -c "#000000" --text-color '#ffffff' --indi
 # exec compton -b --config ~/.config/i3/compton.conf
 # exec nitrogen --restore
 
-#
 #exec mako
 #bindsym ctrl+space            exec makoctl dismiss -a
-#
 
 ## exec ibus-daemon -drx
 #exec nm-applet
@@ -563,7 +595,7 @@ bindsym mod4+l exec swaylock -K -f -F -c "#000000" --text-color '#ffffff' --indi
 
 # exec setxkbmap de,us -device evdev -model pc105 -option "" -option keypad:pointerkeys,grp_led:caps,grp:caps_toggle,terminate:ctrl_alt_bksp -v 1 -print
 # exec xset r rate 330 40
-# exec xinput --set-prop 'Xornet gaming mouse' 'libinput Accel Speed' 0.1
+# exec xinput --set-prop 'XYZ mouse' 'libinput Accel Speed' 0.1
 # exec setxkbmap -option caps:escape
 # exec setsid hexchat -e --minimize=2
 # exec termite  -e /bin/weechat
@@ -582,9 +614,6 @@ bindsym mod4+l exec swaylock -K -f -F -c "#000000" --text-color '#ffffff' --indi
 #fi
 # exec eval $(gnome-keyring-daemon --start)
 # exec export SSH_AUTH_SOCK
-
-# exec xrandr --dpi 95.48 --output LVDS-1 --mode 1024x768 && xrandr --output LVDS-1 --mode 1280x800
-# bindcode 156
 
 # manipulate /sys/class/backlight
 # Or
@@ -631,3 +660,4 @@ bindsym XF86AudioPause exec "mpc pause"
 #hide_edge_borders both
 
 # vim: iskeyword+=\$,\-,\#,(,) nospell ft=tcl
+
