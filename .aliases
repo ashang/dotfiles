@@ -2,17 +2,10 @@
 # - https://github.com/seebi/dircolors-solarized
 # /usr/share/doc/bash/examples/startup-files/Bash_aliases
 
-
 # guideline 0: those not in command-not-found
 # guideline 1: standard cross-platform parameters, such as ps, tar.
 
-# ls, color, etc.
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-  alias ls='ls --color=auto'
-fi
-
+# enable color support ONLY if standard output is a terminal.
 if [ -x /usr/bin/dircolors ]; then
   test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
   alias ls='ls --color=auto'
@@ -29,6 +22,7 @@ fi
 alias l='ls -Ah'
 alias la='ls -A'
 alias l='ls -CF'
+alias l='ls -lapt'	# Detailed listing, sorted by modification time.
 #-C										list entries by columns
 #-F, --classify                append indicator (one of */=>@|) to entries
 #-F      Display a slash (`/') immediately after each pathname that is a directory,
@@ -38,7 +32,7 @@ alias l='ls -CF'
 #        a percent sign (`%') after each whiteout, and
 #        a vertical bar (`|') after each that is a FIFO.
 
-alias ll='ls -l'                 # classify files in colour
+alias ll='ls -laptc'	# Detailed listing, sorted by change time.
 hash exa 2>/dev/null && alias ll='exa -F -l -B --git'
 
 #-a, --all						do not ignore entries starting with .
@@ -367,6 +361,7 @@ alias scu='systemctl --user'
 alias journ='sudo journalctl -b -f'
 alias poweroff='sudo systemctl poweroff'
 alias reboot='sudo systemctl reboot'
+alias su-='su -'
 alias suspend='sudo systemctl suspend'
 
 alias lsblk='lsblk -o NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,UUID'
@@ -416,6 +411,7 @@ else
   alias w='w -s'    # short format, no login time, JCPU or PCPU times.
 fi
 
+#alias wget="wget -U 'noleak'"
 #alias wget="wget --no-check-certificate -c --content-disposition"
 #alias wget="wget -U User-Agent -c --content-disposition"
 # HTTP request sent, awaiting response... 405 Method Not Allowed
@@ -497,3 +493,4 @@ function _seq ()
 if test -f $HOME/.aliases.local ; then
   . $HOME/.aliases.local
 fi
+

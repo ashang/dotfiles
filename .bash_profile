@@ -3,8 +3,6 @@
 # ~/.profile is *NOT* read by BASH IF ~/.bash_profile or ~/.bash_login exists
 # ~/.profile should be executed by command interpreter (also /bin/sh ) for LOGIN shells
 
-# Refer also to /etc/skel/
-# Refer also to /etc/default
+# Deal with settings in .bashrc, and source it in ~/.bash_profile
 
-# Get the aliases and functions, recommended by the bash info pages.
 [ -r ~/.bashrc ] && source ~/.bashrc

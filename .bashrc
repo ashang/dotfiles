@@ -5,24 +5,75 @@
 # To enable the settings / commands in this file for login shells as well,
 # this file has to be sourced in profile.
 
-# if no "-" , .profile won't be loaded??
-# such as in "su -", or "mintty -"
+# ~/.bash_profile is sourced by BASH for login shells
+# ~/.profile is *NOT* read by BASH IF ~/.bash_profile or ~/.bash_login exists
+# ~/.profile should be executed by command interpreter (also /bin/sh ) for LOGIN shells
 
-# Modifying /etc/skel/.bashrc directly will prevent setup from updating it.
+# In "su -", or "mintty -", the "-" is for --login, better to use `--login`
+
+# Refer also to /etc/skel/
+# Refer also to /etc/default
+
+# see /usr/share/doc/bash/examples/startup-files for examples.
+# the files are located in the bash-doc package.
 
 # some ... shells such as scp and rcp
 # that can't tolerate any output.  So make sure this doesn't display
 # anything or bad things will happen !
 
-# Shell is non-interactive. Be done now!
 # bash only
+# Shell is non-interactive. Be done now!
 #[[ $- != *i* ]] && return
-
-# If not running interactively, don't do anything
+#if [ -z "${-##*i*}" ]; then
 case $- in
     *i*) ;;
       *) return;;
 esac
+
+# ~/.profile: executed by Bourne-compatible command interpreter for LOGIN shells
+#~/.profile is *NOT* read by bash IF ~/.bash_profile or ~/.bash_login exists
+# NOTE that other shells might also read it.
+
+# TODO
+# dpkg -s base-files | grep Description: -A50
+# Description: Debian base system miscellaneous files
+# This package contains the basic filesystem hierarchy of a Debian system, and
+# several important miscellaneous files, such as /etc/debian_version,
+# /etc/host.conf, /etc/issue, /etc/motd, /etc/profile, and others,
+# and the text of several common licenses in use on Debian systems.
+# dpkg -L base-files | grep profile$
+
+# /etc/profile: system-wide .profile file for the Bourne shell (sh(1))
+# and Bourne compatible shells (bash(1), ksh(1), ash(1), ...).
+
+# the default umask is set in /etc/profile; for setting the umask
+# for ssh logins, install and configure the libpam-umask package.
+#umask 022
+#[[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && . $HOME/.autojump/etc/profile.d/autojump.sh
+
+#if [ "${PS1-}" ]; then
+
+# ~/.bashrc: executed by bash(1) for non-login shells.
+
+# Note: PS1 and umask are already set in /etc/profile. You should not
+# need this unless you want different defaults for root.
+# PS1='${debian_chroot:+($debian_chroot)}\h:\w\$ '
+# umask 022
+
+# You may uncomment the following lines if you want `ls' to be colorized:
+# export LS_OPTIONS='--color=auto'
+# eval "$(dircolors)"
+# alias ls='ls $LS_OPTIONS'
+# alias ll='ls $LS_OPTIONS -l'
+# alias l='ls $LS_OPTIONS -lA'
+#
+# Some more alias to avoid making mistakes:
+# alias rm='rm -i'
+# alias cp='cp -i'
+# alias mv='mv -i'
+# ~/.profile: executed by Bourne-compatible login shells.
+
+mesg n 2> /dev/null || true
 
 
 #QUOTE BEGIN
@@ -48,34 +99,34 @@ if unset restricted 2>/dev/null ; then
 fi
 : ${_is_save:=unset}
 if test -z "$is" ; then
- if test -f /proc/mounts ; then
-  if ! is=$(readlink /proc/$$/exe 2>/dev/null) ; then
-    case "$0" in
-    *pcksh)	is=ksh	;;
-    *bash)	is=bash	;;
-    *)		is=sh	;;
-    esac
-  fi
-  case "$is" in
-    */bash)	is=bash
-	while read -r -d $'\0' a ; do
-	    case "$a" in
-	    --noprofile)
-		readonly noprofile=true ;;
-	    --restricted)
-		readonly restricted=true ;;
-	    esac
-	done < /proc/$$/cmdline
-	case "$0" in
-	sh|-sh|*/sh)
-		is=sh	;;
-	esac		;;
-    */dash)	is=ash  ;;
-    */mksh)	is=ksh  ;;
-    */*pcksh)	is=ksh  ;;
-    */zsh)	is=zsh  ;;
-    */*)	is=sh   ;;
-  esac
+   if test -f /proc/mounts ; then
+      if ! is=$(readlink /proc/$$/exe 2>/dev/null) ; then
+          case "$0" in
+              *pcksh)    is=ksh    ;;
+              *bash)    is=bash    ;;
+              *)        is=sh    ;;
+          esac
+      fi
+      case "$is" in
+          */bash)    is=bash
+              while read -r -d $'\0' a ; do
+                  case "$a" in
+                      --noprofile)
+                          readonly noprofile=true ;;
+                      --restricted)
+                          readonly restricted=true ;;
+                  esac
+              done < /proc/$$/cmdline
+              case "$0" in
+                  sh|-sh|*/sh)
+                      is=sh    ;;
+              esac        ;;
+          */dash)    is=ash  ;;
+          */mksh)    is=ksh  ;;
+          */*pcksh)    is=ksh  ;;
+          */zsh)    is=zsh  ;;
+          */*)    is=sh   ;;
+      esac
   #
   # `r' in $- occurs *after* system files are parsed
   #
@@ -101,9 +152,9 @@ fi
 path ()
 {
     if test -x /usr/bin/$1 ; then
-	${1+"/usr/bin/$@"}
+    ${1+"/usr/bin/$@"}
     elif test -x   /bin/$1 ; then
-	${1+"/bin/$@"}
+    ${1+"/bin/$@"}
     fi
 }
 
@@ -112,167 +163,164 @@ case "$-" in
 *i*)
     # Set prompt to something useful
     case "$is" in
-    bash)
-	# If COLUMNS are within the environment the shell should update
-	# the winsize after each job otherwise the values are wrong
-	case "$(declare -p COLUMNS 2> /dev/null)" in
-	*-x*COLUMNS=*) shopt -s checkwinsize
-	esac
+        bash)
+        # If COLUMNS are within the environment the shell should update
+        # the winsize after each job otherwise the values are wrong
+        case "$(declare -p COLUMNS 2> /dev/null)" in
+            *-x*COLUMNS=*) shopt -s checkwinsize
+        esac
 
-	# All commands of root will have a time stamp
-	if test "$UID" -eq 0  ; then
-	    HISTTIMEFORMAT=${HISTTIMEFORMAT:-"%F %H:%M:%S "}
-	fi
-	# Force a reset of the readline library
-	unset TERMCAP
+        # All commands of root will have a time stamp
+        if test "$UID" -eq 0  ; then
+            HISTTIMEFORMAT=${HISTTIMEFORMAT:-"%F %H:%M:%S "}
+        fi
+        # Force a reset of the readline library
+        unset TERMCAP
 
-	# Returns short path (last two directories)
-	spwd () {
-	  ( IFS=/
-	    set $PWD
-	    if test $# -le 3 ; then
-		echo "$PWD"
-	    else
-		eval echo \"..\${$(($#-1))}/\${$#}\"
-	    fi ) ; }
+    # Returns short path (last two directories)
+    spwd () {
+      ( IFS=/
+        set $PWD
+        if test $# -le 3 ; then
+        echo "$PWD"
+        else
+        eval echo \"..\${$(($#-1))}/\${$#}\"
+        fi ) ; }
 
-	# Set xterm prompt with short path (last 18 characters)
-	if path tput hs 2>/dev/null || path tput -T $TERM+sl hs 2>/dev/null ; then
-	    # Mirror prompt in terminal "status line", which for graphical
-	    # terminals usually is the window title. KDE konsole in
-	    # addition needs to have "%w" in the "tabs" setting, ymmv for
-	    # other console emulators.
-	    if [[ $TERM = *xterm* ]] ; then
-		_tsl=$(echo -en '\e]2;')
-		_isl=$(echo -en '\e]1;')
-		_fsl=$(echo -en '\007')
-	    elif path tput -T $TERM+sl tsl 2>/dev/null ; then
-		_tsl=$(path tput -T $TERM+sl tsl 2>/dev/null)
-		_isl=''
-		_fsl=$(path tput -T $TERM+sl fsl 2>/dev/null)
-	    else
-		_tsl=$(path tput tsl 2>/dev/null)
-		_isl=''
-		_fsl=$(path tput fsl 2>/dev/null)
-	    fi
-	    _sc=$(tput sc 2>/dev/null)
-	    _rc=$(tput rc 2>/dev/null)
-	    if test -n "$_tsl" -a -n "$_isl" -a "$_fsl" ; then
-		TS1="$_sc$_tsl%s@%s:%s$_fsl$_isl%s$_fsl$_rc"
-	    elif test -n "$_tsl" -a "$_fsl" ; then
-		TS1="$_sc$_tsl%s@%s:%s$_fsl$_rc"
-	    fi
-	    unset _isl _tsl _fsl _sc _rc
-	    ppwd () {
-		local dir
-		local -i width
-		test -n "$TS1" || return;
-		dir="$(dirs +0)"
-		let width=${#dir}-18
-		test ${#dir} -le 18 || dir="...${dir#$(printf "%.*s" $width "$dir")}"
-		if test ${#TS1} -gt 17 ; then
-		    printf "$TS1" "$USER" "$HOST" "$dir" "$HOST"
-		else
-		    printf "$TS1" "$USER" "$HOST" "$dir"
-		fi
-	    }
-	else
-	    ppwd () { true; }
-	fi
+    # Set xterm prompt with short path (last 18 characters)
+    if path tput hs 2>/dev/null || path tput -T $TERM+sl hs 2>/dev/null ; then
+        # Mirror prompt in terminal "status line", which for graphical
+        # terminals usually is the window title. KDE konsole in
+        # addition needs to have "%w" in the "tabs" setting, ymmv for
+        # other console emulators.
+        if [[ $TERM = *xterm* ]] ; then
+        _tsl=$(echo -en '\e]2;')
+        _isl=$(echo -en '\e]1;')
+        _fsl=$(echo -en '\007')
+        elif path tput -T $TERM+sl tsl 2>/dev/null ; then
+        _tsl=$(path tput -T $TERM+sl tsl 2>/dev/null)
+        _isl=''
+        _fsl=$(path tput -T $TERM+sl fsl 2>/dev/null)
+        else
+        _tsl=$(path tput tsl 2>/dev/null)
+        _isl=''
+        _fsl=$(path tput fsl 2>/dev/null)
+        fi
+        _sc=$(tput sc 2>/dev/null)
+        _rc=$(tput rc 2>/dev/null)
+        if test -n "$_tsl" -a -n "$_isl" -a "$_fsl" ; then
+        TS1="$_sc$_tsl%s@%s:%s$_fsl$_isl%s$_fsl$_rc"
+        elif test -n "$_tsl" -a "$_fsl" ; then
+        TS1="$_sc$_tsl%s@%s:%s$_fsl$_rc"
+        fi
+        unset _isl _tsl _fsl _sc _rc
+        ppwd () {
+        local dir
+        local -i width
+        test -n "$TS1" || return;
+        dir="$(dirs +0)"
+        let width=${#dir}-18
+        test ${#dir} -le 18 || dir="...${dir#$(printf "%.*s" $width "$dir")}"
+        if test ${#TS1} -gt 17 ; then
+            printf "$TS1" "$USER" "$HOST" "$dir" "$HOST"
+        else
+            printf "$TS1" "$USER" "$HOST" "$dir"
+        fi
+        }
+    else
+        ppwd () { true; }
+    fi
 
-	# If set: do not follow sym links
-	# set -P
-	# Other prompting for root
-	if test "$UID" -eq 0  ; then
-	    if test -n "$TERM" -a -t ; then
-	    	_bred="$(path tput bold 2> /dev/null; path tput setaf 1 2> /dev/null)"
-	    	_sgr0="$(path tput sgr0 2> /dev/null)"
-	    fi
-	    # Colored root prompt (see bugzilla #144620)
-	    if test -n "$_bred" -a -n "$_sgr0" ; then
-		_u="\[$_bred\]\h"
-		_p=" #\[$_sgr0\]"
-	    else
-		_u="\h"
-		_p=" #"
-	    fi
-	    unset _bred _sgr0
-	else
-	    _u="\u@\h"
-	    _p=">"
-	fi
+    # If set: do not follow sym links
+    # set -P
+    # Other prompting for root
+    if test "$UID" -eq 0  ; then
+        if test -n "$TERM" -a -t ; then
+            _bred="$(path tput bold 2> /dev/null; path tput setaf 1 2> /dev/null)"
+            _sgr0="$(path tput sgr0 2> /dev/null)"
+        fi
+        # Colored root prompt (see bugzilla #144620)
+        if test -n "$_bred" -a -n "$_sgr0" ; then
+        _u="\[$_bred\]\h"
+        _p=" #\[$_sgr0\]"
+        else
+        _u="\h"
+        _p=" #"
+        fi
+        unset _bred _sgr0
+    else
+        _u="\u@\h"
+        _p=">"
+    fi
 
-	if test -z "$EMACS" -a -z "$MC_SID" -a "$restricted" != true -a \
-		-z "$STY" -a -n "$DISPLAY" -a ! -r $HOME/.bash.expert
-	then
-	    _t="\[\$(ppwd)\]"
-	else
-	    _t=""
-	fi
+    if test -z "$EMACS" -a -z "$MC_SID" -a "$restricted" != true -a \
+        -z "$STY" -a -n "$DISPLAY" -a ! -r $HOME/.bash.expert
+    then
+        _t="\[\$(ppwd)\]"
+    else
+        _t=""
+    fi
 
-	case "$(declare -p PS1 2> /dev/null)" in
-	*-x*PS1=*)
-	    ;;
-	*)
-	    # With full path on prompt
-	    PS1="${_t}${_u}:\w${_p} "
-#	    # With short path on prompt
-#	    PS1="${_t}${_u}:\$(spwd)${_p} "
-#	    # With physical path even if reached over sym link
-#	    PS1="${_t}${_u}:\$(pwd -P)${_p} "
-	    ;;
-	esac
-
-	unset _u _p _t
-	;;
-    ash)
-	cd () {
-	    local ret
-	    command cd "$@"
-	    ret=$?
-	    PWD=$(pwd)
-	    if test "$UID" = 0 ; then
-		PS1="${HOST}:${PWD} # "
-	    else
-		PS1="${USER}@${HOST}:${PWD}> "
-	    fi
-	    return $ret
-	}
-	cd .
-	;;
+    case "$(declare -p PS1 2> /dev/null)" in
+    *-x*PS1=*)
+        ;;
     *)
-	    PS1="${USER}@${HOST}:"'${PWD}'"> "
-	;;
+        # With full path on prompt
+        PS1="${_t}${_u}:\w${_p} "
+#        # With short path on prompt
+#        PS1="${_t}${_u}:\$(spwd)${_p} "
+#        # With physical path even if reached over sym link
+#        PS1="${_t}${_u}:\$(pwd -P)${_p} "
+        ;;
+    esac
+
+    unset _u _p _t
+    ;;
+    ash)
+    cd () {
+        local ret
+        command cd "$@"
+        ret=$?
+        PWD=$(pwd)
+        if test "$UID" = 0 ; then
+        PS1="${HOST}:${PWD} # "
+        else
+        PS1="${USER}@${HOST}:${PWD}> "
+        fi
+        return $ret
+    }
+    cd .
+    ;;
+    *)
+        PS1="${USER}@${HOST}:"'${PWD}'"> "
+    ;;
     esac
     PS2='> '
     PS4='+ '
 
-	case "$BASH_VERSION" in
-	[2-9].*)
-	    if test -e /etc/bash_completion ; then
-		. /etc/bash_completion
-	    elif test -s /etc/profile.d/bash_completion.sh ; then
-		. /etc/profile.d/bash_completion.sh
-	    elif test -s /etc/profile.d/complete.bash ; then
-		. /etc/profile.d/complete.bash
-	    fi
-	    # Do not source twice if already handled by bash-completion
-	    if [[ -n $BASH_COMPLETION_COMPAT_DIR && $BASH_COMPLETION_COMPAT_DIR != /etc/bash_completion.d ]]; then
-		for s in /etc/bash_completion.d/*.sh ; do
-		    test -r $s && . $s
-		done
-	    fi
-	    if test -e $HOME/.bash_completion ; then
-		. $HOME/.bash_completion
-	    fi
+    case "$BASH_VERSION" in
+    [2-9].*)
+        if test -s /etc/profile.d/bash_completion.sh ; then
+        . /etc/profile.d/bash_completion.sh
+        fi
+        # Do not source twice if already handled by bash-completion
+        if [[ -n $BASH_COMPLETION_COMPAT_DIR && $BASH_COMPLETION_COMPAT_DIR != /etc/bash_completion.d ]]; then
+        for s in /etc/bash_completion.d/*.sh ; do
+            test -r $s && . $s
+        done
+        fi
+        if test -e $HOME/.bash_completion.d ; then
+        for s in $HOME/.bash_completion.d/* ; do
+            test -r $s && . $s
+        done
+        fi
+        ;;
+    *)  ;;
+    esac
 
-	    ;;
-	*)  ;;
-	esac
-
-		case $(set -o) in
-			*multiline*) set -o multiline
-		esac
+        case $(set -o) in
+            *multiline*) set -o multiline
+        esac
     ;;
 esac
 
@@ -288,12 +336,12 @@ if test "$_is_save" = "unset" ; then
     # Just in case the user excutes a command with ssh or sudo
     #
     if test \( -n "$SSH_CONNECTION" -o -n "$SUDO_COMMAND" \) -a -z "$PROFILEREAD" -a "$noprofile" != true ; then
-	_is_save="$is"
-	_SOURCED_FOR_SSH=true
-	. /etc/profile > /dev/null 2>&1
-	unset _SOURCED_FOR_SSH
-	is="$_is_save"
-	_is_save=unset
+    _is_save="$is"
+    _SOURCED_FOR_SSH=true
+    . /etc/profile > /dev/null 2>&1
+    unset _SOURCED_FOR_SSH
+    is="$_is_save"
+    _is_save=unset
     fi
 fi
 
@@ -306,6 +354,7 @@ if test "$restricted" = true -a -z "$PROFILEREAD" ; then
     export PATH
 fi
 
+unset color_prompt force_color_prompt
 
 # For dircolors-solarized
 # - https://github.com/seebi/dircolors-solarized
@@ -315,12 +364,12 @@ force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
+    # We have color support; assume it's compliant with Ecma-48
+    # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+    # a case would tend to support setf rather than setaf.)
+    color_prompt=yes
     else
-	color_prompt=
+    color_prompt=
     fi
 fi
 
@@ -329,17 +378,6 @@ if [ "$color_prompt" = yes ]; then
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
-unset color_prompt force_color_prompt
-
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
-
 
 if [[ "`uname -s`" == "FreeBSD" ]]
 #if [[ "$OSTYPE" =~ *BSD ]]; then
@@ -347,7 +385,7 @@ then
   alias ls='ls -FG'
 elif [[ "$OSTYPE" =~ ^darwin ]]; then
 #elif [ "`uname -s`" == "Darwin" ]
-	# uname also works
+    # uname also works
   alias ls="command ls -bFG"
 else # Assume Linux
   #alias ls="command ls -FG"
@@ -409,10 +447,6 @@ fi
 # 5 magenta
 # 6 cyan
 # 7 white
-darkgrey="$(tput bold ; tput setaf 0)"
-white="$(tput bold ; tput setaf 7)"
-red="$(tput bold; tput setaf 1)"
-nc="$(tput sgr0)"
 
 # Regular Colors
 Black='\e[0;30m'        # Black
@@ -545,25 +579,27 @@ if type -P dircolors >/dev/null; then
 #  -p, --print-database        output defaults
 #If FILE is specified, read it to determine which colors to use for which file types and extensions.  Otherwise, a precompiled database is used.
 #For details on the format of these files, run 'dircolors --print-database'.
-  LS_COLORS=
+    LS_COLORS=
 
-  # If it isn't set, then `ls` will only colorize by default
-  # based on file attributes and ignore extensions (even the compiled
-  # in defaults of dircolors).
+    # If it isn't set, then `ls` will only colorize by default
+    # based on file attributes and ignore extensions (even the compiled
+    # in defaults of dircolors).
 
-  if [[ -n ${LS_COLORS:+set} ]] ; then
-    use_color=true
-  else
-    # Delete it if it's empty as it's useless in that case.
-    unset LS_COLORS
-  fi
+    if [[ -n ${LS_COLORS:+set} ]] ; then
+        use_color=true
+    else
+        # Delete it if it's empty as it's useless in that case.
+        unset LS_COLORS
+    fi
 
 else
-  # Some systems (e.g. BSD & embedded) don't typically come with
-  # dircolors so we need to hardcode some terminals in here.
-  case ${TERM} in
-    [aEkx]term*|rxvt*|gnome*|konsole*|screen|cons25|*color) use_color=true;;
-  esac
+    # Some systems (e.g. BSD & embedded) don't typically come with
+    # dircolors so we need to hardcode some terminals in here.
+    case ${TERM} in
+        [aEkx]term*|tmux|screen|alacritty|kitty|*color)
+            use_color=true
+            ;;
+    esac
 fi
 
 
@@ -727,9 +763,9 @@ if ! shopt -q login_shell ; then # We're not a login shell
 fi
 
 function genpasswd() {
-	local l=$1
-	[ "$l" == "" ] && l=20
-	tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs
+    local l=$1
+    [ "$l" == "" ] && l=20
+    tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs
 }
 
 function count {
@@ -1350,14 +1386,15 @@ function proml {
     PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}"; echo -ne "\007"'
     #PROMPT_COMMAND='printf "%b" "\033]0;${PWD/$HOME/~}\007"' ;;
 
-	case $TERM in
-	    xterm*|rxvt*)
-	        local TITLEBAR='\[\e]0;\u@\h:\w/ \007\]'
-	        ;;
-	    *)
-	        local TITLEBAR=''
-	        ;;
-	esac
+    case $TERM in
+        [aEkx]term*|tmux|screen|alacritty|kitty|*color)
+            local TITLEBAR='\[\e]0;\u@\h:\w/ \007\]'
+            use_color=true
+            ;;
+        *)
+            local TITLEBAR=''
+            ;;
+    esac
 }
 
 proml
@@ -1375,8 +1412,6 @@ function PWD {
 #certutil: function failed: SEC_ERROR_PKCS11_GENERAL_ERROR: A PKCS #11 module returned CKR_GENERAL_ERROR, indicating that an unrecoverable error has occurred.
 
 ##startup programs ----------------------------------------
-#! ps aux | grep -q fetchmail && fetchmail &
-#! ( ps aux | grep -q fetchmail ) && fetchmail &
 
 #For properly registering the ConsoleKit session, you probably want to add --with-ck-launch with startxfce4
 #By default xfce4-session tries to start the gpg- or ssh-agent. To disable this run the following commands:
@@ -1428,17 +1463,17 @@ appendpath () {
             ;;
         *)
             test -d $1 && PATH="$PATH:$1"
+            ;;
     esac
 }
 
 export PATH="/bin:/sbin:/usr/bin:/usr/sbin"
-appendpath '/usr/local/bin'
-appendpath '/opt/bin'
 appendpath '/usr/games'
+appendpath '/opt/bin'
+appendpath '/usr/local/bin'
 appendpath $HOME/.local/heroku/bin
-appendpath /snap/bin
 appendpath $HOME/.gem/ruby/bin
-appendpath $HOME/.gem/ruby/2.7.0/bin
+appendpath "$HOME/.local/bin"
 
 # fzf {{{
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
@@ -1488,9 +1523,8 @@ export SDKMAN_DIR="$HOME/.sdkman"
 export _JAVA_OPTIONS="-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel"
 #}2
 
-export LD_PRELOAD=""
-
-[ -r /usr/share/byobu/profiles/bashrc ] && . /usr/share/byobu/profiles/bashrc  #byobu-prompt#
+#byobu-prompt#
+[ -r /usr/share/byobu/profiles/bashrc ] && . /usr/share/byobu/profiles/bashrc
 
 # Term
 #/etc/terminfo/*
@@ -1500,7 +1534,9 @@ export LD_PRELOAD=""
 
 # Tmux explicitly requires this to be set to screen-256color.
 export TERM=screen-256color
+
 # TERM in .bashrc overrides `set -g default-terminal` from tmux
+
 # set TERM to xterm-256color if bash is running standalone (no tmux)
 [ -z "$TMUX" ] && export TERM="xterm-256color"
 # http://invisible-island.net/xterm/xterm.faq.html#xterm_terminfo
@@ -1510,18 +1546,19 @@ export TERM=screen-256color
 
 # These should be in ~/.xprofile for DM session
 ## Take care of dbus-launch
+# for IME in sway and alike
 # See http://fcitx-im.org/wiki/Input_method_related_environment_variables#XMODIFIERS
 ##export GTK_IM_MODULE=xim
-export GTK_IM_MODULE=fcitx
+#export GTK_IM_MODULE=fcitx
 ###export QT_IM_MODULE=xim
-export QT_IM_MODULE=fcitx
+#export QT_IM_MODULE=fcitx
 ##export QT_IM_MODULE=xim
-export XMODIFIERS=@im=fcitx
+#export XMODIFIERS=@im=fcitx
 
-# Start X if login from the first console.
+# Start SWAY if login from the specified console.
 # if [ -z $DISPLAY ] && [ "$(tty)" = "/dev/tty1" ]; then
 #   exec sway
-#
+
 #[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
     # now use nodm, comment out
 # if [ "$(tty)" == "/dev/tty3" -o "$(tty)" = "/dev/vc/1" ] ; then
@@ -1530,16 +1567,10 @@ export XMODIFIERS=@im=fcitx
 #     exit 0    # exit login after sway quits
 # fi
 
-# for sway and alike
-export GTK_IM_MODULE=fcitx
-export QT_IM_MODULE=fcitx
-export XMODIFIERS=@im=fcitx
-
-
 case "$(tty)" in
-    "/dev/tty5")	sway; exit 0;;
-    "/dev/tty6")	startxfce4; exit 0;;
-    "/dev/vc/1")	sway; exit 0;;
+    "/dev/tty5")    sway; exit 0;;
+    "/dev/tty6")    startxfce4; exit 0;;
+    "/dev/vc/1")    sway; exit 0;;
 esac
 
 
@@ -1554,6 +1585,14 @@ if [ -f "$HOME/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/google-cloud-sdk
 
 export GOPATH=$HOME/go
 appendpath $GOPATH/bin
+
+[ "$UID" = "0" ] || appendpath "."
+
+#set -o emacs
+set -o vi
+
+if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+appendpath "$HOME/.rbenv/shims"
 
 ## alacritty
 test -d  ~/.config/alacritty/alacritty.bash && source ~/.config/alacritty/alacritty.bash
@@ -1601,11 +1640,10 @@ export LESS_TERMCAP_ue=$'\E[0m'           # end underline
 #}
 
 appendpath $HOME/.cargo/bin
-appendpath "$HOME/.local/bin"
+. "$HOME/.cargo/env"
 
 # Original PATH is set in /etc/profile
 # NEVER export PATH without quoting $PATH
-# Deal with PATH only in .bashrc, and source it in ~/.bash_profile
 
 #For Java
 # export JAVA_HOME=/usr/lib/jvm/java-6-sun-1.6.0.14/jre/
@@ -1614,10 +1652,10 @@ appendpath "$HOME/.local/bin"
 [ ! -z $JAVA_HOME ] && export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/td.jar:$JAVA_HOME/lib/rt.jar:.
 
 
-# linuxbrew
-export PATH="$HOME/.linuxbrew/bin:$PATH"
-export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
-export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
+# brew
+appendpath "$HOME/.brew/bin"
+export MANPATH="$HOME/.brew/share/man:$MANPATH"
+export INFOPATH="$HOME/.brew/share/info:$INFOPATH"
 export HOMEBREW_BUILD_FROM_SOURCE=1
 
 export LABS="${HOME}/.local"
@@ -1670,7 +1708,7 @@ if which rbenv 2>/dev/null ; then
   export PATH="$HOME/.rbenv/shims:$PATH"
 fi
 
-export ENV=$HOME/.bashrc
+#export ENV=$HOME/.bashrc
 
 PATH="$PATH:./node_modules/.bin"
 export NODE_MIRROR=https://mirrors.tuna.tsinghua.edu.cn/nodejs-release/
@@ -1702,19 +1740,11 @@ function box() {
 
 #LESSOPEN="|lesspipe.sh %s"; export LESSOPEN
 
-# Specific bashrc
-[[ -f $HOME/.bashrc.local ]] && . $HOME/.bashrc.local
-
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
-
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
-esac
 
 function ahead_behind() {
   curr_branch=$(git rev-parse --abbrev-ref HEAD);
@@ -1730,12 +1760,12 @@ force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
+    # We have color support; assume it's compliant with Ecma-48
+    # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+    # a case would tend to support setf rather than setaf.)
+    color_prompt=yes
     else
-	color_prompt=
+    color_prompt=
     fi
 fi
 
@@ -1749,9 +1779,9 @@ if [ "$color_prompt" = yes ]; then
     #prompt_symbol=㉿
     prompt_symbol=@
     if [ "$EUID" -eq 0 ]; then # Change prompt colors for root user
-	prompt_color='\[\033[;94m\]'
-	info_color='\[\033[1;31m\]'
-	prompt_symbol=💀
+    prompt_color='\[\033[;94m\]'
+    info_color='\[\033[1;31m\]'
+    prompt_symbol=💀
     fi
     #PS1=$prompt_color'┌──${debian_chroot:+($debian_chroot)──}${VIRTUAL_ENV:+(\[\033[0;1m\]$(basename $VIRTUAL_ENV)'$prompt_color')}('$info_color'\u${prompt_symbol}\h'$prompt_color')-[\[\033[0;1m\]\w'$prompt_color']\n'$prompt_color'└─'$info_color'\$\[\033[0m\] '
     PS1=$prompt_color'${debian_chroot:+($debian_chroot)-}${VIRTUAL_ENV:+(\[\033[0;1m\]$(basename $VIRTUAL_ENV)'$prompt_color')}'$info_color'\u${prompt_symbol}\h'$prompt_color':\[\033[0;1m\]\w'$prompt_color'/ '$prompt_color' '$info_color
@@ -1768,22 +1798,25 @@ else
 fi
 unset color_prompt force_color_prompt
 
-# If this is an xterm set the title to user@host:dir
 case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
+    [aEkx]term*|tmux|screen|alacritty|kitty|*color)
+        # set the title to user@host:dir
+        PROMPT_COMMAND=${PROMPT_COMMAND:+$PROMPT_COMMAND; }'printf "\033]0;%s@%s:%s\007" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/\~}"'
+        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+        use_color=true
+        ;;
+    *)
+        ;;
 esac
 
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
-fi
+
+# colors
+darkgrey="$(tput bold; tput setaf 0)"
+white="$(tput bold; tput setaf 7)"
+red="$(tput bold; tput setaf 1)"
+nc="$(tput sgr0)"
+
+#export PS1="\[$darkgrey\][ \[$red\]\u@\h \[$white\]\W\[$red\] \[$darkgrey\]]\\[$red\]# \[$nc\] \w$ "
 
 # Completion options
 #These completion tuning parameters change the default behavior of bash_completion:
@@ -1794,41 +1827,85 @@ COMP_CONFIGURE_HINTS=1
 #Define to avoid flattening internal contents of tar files
 COMP_TAR_INTERNAL_PATHS=1
 
-#trap '. /etc/bash_completion ; trap USR2' USR2
-#{ sleep 0.01 ; builtin kill -USR2 $$ ; } & disown
-#[ -z "${BASH_COMPLETION_COMPAT_DIR}" ] && [ -f /etc/bash_completion ] && . /etc/bash_completion
 
-#   https://github.com/scop/bash-completion
-## source files
+## if ! shopt -oq posix; then
+# source user completion file
+# LOCAL_BASH_COMPLETION="${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion"
+# [ $BASH_COMPLETION != $LOCAL_BASH_COMPLETION -a -r $LOCAL_BASH_COMPLETION ] && . $LOCAL_BASH_COMPLETION
+# Update: it had been done in
+# bash-completion: /etc/profile.d/bash_completion.sh
+# Also there: source files
 #[ -r /usr/share/bash-completion/completions ] &&
 #  . /usr/share/bash-completion/completions/*
 
-# Check for interactive bash and that we haven't already been sourced.
-if [ -n "${BASH_VERSION-}" -a -n "${PS1-}" -a -z "${BASH_COMPLETION_COMPAT_DIR-}" ]; then
-    # Check for recent enough version of bash.
-    if [ ${BASH_VERSINFO[0]} -gt 4 ] || [ ${BASH_VERSINFO[0]} -eq 4 -a ${BASH_VERSINFO[1]} -ge 1 ]; then
-        [ -r "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion" ] && \
-            . "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion"
-        if shopt -q progcomp && [ -r /usr/share/bash-completion/bash_completion ]; then
-            . /usr/share/bash-completion/bash_completion
-        elif [ -f /etc/bash_completion ]; then
-            . /etc/bash_completion
-        fi
-    fi
-fi
+#trap '. /etc/bash_completion ; trap USR2' USR2
+#{ sleep 0.01 ; builtin kill -USR2 $$ ; } & disown
+#   https://github.com/scop/bash-completion
 
 complete -W menuconfig make
 complete -cf sudo
 
-# source user completion file
-#[ $BASH_COMPLETION != ~/.bash_completion -a -r ~/.bash_completion ] && . ~/.bash_completion
-
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# Alias definitions into a separate ~/.bash_aliases
+# Alias definitions into a separate file
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
 test -f ~/.aliases && . ~/.aliases
 
-. "$HOME/.cargo/env"
+# sets pygmentize as the syntax highlighter rather than the built-in code2color
+if type pygmentize >/dev/null 2>&1; then
+	export LESSCOLORIZER='pygmentize'
+fi
+
+# source files
+[ -r /usr/share/bash-completion/completions ] &&
+  . /usr/share/bash-completion/completions/*
+
+## Autostart X at login
+#[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx ~/.config/xorg/xinitrc
+
+
+# Set user-defined locale
+#TODO
+#export LANG=$(locale -uU)
+# export LANGUAGE="zh_CN:zh:en"
+# export LANG="zh_CN.utf8"
+export LANG="en_US.utf8"
+
+# Set MANPATH so it includes users' private man if it exists
+if [ -d "${HOME}/man" ]; then
+   MANPATH="${HOME}/man:${MANPATH}"
+fi
+
+# Set INFOPATH so it includes users' private info if it exists
+if [ -d "${HOME}/info" ]; then
+   INFOPATH="${HOME}/info:${INFOPATH}"
+fi
+
+# Load RVM into a shell session *as a function*
+#export PATH="$PATH:$HOME/.rvm/bin"
+# Use the following; Add RVM to PATH for scripting
+#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+#TODO
+# bash: keychain: command not found
+#eval `keychain --eval --agents ssh id_rsa`
+#eval `keychain --eval ~/.ssh/id_dsa`
+#eval `keychain --eval ~/.ssh/id_rsa`
+
+# exports
+export LD_PRELOAD=""
+#export VISUAL=vim
+#export EDITOR=vim
+# export INPUTRC=/etc/inputrc
+#export USER LOGNAME MAIL HOSTNAME
+# source ~/.inputrc
+
+if [ -n "$BASH" -a -n "$BASH_VERSION" ]; then
+# Notify of job termination immediately.
+	set -b
+fi
+
+# Specific bashrc
+[[ -f $HOME/.bashrc.local ]] && . $HOME/.bashrc.local
+
