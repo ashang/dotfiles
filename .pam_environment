@@ -1,3 +1,11 @@
+# ~/.pam_environment
+# read by the pam_env module for all logins, including both X11 and Wayland sessions.
+# See pam_env(8) and pam_env.conf(5)
+
+GTK_IM_MODULE DEFAULT=fcitx
+QT_IM_MODULE  DEFAULT=fcitx
+XMODIFIERS    DEFAULT=\@im=fcitx
+
 LANGUAGE=en_GB:en
 LANG=en_GB.UTF-8
 LC_NUMERIC=en_GB.UTF-8
@@ -10,3 +18,4 @@ LC_TELEPHONE=en_GB.UTF-8
 LC_MEASUREMENT=en_GB.UTF-8
 LC_IDENTIFICATION=en_GB.UTF-8
 PAPERSIZE=a4
+

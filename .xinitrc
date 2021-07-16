@@ -6,50 +6,43 @@
 # Executed by X (Run your window manager from here)
 # startx, slim, etc.
 
-# configuration: by default all scripts from ~/.xinitrc.d are executed,
-# but it's possible to configure this through a configuration file
-if [ -r "$HOME/.config/${distri}/xinitrc" ] ; then
-  . "$HOME/.config/${distri}/xinitrc"
-elif [ -r "$HOME/.config/grml/xinitrc" ] ; then
-  . "$HOME/.config/grml/xinitrc"
-fi
+
+## set mouse speed behaviour:
+# fast:
+# xset m 4 2
+# normal:
+  xset m 2 5
+# slow:
+# xset m 1 1
+
+# other settings:
+# xset m 20/10 4
+
+# disable screensaver and dpms:
+# xset s off
+# xset -dpms
 
 # execute all existing scripts
 for f in ~/.xinitrc.d/* ; do
   "$f"
 done
 
-# default entry, use e.g. 'grml-x windowmanager' for changing or just adjust manually
-#exec /usr/bin/x-window-manager
 
-
-# init dbus for im module
-eval `dbus-launch --sh-syntax --exit-with-session`
-
+# Environment variables
 export LC_ALL=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
 export LANG=en_US.UTF-8
-
-[ -f ~/.xprofile  ] && source ~/.xprofile
-
-#exec awesome
-
-##Note that if you need im module or kimpanel support, DBus must be initialized correctly.
-if which dbus-launch >/dev/null && test -z "$DBUS_SESSION_BUS_ADDRESS"; then
-    eval "$(dbus-launch --sh-syntax --exit-with-session)"
-fi
-
-
-# Environment variables
-export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
 
 ## Gentoo: If you do not enable the gtk and gtk3 USE flags, use:
 #export GTK_IM_MODULE=xim
 #export QT_IM_MODULE=xim
 
-export GTK_IM_MODULE=fcitx
-export QT_IM_MODULE=fcitx
-export XMODIFIERS=@im=fcitx
+# IME
+#export GTK_IM_MODULE=fcitx
+#export QT_IM_MODULE=fcitx
+#export XMODIFIERS=@im=fcitx
+# Some programs can only use xim, if you are using these programs, please make sure your XMODIFIERS is set properly and be aware of the problems you may have. These programs include all programs that are not using GTK or Qt (e.g. programs that use tk, motif, or xlib directly), emacs, opera, openoffice, libreoffice, 
+
 
 ##In GDM/KDM/LightDM/Slim (Session Mode)
 ## You should append the lines to ~/.xprofile (If not exists, create a new one).
@@ -57,6 +50,7 @@ export XMODIFIERS=@im=fcitx
 ## You need to add those lines in your ~/.xinitrc.
 
 #xsetroot -xcf /usr/share/icons/Adwaita/cursors/left_ptr 16 -solid black
+# set default cursor
 xsetroot -cursor_name left_ptr
 xsetroot -solid '#80a0af'
 
@@ -66,12 +60,12 @@ xsetroot -solid '#80a0af'
 #xscreensaver -nosplash &
 $(gnome-keyring-daemon --start --daemonize)
 
-
-sysresources=/etc/X11/xinit/.Xresources
-sysmodmap=/etc/X11/xinit/.Xmodmap
+# xresources
 # Moved $HOME/.Xresources to $XDG_CONFIG_HOME/xorg/xresources
+#userresources=$HOME/.Xresources
 userresources=$XDG_CONFIG_HOME/xorg/xresources
-usermodmap=$HOME/.Xmodmap
+[ -r $userresources ] && xrdb -merge $userresources
+
 ##setxkbmap de nodeadkeys
 # xmodmap -e "keycode 233 = Page_Down"
 # xmodmap -e "keycode 234 = Page_Up"
@@ -81,39 +75,20 @@ usermodmap=$HOME/.Xmodmap
 
 # merge in defaults and keymaps
 
-if [ -f $sysresources ]; then
-    xrdb -merge $sysresources
-fi
-
-if [ -f $sysmodmap ]; then
-    xmodmap $sysmodmap
-fi
-
-if [ -f "$userresources" ]; then
-    xrdb -merge "$userresources"
-fi
-
-if [ -f "$usermodmap" ]; then
-    xmodmap "$usermodmap"
-fi
-
 # start some nice programs
 
-if [ -d /etc/X11/xinit/xinitrc.d ] ; then
- for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
-  [ -x "$f" ] && . "$f"
- done
- unset f
+##Note that if you need im module or kimpanel support, DBus must be initialized correctly.
+if which dbus-launch >/dev/null && test -z "$DBUS_SESSION_BUS_ADDRESS"; then
+    eval "$(dbus-launch --sh-syntax --exit-with-session)"
 fi
 
-#exec herbstluftwm
-
-
-#exec ck-launch-session mate-session
-# If you have authorization problems (e.g. when mounting disks), try
-#exec ck-launch-session dbus-launch mate-session
 
 touch /tmp/$1
+
+# IME
+#fcitx &
+sleep 2
+
 
 ### xrandr -s 0
 
@@ -166,4 +141,12 @@ case $1 in
     #mkfifo "$PANEL_FIFO"
     #exec dbus-launch bspwm -c /home/sunn/.config/bspwm/autostart -s "$PANEL_FIFO" -p W
 esac
+
+
+# default entry
+#exec /usr/bin/x-window-manager
+#exec awesome
+
+[ -f ~/.xprofile  ] && source ~/.xprofile
+
 
